@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" role="img" aria-labelledby="title desc">
+	<title id="title">Logo de DataM</title>
+	<desc id="desc">DATA sobre una M con un birrete de graduación.</desc>
+	<g fill="#11141B" font-family="Arial, Helvetica, sans-serif" font-weight="700">
+		<text x="90" y="190" font-size="140" letter-spacing="4">DATA</text>
+		<path d="M355 690 405 220h115l80 250 100-250h115l60 470H755l-20-285-85 285h-90l-85-285-20 285z"/>
+		<path d="m610 95 235 30 240 140-210-15-95-55-105-15z"/>
+		<path d="m675 180 105 15 95 55-30 80-105-60z"/>
+		<path d="m875 250 140 15-40 100-20-1z"/>
+		<path d="m965 360 20 5-15 70-20-1z"/>
+		<ellipse cx="960" cy="450" rx="13" ry="21"/>
+	</g>
+</svg>

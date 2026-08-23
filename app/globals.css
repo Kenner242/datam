@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #F6F7FA;
+  color: #11141B;
+}
+
+/* Celda estilo "hoja de cálculo": el elemento firma de DataM */
+.data-cell {
+  border: 1px solid #E2E4EA;
+  border-radius: 6px;
+  background: #FFFFFF;
+}
+
+.data-cell-header {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #6B7080;
+}
+
+:focus-visible {
+  outline: 2px solid #5B5FEF;
+  outline-offset: 2px;
+}
+
+@keyframes datam-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.tech-float {
+  animation: datam-float 3s ease-in-out infinite;
+}
+
+.tech-float-delay {
+  animation: datam-float 3s ease-in-out 1.2s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

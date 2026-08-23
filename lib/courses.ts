@@ -29,7 +29,7 @@ const lesson = (title: string, topics: string[], videoUrl?: string): Lesson => (
 const module = (title: string, lessons: Lesson[]): CourseModule => ({ title, lessons });
 const common = (slug: string, code: string, title: string, level: string, duration: string, description: string, image: string, summary: string, professionalUse: string, modules: CourseModule[]): Course => ({ slug, code, title, level, duration, description, image, summary, professionalUse, modules });
 
-export const courses: Course[] = [
+const baseCourses: Course[] = [
 	common("excel-avanzado", "B1", "Excel Avanzado", "Intermedio", "6 semanas", "Tablas dinámicas, fórmulas avanzadas y automatización.", images.excel, "Aprenderás a organizar, analizar y automatizar información en Excel mediante fórmulas avanzadas, tablas dinámicas y reportes claros.", "Te ayudará a crear reportes, controlar presupuestos, analizar ventas y presentar información para tomar decisiones.", [module("Fundamentos para trabajar con datos", [lesson("Estructura de una base de datos", ["Tablas y registros", "Tipos de datos", "Orden y filtros"]), lesson("Fórmulas esenciales", ["Referencias absolutas y relativas", "Funciones lógicas", "Funciones de texto y fecha"])]), module("Análisis y visualización", [lesson("Tablas dinámicas", ["Campos y segmentaciones", "Agrupación de información", "Indicadores de resumen"]), lesson("Dashboards en Excel", ["Gráficos adecuados", "Diseño de reportes", "Presentación de hallazgos"])]), module("Automatización aplicada", [lesson("Procesos eficientes", ["Validación de datos", "Plantillas reutilizables", "Introducción a macros"])])]),
 	common("power-bi-desde-cero", "B2", "Power BI desde Cero", "Principiante", "5 semanas", "Dashboards reales conectando y modelando datos.", images.powerBi, "Construirás dashboards interactivos desde cero, conectando fuentes, limpiando datos y creando visualizaciones.", "Podrás apoyar decisiones comerciales y operativas con indicadores y paneles de resultados.", [module("Primeros pasos con Power BI", [lesson("Entorno y fuentes", ["Interfaz", "Importación de Excel y CSV", "Tipos de visualización"])]), module("Preparación y modelo de datos", [lesson("Datos listos para analizar", ["Limpieza básica", "Relaciones entre tablas", "Modelo estrella"])]), module("Dashboard final", [lesson("Indicadores para decisiones", ["Medidas básicas", "Filtros y segmentadores", "Publicación de un informe"], "/videos/power-bi-desde-cero/modulo-03-dashboard-final/clase-01-indicadores/AQMv6X025x31BrL_5X8E6vOwYy__mKHKxAgtJWgX0h2JnPbEHYGAmKIChT0TlEPDAtMy7NUZMruaB4Om1i3gYR7cye6vWltXvbs.mp4")])]),
 	common("python-para-datos", "B3", "Python para Datos", "Intermedio", "8 semanas", "Pandas, visualización y automatización de reportes.", images.python, "Aprenderás a usar Python para cargar, limpiar, explorar y visualizar datos.", "Te permitirá automatizar reportes y analizar grandes volúmenes de información.", [module("Python y pensamiento lógico", [lesson("Bases del lenguaje", ["Variables", "Condicionales y ciclos", "Funciones"])]), module("Análisis con Pandas", [lesson("Trabajar con datos", ["DataFrames", "Limpieza", "Agrupaciones y métricas"])]), module("Proyecto de análisis", [lesson("Reporte automatizado", ["Gráficos", "Conclusiones", "Exportación de resultados"])])]),
@@ -40,5 +40,30 @@ export const courses: Course[] = [
 	common("programacion-desarrollo-web", "B8", "Programación y Desarrollo Web", "Principiante", "8 semanas", "Crea páginas web modernas desde la estructura hasta la publicación.", images.web, "Construirás una página web funcional aprendiendo HTML, CSS y JavaScript.", "Te permitirá crear portafolios, sitios para emprendimientos y prototipos digitales.", [module("Fundamentos de la web", [lesson("Cómo funciona una página", ["Navegador y servidor", "HTML semántico", "Estructura de un documento"]), lesson("Primer proyecto", ["Textos e imágenes", "Enlaces y formularios", "Organización de carpetas"])]), module("Diseño y estilos", [lesson("CSS desde cero", ["Selectores", "Colores y tipografía", "Modelo de caja"]), lesson("Diseño responsive", ["Flexbox y Grid", "Adaptación a celulares", "Accesibilidad"])]), module("Interactividad y publicación", [lesson("JavaScript básico", ["Variables y funciones", "Eventos", "Validación"]), lesson("Publicar un sitio", ["Git", "Hosting", "Proyecto final"])])]),
 	common("finanzas-para-emprendedores", "B9", "Finanzas para Emprendedores", "Principiante", "5 semanas", "Organiza tus finanzas y toma mejores decisiones para tu negocio.", images.finance, "Aprenderás a ordenar ingresos y gastos, elaborar presupuestos, calcular costos y leer indicadores financieros.", "Te ayudará a controlar el flujo de caja, definir precios y evaluar inversiones.", [module("Orden financiero", [lesson("Ingresos y gastos", ["Clasificación", "Registro financiero", "Separar finanzas personales"]), lesson("Presupuesto", ["Metas", "Presupuesto mensual", "Escenarios"])]), module("Costos y precios", [lesson("Conocer los costos", ["Costos fijos y variables", "Punto de equilibrio", "Margen"]), lesson("Definir precios", ["Costos", "Valor para el cliente", "Competencia"])]), module("Decisiones y crecimiento", [lesson("Flujo de caja", ["Entradas y salidas", "Liquidez", "Proyección"]), lesson("Indicadores básicos", ["Rentabilidad", "Endeudamiento", "Plan financiero"])])]),
 ];
+
+const currentTopics: Record<string, string[]> = {
+	"excel-avanzado": ["Automatización de reportes", "Buenas prácticas de documentación"],
+	"power-bi-desde-cero": ["KPIs comerciales", "Narrativa con datos"],
+	"python-para-datos": ["Automatización con scripts", "Control de calidad del análisis"],
+	"sql-para-analisis": ["CTE y consultas legibles", "Seguridad de acceso a datos"],
+	"power-query": ["Parámetros y actualización", "Control de calidad de datos"],
+	"introduccion-a-la-ia": ["Automatización de tareas", "IA generativa en el trabajo"],
+	"investigacion-aplicada": ["Alfabetización informacional", "Presentación de evidencia"],
+	"programacion-desarrollo-web": ["GitHub", "Seguridad básica", "Optimización para buscadores"],
+	"finanzas-para-emprendedores": ["Flujo de caja proyectado", "Decisiones basadas en datos"],
+};
+
+export const courses: Course[] = baseCourses.map((course) => ({
+	...course,
+	modules: course.modules.map((courseModule, moduleIndex) => ({
+		...courseModule,
+		lessons: courseModule.lessons.map((lesson, lessonIndex) => ({
+			...lesson,
+			topics: moduleIndex === course.modules.length - 1 && lessonIndex === courseModule.lessons.length - 1
+				? [...lesson.topics, ...(currentTopics[course.slug] ?? [])]
+				: lesson.topics,
+		})),
+	})),
+}));
 
 export function getCourse(slug: string) { return courses.find((course) => course.slug === slug); }

@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Menu, X, LogOut, LayoutDashboard } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
+import NavbarSearch from "./NavbarSearch";
 
 export default function Navbar() {
   const router = useRouter();
@@ -45,7 +46,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-base/90 backdrop-blur">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+      <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
         <Link href="/" aria-label="DataM, inicio" className="flex items-center">
           <Image
             src="/images/datam-logo.svg"
@@ -57,7 +58,10 @@ export default function Navbar() {
           />
         </Link>
 
-        <div className="hidden items-center gap-8 text-sm text-ink/80 md:flex">
+        {/* Buscador */}
+        <NavbarSearch />
+
+        <div className="hidden flex-1 items-center gap-8 text-sm text-ink/80 md:flex">
           <Link href="/cursos" className="transition-colors hover:text-accent">
             Cursos
           </Link>

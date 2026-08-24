@@ -29,7 +29,13 @@ export default function RegistroPage() {
 
     if (authError) {
       console.error("Supabase signup error:", authError);
-      setError(authError.message);
+      setError(
+        authError.message.toLowerCase().includes("already registered")
+          ? "Este correo ya tiene una cuenta. Inicia sesión para continuar."
+          : authError.message.toLowerCase().includes("rate limit")
+            ? "Se alcanzó el límite temporal de correos. Intenta más tarde o inicia sesión si tu cuenta ya fue creada."
+            : authError.message,
+      );
       setIsLoading(false);
       return;
     }

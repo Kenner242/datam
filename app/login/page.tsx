@@ -11,11 +11,14 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isRecovering, setIsRecovering] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setError("");
+    setMessage("");
     setIsLoading(true);
 
     const { error: authError } = await supabase.auth.signInWithPassword({
@@ -25,13 +28,35 @@ export default function LoginPage() {
 
     if (authError) {
       console.error("Supabase login error:", authError);
-      setError(authError.message);
+      setError(
+        authError.message.toLowerCase().includes("invalid login credentials")
+          ? "El correo o la contraseña no son correctos."
+          : authError.message.toLowerCase().includes("email not confirmed")
+            ? "Confirma tu correo electrónico antes de iniciar sesión."
+            : authError.message,
+      );
       setIsLoading(false);
       return;
     }
 
     router.push("/dashboard");
     router.refresh();
+  }
+
+  async function handlePasswordRecovery() {
+    if (!email) {
+      setError("Escribe tu correo para enviarte un enlace de recuperación.");
+      return;
+    }
+    setError("");
+    setMessage("");
+    setIsRecovering(true);
+    const { error: recoveryError } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/login`,
+    });
+    if (recoveryError) setError(recoveryError.message);
+    else setMessage("Te enviamos un enlace para crear una nueva contraseña.");
+    setIsRecovering(false);
   }
 
   return (
@@ -68,6 +93,9 @@ export default function LoginPage() {
               placeholder="••••••••"
             />
           </label>
+          <button type="button" onClick={handlePasswordRecovery} disabled={isRecovering} className="self-start text-sm font-medium text-accent hover:underline">
+            {isRecovering ? "Enviando enlace..." : "¿Olvidaste tu contraseña?"}
+          </button>
           <button
             type="submit"
             disabled={isLoading}
@@ -76,6 +104,7 @@ export default function LoginPage() {
             {isLoading ? "Entrando..." : "Entrar"}
           </button>
           {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
+          {message && <p role="status" className="text-sm text-green-700">{message}</p>}
         </form>
 
         <p className="mt-6 text-center text-sm text-muted">

@@ -36,9 +36,9 @@ export default function ComunidadPage() {
               <p className="mt-5 font-display text-sm font-bold text-ink">Únete, participa y construye tu futuro junto a la comunidad.</p>
               <a href={communityUrl} target="_blank" rel="noreferrer" className="mt-5 inline-flex items-center justify-center gap-2 rounded-cell bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-ink"><MessageCircle className="h-5 w-5" /> Unirme por WhatsApp <ArrowUpRight className="h-4 w-4" /></a>
             </div>
-            <figure className="relative mx-auto h-80 w-full max-w-sm overflow-hidden rounded-cell border border-blue-200 bg-white shadow-lg md:h-[420px]">
-              <img src="/images/kener_01.jpeg" alt="Kenner, fundador de DataM, invitando a los estudiantes a la comunidad" className="h-full w-full object-cover object-[62%_center]" />
-              <figcaption className="absolute bottom-0 left-0 right-0 bg-ink/85 px-4 py-3 text-sm font-medium text-white">Comunidad DataM · Aprende acompañado</figcaption>
+            <figure className="relative mx-auto flex h-80 w-full max-w-sm items-end justify-center overflow-hidden md:h-[420px]">
+              <img src="/images/kener_01.png" alt="Kenner, fundador de DataM, invitando a los estudiantes a la comunidad" className="h-full w-full object-contain object-bottom drop-shadow-xl" />
+              <figcaption className="absolute bottom-4 left-4 rounded-cell bg-ink px-4 py-2 text-sm font-medium text-white">Comunidad DataM · Aprende acompañado</figcaption>
             </figure>
           </div>
         </section>

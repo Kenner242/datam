@@ -36,42 +36,36 @@ body {
   50% { transform: translateY(-8px); }
 }
 
+@keyframes datam-logo-enter {
+  from { opacity: 0; transform: translateY(10px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes datam-logo-float {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-6px) rotate(-1deg); }
+}
+
+.datam-logo-hero {
+  animation: datam-logo-enter 560ms ease-out both, datam-logo-float 4s ease-in-out 700ms infinite;
+  transform-origin: center;
+}
+
+.datam-logo-nav {
+  transition: transform 180ms ease, filter 180ms ease;
+}
+
+.datam-logo-nav:hover {
+  filter: drop-shadow(0 4px 6px rgb(91 95 239 / 0.22));
+  transform: translateY(-2px) rotate(-2deg);
+}
+
 .tech-float {
   animation: datam-float 3s ease-in-out infinite;
 }
 
 .tech-float-delay {
   animation: datam-float 3s ease-in-out 1.2s infinite;
-}
-
-@keyframes datam-logo-enter {
-  from {
-    opacity: 0;
-    transform: translateY(-6px) scale(0.96);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes datam-logo-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
-}
-
-.datam-logo-motion {
-  animation: datam-logo-enter 520ms ease-out both;
-  transition: transform 180ms ease, filter 180ms ease;
-}
-
-.datam-logo-motion:hover {
-  transform: translateY(-2px) rotate(-2deg) scale(1.03);
-  filter: drop-shadow(0 8px 10px rgb(2 32 84 / 0.16));
-}
-
-.datam-logo-hero {
-  animation: datam-logo-enter 520ms ease-out both, datam-logo-float 4s ease-in-out 700ms infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {

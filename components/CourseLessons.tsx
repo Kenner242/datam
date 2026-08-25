@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BookOpen, Check, ChevronDown, Download, Play, Target } from "lucide-react";
+import { BookOpen, Check, ChevronDown, Download, Target } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import type { Course } from "@/lib/courses";
 import { getTopicConcept } from "@/lib/topicConcepts";
@@ -205,7 +205,6 @@ export default function CourseLessons({ course }: { course: Course }) {
                             <span className="block font-display font-bold text-ink">{lesson.title}</span>
                             <span className="mt-1 block truncate text-xs text-muted">{lesson.topics.join(" - ")}</span>
                           </span>
-                          <span className="hidden items-center gap-1 text-xs text-muted sm:flex"><Play className="h-3.5 w-3.5" /> 10-20 min</span>
                           <ChevronDown className={`h-5 w-5 shrink-0 text-blue-700 transition-transform ${isOpen ? "rotate-180" : ""}`} />
                         </button>
 

@@ -12,13 +12,15 @@ export default function CourseLessons({ course }: { course: Course }) {
   const [userId, setUserId] = useState<string | null>(null);
   const [watched, setWatched] = useState<string[]>([]);
   const [isEnrolled, setIsEnrolled] = useState(false);
+  const [isReady, setIsReady] = useState(false);
   const [message, setMessage] = useState("");
   const [openLessonId, setOpenLessonId] = useState("");
   const lessonIds = useMemo(
     () => course.modules.flatMap((module) => module.lessons.map((lesson) => `${module.title}:${lesson.title}`)),
     [course.modules],
   );
-  const storageKey = userId ? `datam-progress:${userId}:${course.slug}` : "";
+  const storageKey = `datam-progress:${userId ?? "guest"}:${course.slug}`;
+  const enrollmentKey = `datam-enrollment:${userId ?? "guest"}:${course.slug}`;
   const completedLessons = watched.filter((id) => lessonIds.includes(id)).length;
   const courseProgress = lessonIds.length ? Math.round((completedLessons / lessonIds.length) * 100) : 0;
   const isComplete = lessonIds.length > 0 && completedLessons === lessonIds.length;
@@ -30,24 +32,24 @@ export default function CourseLessons({ course }: { course: Course }) {
 
   useEffect(() => {
     void supabase.auth.getUser().then(async ({ data }) => {
-      if (!data.user) {
-        router.replace(`/login?next=/cursos/${course.slug}`);
-        return;
+      if (data.user) {
+        setUserId(data.user.id);
+        const { data: enrollment } = await supabase
+          .from("enrollments")
+          .select("id")
+          .eq("user_id", data.user.id)
+          .eq("course_slug", course.slug)
+          .maybeSingle();
+        setIsEnrolled(Boolean(enrollment));
+      } else {
+        setIsEnrolled(window.localStorage.getItem(`datam-enrollment:guest:${course.slug}`) === "true");
       }
-
-      setUserId(data.user.id);
-      const { data: enrollment } = await supabase
-        .from("enrollments")
-        .select("id")
-        .eq("user_id", data.user.id)
-        .eq("course_slug", course.slug)
-        .maybeSingle();
-      setIsEnrolled(Boolean(enrollment));
+      setIsReady(true);
     });
-  }, [course.slug, router]);
+  }, [course.slug]);
 
   useEffect(() => {
-    if (!storageKey) return;
+    if (!isReady) return;
     const savedProgress = window.localStorage.getItem(storageKey);
     if (!savedProgress) return;
 
@@ -56,10 +58,25 @@ export default function CourseLessons({ course }: { course: Course }) {
     } catch {
       window.localStorage.removeItem(storageKey);
     }
-  }, [storageKey]);
+  }, [isReady, storageKey]);
+
+  useEffect(() => {
+    function handleEnrollment(event: Event) {
+      const requestedCourse = (event as CustomEvent<{ courseSlug: string }>).detail.courseSlug;
+      if (requestedCourse === course.slug) void enroll();
+    }
+
+    window.addEventListener("datam:enroll-course", handleEnrollment);
+    return () => window.removeEventListener("datam:enroll-course", handleEnrollment);
+  }, [course.slug, userId]);
 
   async function enroll() {
-    if (!userId) return;
+    if (!userId) {
+      window.localStorage.setItem(enrollmentKey, "true");
+      setIsEnrolled(true);
+      setMessage(`Te has inscrito correctamente en ${course.title}. Ya puedes comenzar las clases.`);
+      return;
+    }
     const { error } = await supabase
       .from("enrollments")
       .upsert({ user_id: userId, course_slug: course.slug }, { onConflict: "user_id,course_slug" });
@@ -70,17 +87,18 @@ export default function CourseLessons({ course }: { course: Course }) {
     }
 
     setIsEnrolled(true);
-    setMessage("Te has inscrito correctamente en este curso.");
+    setMessage(`Te has inscrito correctamente en ${course.title}. Ya puedes comenzar las clases.`);
   }
 
   async function markCompleted(lessonId: string) {
-    if (!storageKey || watched.includes(lessonId) || !userId || !isEnrolled) return;
+    if (watched.includes(lessonId) || !isEnrolled) return;
     const lessonPosition = lessonIds.indexOf(lessonId);
     const previousLessonId = lessonPosition > 0 ? lessonIds[lessonPosition - 1] : null;
     if (previousLessonId && !watched.includes(previousLessonId)) return;
     const nextProgress = [...watched, lessonId];
     setWatched(nextProgress);
     window.localStorage.setItem(storageKey, JSON.stringify(nextProgress));
+    if (!userId) return;
     await supabase
       .from("progress")
       .upsert({ user_id: userId, course_slug: course.slug, lesson_id: lessonId }, { onConflict: "user_id,course_slug,lesson_id" });
@@ -109,10 +127,10 @@ export default function CourseLessons({ course }: { course: Course }) {
     URL.revokeObjectURL(blobUrl);
   }
 
-  if (!userId) return <p className="mt-8 text-sm text-muted">Verificando tu acceso...</p>;
+  if (!isReady) return <p className="mt-8 text-sm text-muted">Preparando el curso...</p>;
 
   return (
-    <div className="mt-8 space-y-5">
+    <div id="curso-aprendizaje" className="mt-8 space-y-5">
       <section className="data-cell overflow-hidden">
         <div className="grid gap-5 bg-ink p-5 text-white md:grid-cols-[1fr_auto] md:items-center">
           <div>

@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title>Microsoft Excel</title>
+  <rect width="512" height="512" fill="#ffffff"/>
+  <path fill="#33c481" d="M210 48h206c27 0 48 21 48 48v320c0 27-21 48-48 48H210z"/>
+  <path fill="#107c41" d="M210 48h103v416H210z"/>
+  <path fill="#21a366" d="M313 48h103c27 0 48 21 48 48v112H313z"/>
+  <path fill="#107c41" d="M313 160h151v104H313z" opacity=".82"/>
+  <path fill="#185c37" d="M72 132h194c19 0 34 15 34 34v180c0 19-15 34-34 34H72c-19 0-34-15-34-34V166c0-19 15-34 34-34z"/>
+  <path fill="#0f6b36" d="M280 132h19c19 0 34 15 34 34v180c0 19-15 34-34 34h-19z" opacity=".75"/>
+  <path fill="#fff" d="m107 192 51 0 30 53 31-53h49l-52 76 56 84h-51l-34-58-35 58h-50l58-85z"/>
+</svg>

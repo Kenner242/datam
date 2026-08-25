@@ -16,7 +16,7 @@ type SearchResult = {
 };
 
 const toolImages: Record<string, string> = {
-  "excel-avanzado": "https://cdn.simpleicons.org/microsoftexcel/217346",
+  "excel-avanzado": "/images/tools/excel.svg",
   "power-bi-desde-cero": "https://cdn.simpleicons.org/powerbi/F2C811",
   "python-para-datos": "https://cdn.simpleicons.org/python/3776AB",
   "sql-para-analisis": "https://cdn.simpleicons.org/postgresql/4169E1",
@@ -24,7 +24,7 @@ const toolImages: Record<string, string> = {
   "introduccion-a-la-ia": "https://cdn.simpleicons.org/openai/412991",
   "investigacion-aplicada": "https://cdn.simpleicons.org/googlescholar/4285F4",
   "programacion-desarrollo-web": "https://cdn.simpleicons.org/html5/E34F26",
-  "finanzas-para-emprendedores": "https://cdn.simpleicons.org/microsoftexcel/217346",
+  "finanzas-para-emprendedores": "/images/tools/excel.svg",
 };
 
 export default function NavbarSearch() {

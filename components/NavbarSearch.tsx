@@ -9,6 +9,7 @@ type SearchResult = {
   type: "course" | "module";
   courseSlug: string;
   courseName: string;
+  courseImage: string;
   moduleName?: string;
   courseCode: string;
 };
@@ -48,6 +49,7 @@ export default function NavbarSearch() {
           type: "course",
           courseSlug: course.slug,
           courseName: course.title,
+          courseImage: course.image,
           courseCode: course.code,
         });
       }
@@ -59,6 +61,7 @@ export default function NavbarSearch() {
             type: "module",
             courseSlug: course.slug,
             courseName: course.title,
+            courseImage: course.image,
             moduleName: module.title,
             courseCode: course.code,
           });
@@ -113,18 +116,25 @@ export default function NavbarSearch() {
                 key={`${result.courseSlug}-${result.moduleName || 'course'}-${idx}`}
                 href={`/cursos/${result.courseSlug}`}
                 onClick={handleResultClick}
-                className="block border-b border-line/50 px-4 py-3 last:border-b-0 hover:bg-blue-50 transition-colors"
+                className="flex items-center gap-3 border-b border-line/50 px-4 py-3 last:border-b-0 hover:bg-blue-50 transition-colors"
               >
-                <div className="text-sm font-medium text-ink">
-                  {result.courseName}
-                </div>
-                {result.moduleName && (
-                  <div className="text-xs text-muted">
-                    📚 Módulo: {result.moduleName}
+                <img
+                  src={result.courseImage}
+                  alt=""
+                  className="h-12 w-16 shrink-0 rounded-cell border border-line object-cover"
+                />
+                <div className="min-w-0 flex-1">
+                  <div className="truncate text-sm font-medium text-ink">
+                    {result.courseName}
                   </div>
-                )}
-                <div className="text-xs text-accent font-medium">
-                  {result.type === "course" ? "Curso" : "Dentro de este curso"}
+                  {result.moduleName && (
+                    <div className="truncate text-xs text-muted">
+                      Módulo: {result.moduleName}
+                    </div>
+                  )}
+                  <div className="mt-1 text-xs font-medium text-accent">
+                    {result.type === "course" ? "Curso" : "Dentro de este curso"}
+                  </div>
                 </div>
               </Link>
             ))}

@@ -28,7 +28,7 @@ export default function ComunidadPage() {
       <Navbar />
       <main>
         <section className="border-b border-blue-200 bg-blue-50">
-          <div className="mx-auto grid max-w-6xl gap-10 px-6 py-12 md:grid-cols-[minmax(0,1fr)_400px] md:items-center md:py-16">
+          <div className="mx-auto grid max-w-6xl gap-10 px-6 py-12 md:grid-cols-[minmax(0,1fr)_420px] md:items-center md:py-16">
             <div className="max-w-3xl">
               <p className="data-cell-header">Comunidad DataM</p>
               <h1 className="mt-3 max-w-3xl font-display text-4xl font-bold leading-tight text-ink md:text-5xl">Aprender es mejor cuando avanzamos juntos.</h1>
@@ -36,8 +36,12 @@ export default function ComunidadPage() {
               <p className="mt-5 font-display text-sm font-bold text-ink">Únete, participa y construye tu futuro junto a la comunidad.</p>
               <a href={communityUrl} target="_blank" rel="noreferrer" className="mt-5 inline-flex items-center justify-center gap-2 rounded-cell bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-ink"><MessageCircle className="h-5 w-5" /> Unirme por WhatsApp <ArrowUpRight className="h-4 w-4" /></a>
             </div>
-            <figure className="relative mx-auto flex h-80 w-full max-w-sm items-end justify-center border-b-4 border-accent bg-white/60 px-4 pt-4 md:h-[460px] md:max-w-none md:px-6 md:pt-6">
-              <img src="/images/kener_01.png" alt="Kenner, fundador de DataM, invitando a los estudiantes a la comunidad" className="h-full w-full object-contain object-bottom brightness-90 contrast-110 drop-shadow-xl" />
+            <figure className="relative mx-auto h-80 w-full max-w-sm overflow-hidden border-b-4 border-accent bg-white/60 md:h-[470px] md:max-w-none">
+              <div className="absolute left-5 top-5 z-10 max-w-40 border-l-2 border-accent pl-3 md:left-6 md:top-6">
+                <p className="data-cell-header">DataM</p>
+                <p className="mt-1 text-sm font-medium text-ink">Una comunidad para aprender acompañado.</p>
+              </div>
+              <img src="/images/kener_01.png" alt="Kenner, fundador de DataM, invitando a los estudiantes a la comunidad" className="absolute bottom-0 right-[-78px] h-[112%] w-auto max-w-none brightness-90 contrast-110 drop-shadow-2xl md:right-[-96px]" />
               <figcaption className="absolute bottom-4 left-4 rounded-cell bg-ink px-4 py-2 text-sm font-medium text-white md:left-6">Comunidad DataM · Aprende acompañado</figcaption>
             </figure>
           </div>

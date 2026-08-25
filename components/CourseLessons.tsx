@@ -129,7 +129,7 @@ export default function CourseLessons({ course }: { course: Course }) {
         <div className="p-5">
           {!isEnrolled && <button onClick={enroll} className="rounded-cell bg-accent px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-ink">Inscribirme y empezar</button>}
           {isEnrolled && <p className="text-sm font-medium text-green-700">Estas inscrito. Continúa con la siguiente clase de tu nivel.</p>}
-          {isComplete && <button onClick={() => router.push(`/certificado/${course.slug}`)} className="mt-3 rounded-cell bg-accent px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-ink">Descargar certificado PDF</button>}
+          {isComplete && <button onClick={() => router.push(`/cursos/${course.slug}/evaluacion`)} className="mt-3 rounded-cell bg-accent px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-ink">Ir a evaluación final</button>}
           {message && <p role="status" className="mt-3 text-sm text-blue-800">{message}</p>}
         </div>
       </section>

@@ -110,3 +110,79 @@ to authenticated
 using ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
 revoke all on public.enrollments from anon;
+
+-- Evaluacion final y proyecto: ambos son requisitos para emitir un certificado.
+create table if not exists public.exam_attempts (
+  id bigint generated always as identity primary key,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  course_slug text not null,
+  score integer not null check (score >= 0 and score <= 100),
+  passed boolean not null,
+  submitted_at timestamptz not null default now()
+);
+
+create index if not exists exam_attempts_user_course_submitted_idx
+on public.exam_attempts (user_id, course_slug, submitted_at desc);
+
+alter table public.exam_attempts enable row level security;
+drop policy if exists "exam_attempts_own_rows" on public.exam_attempts;
+create policy "exam_attempts_own_rows"
+on public.exam_attempts for select
+to authenticated
+using (user_id = auth.uid());
+
+drop policy if exists "exam_attempts_own_insert" on public.exam_attempts;
+create policy "exam_attempts_own_insert"
+on public.exam_attempts for insert
+to authenticated
+with check (user_id = auth.uid());
+
+drop policy if exists "exam_attempts_admin_read" on public.exam_attempts;
+create policy "exam_attempts_admin_read"
+on public.exam_attempts for select
+to authenticated
+using ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+
+create table if not exists public.project_submissions (
+  id bigint generated always as identity primary key,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  course_slug text not null,
+  project_url text not null check (char_length(project_url) <= 2048),
+  notes text,
+  status text not null default 'pending' check (status in ('pending', 'approved', 'changes_requested')),
+  reviewer_note text,
+  reviewed_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique (user_id, course_slug)
+);
+
+alter table public.project_submissions enable row level security;
+drop policy if exists "project_submissions_own_read" on public.project_submissions;
+create policy "project_submissions_own_read"
+on public.project_submissions for select
+to authenticated
+using (user_id = auth.uid());
+
+drop policy if exists "project_submissions_own_insert" on public.project_submissions;
+create policy "project_submissions_own_insert"
+on public.project_submissions for insert
+to authenticated
+with check (user_id = auth.uid() and status = 'pending');
+
+drop policy if exists "project_submissions_own_update" on public.project_submissions;
+create policy "project_submissions_own_update"
+on public.project_submissions for update
+to authenticated
+using (user_id = auth.uid() and status in ('pending', 'changes_requested'))
+with check (user_id = auth.uid() and status = 'pending');
+
+drop policy if exists "project_submissions_admin_all" on public.project_submissions;
+create policy "project_submissions_admin_all"
+on public.project_submissions for all
+to authenticated
+using ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin')
+with check ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+
+revoke all on public.exam_attempts from anon;
+revoke all on public.project_submissions from anon;

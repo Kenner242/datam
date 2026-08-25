@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BookOpen, Check, ChevronDown, Download, Lightbulb, Play, Target } from "lucide-react";
+import { BookOpen, Check, ChevronDown, Download, Play, Target } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import type { Course } from "@/lib/courses";
 import { getTopicConcept } from "@/lib/topicConcepts";
@@ -209,8 +209,6 @@ export default function CourseLessons({ course }: { course: Course }) {
                                 <div className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-blue-700" /><p className="data-cell-header">Laboratorio</p></div>
                                 <p className="mt-2 text-sm text-muted">Descarga la guía, desarrolla la práctica y utiliza una pista solo cuando la necesites.</p>
                                 <button onClick={() => downloadMaterial(lesson.title, lesson.topics)} className="mt-4 flex w-full items-center justify-center gap-2 rounded-cell border border-blue-300 px-3 py-2 text-sm font-medium text-blue-700 transition-colors hover:bg-blue-50"><Download className="h-4 w-4" /> Descargar material</button>
-                                <details className="mt-4 border-t border-line pt-3"><summary className="flex cursor-pointer items-center gap-2 text-sm font-medium text-blue-700"><Lightbulb className="h-4 w-4" /> Ver una pista</summary><p className="mt-2 text-sm text-muted">Identifica primero los datos de entrada, despues el resultado esperado y el concepto que conecta ambos.</p></details>
-                                <details className="mt-3 border-t border-line pt-3"><summary className="cursor-pointer text-sm font-medium text-blue-700">Solución guiada</summary><ol className="mt-2 list-decimal space-y-1 pl-5 text-sm text-muted"><li>Abre el material de práctica.</li><li>Aplica {lesson.topics.slice(0, 2).join(" y ")} según el video.</li><li>Comprueba que el resultado cumpla el objetivo de la clase.</li></ol></details>
                               </aside>
                             </div>
                             <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-l-4 border-blue-500 bg-blue-50 p-4">

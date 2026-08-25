@@ -10,8 +10,21 @@ type SearchResult = {
   courseSlug: string;
   courseName: string;
   courseImage: string;
+  toolImage: string;
   moduleName?: string;
   courseCode: string;
+};
+
+const toolImages: Record<string, string> = {
+  "excel-avanzado": "https://cdn.simpleicons.org/microsoftexcel/217346",
+  "power-bi-desde-cero": "https://cdn.simpleicons.org/powerbi/F2C811",
+  "python-para-datos": "https://cdn.simpleicons.org/python/3776AB",
+  "sql-para-analisis": "https://cdn.simpleicons.org/postgresql/4169E1",
+  "power-query": "https://cdn.simpleicons.org/microsoft/00A4EF",
+  "introduccion-a-la-ia": "https://cdn.simpleicons.org/openai/412991",
+  "investigacion-aplicada": "https://cdn.simpleicons.org/googlescholar/4285F4",
+  "programacion-desarrollo-web": "https://cdn.simpleicons.org/html5/E34F26",
+  "finanzas-para-emprendedores": "https://cdn.simpleicons.org/microsoftexcel/217346",
 };
 
 export default function NavbarSearch() {
@@ -50,6 +63,7 @@ export default function NavbarSearch() {
           courseSlug: course.slug,
           courseName: course.title,
           courseImage: course.image,
+          toolImage: toolImages[course.slug] ?? course.image,
           courseCode: course.code,
         });
       }
@@ -62,6 +76,7 @@ export default function NavbarSearch() {
             courseSlug: course.slug,
             courseName: course.title,
             courseImage: course.image,
+            toolImage: toolImages[course.slug] ?? course.image,
             moduleName: module.title,
             courseCode: course.code,
           });
@@ -119,9 +134,10 @@ export default function NavbarSearch() {
                 className="flex items-center gap-3 border-b border-line/50 px-4 py-3 last:border-b-0 hover:bg-blue-50 transition-colors"
               >
                 <img
-                  src={result.courseImage}
-                  alt=""
-                  className="h-12 w-16 shrink-0 rounded-cell border border-line object-cover"
+                  src={result.toolImage}
+                  alt={`Herramienta principal de ${result.courseName}`}
+                  onError={(event) => { event.currentTarget.src = result.courseImage; }}
+                  className="h-12 w-12 shrink-0 rounded-cell border border-line bg-white p-2 object-contain"
                 />
                 <div className="min-w-0 flex-1">
                   <div className="truncate text-sm font-medium text-ink">

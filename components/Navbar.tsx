@@ -65,6 +65,9 @@ export default function Navbar() {
           <Link href="/cursos" className="transition-colors hover:text-accent">
             Cursos
           </Link>
+          <Link href="/comunidad" className="transition-colors hover:text-accent">
+            Comunidad
+          </Link>
           <Link href="/" className="transition-colors hover:text-accent">
             Metodología
           </Link>
@@ -108,6 +111,7 @@ export default function Navbar() {
         <div className="border-t border-line bg-base px-6 py-4 md:hidden">
           <div className="mx-auto flex max-w-6xl flex-col gap-3 text-sm">
             <Link href="/cursos" onClick={closeMenu}>Cursos</Link>
+            <Link href="/comunidad" onClick={closeMenu}>Comunidad</Link>
             <Link href="/" onClick={closeMenu}>Metodología</Link>
             <Link href="/nosotros" onClick={closeMenu}>Nosotros</Link>
             <Link href="/fundador" onClick={closeMenu}>Fundador</Link>

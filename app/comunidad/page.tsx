@@ -37,7 +37,7 @@ export default function ComunidadPage() {
               <a href={communityUrl} target="_blank" rel="noreferrer" className="mt-5 inline-flex items-center justify-center gap-2 rounded-cell bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-ink"><MessageCircle className="h-5 w-5" /> Unirme por WhatsApp <ArrowUpRight className="h-4 w-4" /></a>
             </div>
             <figure className="relative mx-auto flex h-96 w-full max-w-md items-end justify-center overflow-hidden md:h-[500px]">
-              <img src="/images/ChatGPT%20Image%2025%20ago%202026%2C%2007_29_14%20p.m..png" alt="Kenner, fundador de DataM, invitando a los estudiantes a la comunidad" className="h-[108%] w-[108%] max-w-none object-contain object-bottom brightness-90 contrast-110 drop-shadow-2xl" />
+              <img src="/images/kener_01.png" alt="Kenner, fundador de DataM, invitando a los estudiantes a la comunidad" className="h-[108%] w-[108%] max-w-none object-contain object-bottom brightness-90 contrast-110 drop-shadow-2xl" />
               <figcaption className="absolute bottom-4 left-4 rounded-cell bg-ink px-4 py-2 text-sm font-medium text-white">Comunidad DataM · Aprende acompañado</figcaption>
             </figure>
           </div>

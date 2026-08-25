@@ -75,6 +75,9 @@ export default function CourseLessons({ course }: { course: Course }) {
 
   async function markCompleted(lessonId: string) {
     if (!storageKey || watched.includes(lessonId) || !userId || !isEnrolled) return;
+    const lessonPosition = lessonIds.indexOf(lessonId);
+    const previousLessonId = lessonPosition > 0 ? lessonIds[lessonPosition - 1] : null;
+    if (previousLessonId && !watched.includes(previousLessonId)) return;
     const nextProgress = [...watched, lessonId];
     setWatched(nextProgress);
     window.localStorage.setItem(storageKey, JSON.stringify(nextProgress));
@@ -165,6 +168,9 @@ export default function CourseLessons({ course }: { course: Course }) {
                     const isDone = watched.includes(lessonId);
                     const isOpen = openLessonId === lessonId;
                     const isFinalLesson = moduleIndex === course.modules.length - 1 && lessonIndex === module.lessons.length - 1;
+                    const lessonPosition = lessonIds.indexOf(lessonId);
+                    const previousLessonId = lessonPosition > 0 ? lessonIds[lessonPosition - 1] : null;
+                    const isCompletionLocked = Boolean(previousLessonId && !watched.includes(previousLessonId));
 
                     return (
                       <article key={lesson.title}>
@@ -209,8 +215,9 @@ export default function CourseLessons({ course }: { course: Course }) {
                             </div>
                             <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-l-4 border-blue-500 bg-blue-50 p-4">
                               <div><p className="font-display text-sm font-bold text-ink">Competencia lograda</p><p className="mt-1 text-sm text-muted">{isFinalLesson ? "Has integrado las habilidades del curso en una aplicación final." : `Has consolidado los conocimientos de esta clase del nivel ${level.name}.`}</p></div>
-                              <button disabled={!isEnrolled || isDone} onClick={() => markCompleted(lessonId)} className="rounded-cell bg-accent px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-ink disabled:cursor-not-allowed disabled:bg-line disabled:text-muted">{isDone ? "Clase completada" : "Completar clase"}</button>
+                              <button disabled={!isEnrolled || isDone || isCompletionLocked} onClick={() => markCompleted(lessonId)} className="rounded-cell bg-accent px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-ink disabled:cursor-not-allowed disabled:bg-line disabled:text-muted">{isDone ? "Clase completada" : "Completar clase"}</button>
                             </div>
+                            {isCompletionLocked && <p className="mt-2 text-xs text-muted">Puedes ver esta clase, pero debes completar la clase anterior antes de marcarla como terminada.</p>}
                             {!isEnrolled && <p className="mt-2 text-xs text-muted">Inscríbete en el curso para registrar tus clases completadas.</p>}
                           </div>
                         )}

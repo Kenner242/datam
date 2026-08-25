@@ -28,13 +28,18 @@ export default function ComunidadPage() {
       <Navbar />
       <main>
         <section className="border-b border-blue-200 bg-blue-50">
-          <div className="mx-auto grid max-w-6xl gap-8 px-6 py-16 md:grid-cols-[1fr_auto] md:items-end">
-            <div>
+          <div className="mx-auto grid max-w-6xl gap-8 px-6 py-12 md:grid-cols-[1fr_360px] md:items-center md:py-16">
+            <div className="max-w-3xl">
               <p className="data-cell-header">Comunidad DataM</p>
               <h1 className="mt-3 max-w-3xl font-display text-4xl font-bold leading-tight text-ink md:text-5xl">Aprender es mejor cuando avanzamos juntos.</h1>
               <p className="mt-5 max-w-2xl text-base leading-7 text-muted">Un espacio para estudiantes de DataM que quieren resolver dudas, compartir proyectos y crecer profesionalmente con tecnología.</p>
+              <p className="mt-5 font-display text-sm font-bold text-ink">Únete, participa y construye tu futuro junto a la comunidad.</p>
+              <a href={communityUrl} target="_blank" rel="noreferrer" className="mt-5 inline-flex items-center justify-center gap-2 rounded-cell bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-ink"><MessageCircle className="h-5 w-5" /> Unirme por WhatsApp <ArrowUpRight className="h-4 w-4" /></a>
             </div>
-            <a href={communityUrl} target="_blank" rel="noreferrer" className="inline-flex items-center justify-center gap-2 rounded-cell bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-ink"><MessageCircle className="h-5 w-5" /> Unirme por WhatsApp <ArrowUpRight className="h-4 w-4" /></a>
+            <figure className="relative mx-auto h-80 w-full max-w-sm overflow-hidden rounded-cell border border-blue-200 bg-white shadow-lg md:h-[420px]">
+              <img src="/images/kener_01.jpeg" alt="Kenner, fundador de DataM, invitando a los estudiantes a la comunidad" className="h-full w-full object-cover object-[62%_center]" />
+              <figcaption className="absolute bottom-0 left-0 right-0 bg-ink/85 px-4 py-3 text-sm font-medium text-white">Comunidad DataM · Aprende acompañado</figcaption>
+            </figure>
           </div>
         </section>
 

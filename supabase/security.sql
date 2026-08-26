@@ -186,3 +186,34 @@ with check ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
 
 revoke all on public.exam_attempts from anon;
 revoke all on public.project_submissions from anon;
+
+-- Diseño curricular por competencias: perfil de egreso y resultados Bloom.
+alter table public.courses
+add column if not exists graduate_profile text;
+
+create table if not exists public.course_modules (
+  id bigint generated always as identity primary key,
+  course_slug text not null,
+  position integer not null check (position > 0),
+  title text not null,
+  bloom_level text not null check (bloom_level in ('recordar', 'comprender', 'aplicar', 'analizar', 'evaluar', 'crear')),
+  learning_outcome text not null,
+  unique (course_slug, position)
+);
+
+alter table public.course_modules enable row level security;
+drop policy if exists "course_modules_public_read" on public.course_modules;
+create policy "course_modules_public_read"
+on public.course_modules for select
+to anon, authenticated
+using (true);
+
+drop policy if exists "course_modules_admin_write" on public.course_modules;
+create policy "course_modules_admin_write"
+on public.course_modules for all
+to authenticated
+using ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin')
+with check ((auth.jwt() -> 'app_metadata' ->> 'role') = 'admin');
+
+revoke all on public.course_modules from anon;
+grant select on public.course_modules to anon, authenticated;

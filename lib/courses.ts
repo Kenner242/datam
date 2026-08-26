@@ -1,5 +1,7 @@
 export type Lesson = { title: string; topics: string[]; videoUrl?: string };
-export type CourseModule = { title: string; lessons: Lesson[] };
+export type BloomLevel = "recordar" | "comprender" | "aplicar" | "analizar" | "evaluar" | "crear";
+export type LearningOutcome = { bloomLevel: BloomLevel; outcome: string };
+export type CourseModule = { title: string; lessons: Lesson[]; bloomLevel?: BloomLevel; learningOutcome?: string };
 export type Course = {
 	slug: string;
 	code: string;
@@ -10,6 +12,8 @@ export type Course = {
 	image: string;
 	summary: string;
 	professionalUse: string;
+	graduateProfile?: string;
+	learningOutcomes?: LearningOutcome[];
 	modules: CourseModule[];
 };
 
@@ -53,10 +57,39 @@ const currentTopics: Record<string, string[]> = {
 	"finanzas-para-emprendedores": ["Flujo de caja proyectado", "Decisiones basadas en datos"],
 };
 
+const bloomLevels: BloomLevel[] = ["recordar", "comprender", "aplicar", "analizar", "evaluar", "crear"];
+
+const graduateProfiles: Record<string, string> = {
+	"excel-avanzado": "Al finalizar, el estudiante organiza, analiza y automatiza información en Excel para elaborar reportes y dashboards que apoyen decisiones de negocio.",
+	"power-bi-desde-cero": "Al finalizar, el estudiante construye y comunica dashboards interactivos en Power BI a partir de datos preparados para la toma de decisiones.",
+	"python-para-datos": "Al finalizar, el estudiante desarrolla scripts de Python para limpiar, analizar y visualizar datos, generando reportes reproducibles.",
+	"sql-para-analisis": "Al finalizar, el estudiante consulta y relaciona bases de datos con SQL para responder preguntas de negocio mediante indicadores confiables.",
+	"power-query": "Al finalizar, el estudiante diseña procesos reutilizables de importación, limpieza y transformación de datos con Power Query.",
+	"introduccion-a-la-ia": "Al finalizar, el estudiante identifica oportunidades de uso responsable de IA y propone soluciones verificables para tareas reales.",
+	"investigacion-aplicada": "Al finalizar, el estudiante diseña y comunica una investigación aplicada con problema, metodología, evidencia y conclusiones claras.",
+	"programacion-desarrollo-web": "Al finalizar, el estudiante crea y publica una página web responsive que integra estructura, estilos e interacciones básicas.",
+	"finanzas-para-emprendedores": "Al finalizar, el estudiante elabora herramientas financieras para controlar, proyectar y decidir sobre un emprendimiento.",
+};
+
+function learningOutcomes(courseTitle: string): LearningOutcome[] {
+	return [
+		{ bloomLevel: "recordar", outcome: `Identifica los conceptos, herramientas y términos fundamentales de ${courseTitle}.` },
+		{ bloomLevel: "comprender", outcome: `Explica cómo los conceptos de ${courseTitle} se relacionan con una necesidad real.` },
+		{ bloomLevel: "aplicar", outcome: `Aplica procedimientos de ${courseTitle} para resolver un ejercicio guiado.` },
+		{ bloomLevel: "analizar", outcome: `Analiza datos, resultados o decisiones mediante las herramientas de ${courseTitle}.` },
+		{ bloomLevel: "evaluar", outcome: `Evalúa la calidad de una solución de ${courseTitle} usando criterios definidos.` },
+		{ bloomLevel: "crear", outcome: `Crea un proyecto funcional de ${courseTitle} que responda a una situación real.` },
+	];
+}
+
 export const courses: Course[] = baseCourses.map((course) => ({
 	...course,
+	graduateProfile: graduateProfiles[course.slug],
+	learningOutcomes: learningOutcomes(course.title),
 	modules: course.modules.map((courseModule, moduleIndex) => ({
 		...courseModule,
+		bloomLevel: bloomLevels[Math.min(moduleIndex * 2, bloomLevels.length - 1)],
+		learningOutcome: learningOutcomes(course.title)[Math.min(moduleIndex * 2, bloomLevels.length - 1)].outcome,
 		lessons: courseModule.lessons.map((lesson, lessonIndex) => ({
 			...lesson,
 			topics: moduleIndex === course.modules.length - 1 && lessonIndex === courseModule.lessons.length - 1

@@ -36,9 +36,10 @@ export default function ComunidadPage() {
               <p className="mt-5 font-display text-sm font-bold text-ink">Únete, participa y construye tu futuro junto a la comunidad.</p>
               <a href={communityUrl} target="_blank" rel="noreferrer" className="mt-5 inline-flex items-center justify-center gap-2 rounded-cell bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-ink"><MessageCircle className="h-5 w-5" /> Unirme por WhatsApp <ArrowUpRight className="h-4 w-4" /></a>
             </div>
-            <figure className="relative mx-auto flex h-80 w-full max-w-md items-end justify-center overflow-hidden border-b-4 border-accent bg-white/60 sm:h-96 lg:h-[500px] lg:max-w-none">
-              <img src="/images/kener_01.png" alt="Kenner, fundador de DataM, invitando a los estudiantes a la comunidad" className="h-[94%] w-[94%] object-contain object-bottom brightness-90 contrast-110 drop-shadow-2xl" />
-              <figcaption className="absolute bottom-4 left-4 rounded-cell bg-ink px-4 py-2 text-sm font-medium text-white md:left-6">Comunidad DataM · Aprende acompañado</figcaption>
+            <figure className="relative mx-auto h-80 w-full max-w-md overflow-hidden border-b-4 border-accent bg-white sm:h-96 lg:h-[500px] lg:max-w-none">
+              <img src="/images/kener_01.jpeg" alt="Kenner, fundador de DataM, invitando a los estudiantes a la comunidad" className="h-full w-full object-cover object-[56%_center] brightness-95 contrast-105" />
+              <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent" />
+              <figcaption className="absolute bottom-4 left-4 right-4 text-sm font-medium text-white md:left-6">Comunidad DataM · Aprende acompañado</figcaption>
             </figure>
           </div>
         </section>

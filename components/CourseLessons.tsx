@@ -217,17 +217,26 @@ export default function CourseLessons({ course }: { course: Course }) {
                                 <div className="border-l-4 border-accent bg-blue-50 p-4">
                                   <div className="flex items-center gap-2"><Target className="h-4 w-4 text-accent" /><p className="data-cell-header">Paso 1 · Aprende</p></div>
                                   <p className="mt-2 text-sm font-medium text-ink">Al terminar podrás aplicar: {lesson.topics.join(", ")}.</p>
+                                  <p className="mt-2 text-sm leading-6 text-muted">Este aprendizaje se conecta con el perfil de egreso: {course.graduateProfile ?? "resolver situaciones reales con la herramienta del curso"}</p>
                                 </div>
                                 {lesson.videoUrl ? (
                                   <video controls preload="metadata" src={lesson.videoUrl} onEnded={() => markCompleted(lessonId)} aria-label={`Video de la clase ${lesson.title}`} className="mt-4 aspect-video w-full rounded-cell bg-ink" />
                                 ) : (
                                   <div role="status" className="mt-4 flex aspect-video items-center justify-center rounded-cell bg-blue-950 px-4 text-center text-sm text-blue-100">El video de esta clase estará disponible próximamente.</div>
                                 )}
+                                <section className="data-cell mt-4 p-4" aria-label={`Contenido fundamental de ${lesson.title}`}>
+                                  <p className="data-cell-header">Contenido fundamental</p>
+                                  <ul className="mt-3 space-y-3 text-sm leading-6 text-muted">
+                                    {lesson.topics.map((topic) => <li key={topic}><strong className="text-ink">{topic}:</strong> {getTopicConcept(topic)}</li>)}
+                                  </ul>
+                                </section>
                               </div>
                               <aside className="data-cell h-fit p-4 lg:sticky lg:top-24">
                                 <div className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-blue-700" /><p className="data-cell-header">Paso 2 · Practica</p></div>
                                 <p className="mt-2 text-sm text-muted">Descarga una guía breve para practicar los conceptos de esta clase a tu ritmo.</p>
+                                <div className="mt-4 border-l-2 border-blue-500 pl-3 text-sm leading-6 text-muted"><p className="font-medium text-ink">Actividad fundamental</p><p className="mt-1">Usa {lesson.topics.slice(0, 2).join(" y ")} para resolver un caso sencillo relacionado con: {course.professionalUse}</p></div>
                                 <button onClick={() => downloadMaterial(lesson.title, lesson.topics)} aria-label={`Descargar material de práctica de ${lesson.title}`} className="mt-4 flex w-full items-center justify-center gap-2 rounded-cell border border-blue-300 px-3 py-2 text-sm font-medium text-blue-700 transition-colors hover:bg-blue-50"><Download className="h-4 w-4" /> Descargar material</button>
+                                {module.learningOutcome && <details className="mt-4 border-t border-line pt-3 text-sm text-muted"><summary className="cursor-pointer font-medium text-blue-700">Resultado de aprendizaje del módulo</summary><p className="mt-2 leading-6">{module.learningOutcome}</p></details>}
                               </aside>
                             </div>
                             <div className="mt-5 flex flex-col gap-3 border-l-4 border-blue-500 bg-blue-50 p-4 sm:flex-row sm:items-center sm:justify-between">

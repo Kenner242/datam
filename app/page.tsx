@@ -114,6 +114,28 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="border-y border-blue-100 bg-blue-50 py-16">
+        <div className="mx-auto grid max-w-6xl gap-10 px-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
+          <figure className="mx-auto w-full max-w-xs overflow-hidden rounded-cell border border-line bg-ink shadow-xl">
+            <img
+              src="/images/flayer_02.jpg"
+              alt="DataM ofrece cursos prácticos de Excel, Power BI, SQL, RStudio y más herramientas"
+              className="h-auto w-full"
+              loading="lazy"
+            />
+          </figure>
+          <div>
+            <span className="data-cell-header">Aprende con propósito</span>
+            <h2 className="mt-3 max-w-xl font-display text-3xl font-bold leading-tight text-ink md:text-4xl">Aprende hoy. Practica con casos reales. Construye tu futuro.</h2>
+            <p className="mt-5 max-w-xl text-base leading-7 text-muted">En DataM encontrarás formación práctica para fortalecer tus habilidades en análisis de datos, investigación y herramientas digitales. Avanza a tu ritmo y desarrolla competencias que puedas aplicar.</p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <a href="/cursos" className="rounded-cell bg-ink px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-accent">Ver todos los cursos</a>
+              <a href="/comunidad" className="rounded-cell border border-line bg-panel px-5 py-3 text-sm font-bold text-ink transition-colors hover:border-accent hover:text-accent">Conocer la comunidad</a>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Metodología */}
       <section id="metodologia" className="py-16">
         <div className="mx-auto max-w-6xl px-6">

@@ -74,3 +74,14 @@ body {
     transition-duration: 0.01ms !important;
   }
 }
+
+@media (prefers-contrast: more) {
+  .data-cell {
+    border-color: #11141B;
+  }
+
+  .data-cell-header,
+  .text-muted {
+    color: #363C49;
+  }
+}

@@ -197,6 +197,7 @@ export default function CourseLessons({ course }: { course: Course }) {
                           type="button"
                           onClick={() => setOpenLessonId(isOpen ? "" : lessonId)}
                           aria-expanded={isOpen}
+                          aria-controls={`lesson-content-${course.slug}-${moduleIndex}-${lessonIndex}`}
                           className="flex w-full items-start gap-3 px-4 py-4 text-left transition-colors hover:bg-blue-50 sm:items-center sm:gap-4 sm:px-5"
                         >
                           <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border text-sm font-bold ${isDone ? "border-green-600 bg-green-600 text-white" : "border-blue-200 bg-white text-blue-700"}`}>
@@ -210,27 +211,27 @@ export default function CourseLessons({ course }: { course: Course }) {
                         </button>
 
                         {isOpen && (
-                          <div className="border-t border-line bg-base px-4 py-5 sm:px-5">
+                          <div id={`lesson-content-${course.slug}-${moduleIndex}-${lessonIndex}`} className="border-t border-line bg-base px-4 py-5 sm:px-5">
                             <div className="grid gap-4 lg:grid-cols-[1.25fr_0.75fr]">
                               <div>
                                 <div className="border-l-4 border-accent bg-blue-50 p-4">
-                                  <div className="flex items-center gap-2"><Target className="h-4 w-4 text-accent" /><p className="data-cell-header">Objetivo de la clase</p></div>
-                                  <p className="mt-2 text-sm font-medium text-ink">Comprende y aplica {lesson.topics.join(", ")} mediante una práctica paso a paso.</p>
+                                  <div className="flex items-center gap-2"><Target className="h-4 w-4 text-accent" /><p className="data-cell-header">Paso 1 · Aprende</p></div>
+                                  <p className="mt-2 text-sm font-medium text-ink">Al terminar podrás aplicar: {lesson.topics.join(", ")}.</p>
                                 </div>
                                 {lesson.videoUrl ? (
-                                  <video controls preload="metadata" src={lesson.videoUrl} onEnded={() => markCompleted(lessonId)} className="mt-4 aspect-video w-full rounded-cell bg-ink" />
+                                  <video controls preload="metadata" src={lesson.videoUrl} onEnded={() => markCompleted(lessonId)} aria-label={`Video de la clase ${lesson.title}`} className="mt-4 aspect-video w-full rounded-cell bg-ink" />
                                 ) : (
-                                  <div className="mt-4 flex aspect-video items-center justify-center rounded-cell bg-blue-950 px-4 text-center text-sm text-blue-100">El video de esta clase estará disponible próximamente.</div>
+                                  <div role="status" className="mt-4 flex aspect-video items-center justify-center rounded-cell bg-blue-950 px-4 text-center text-sm text-blue-100">El video de esta clase estará disponible próximamente.</div>
                                 )}
                               </div>
                               <aside className="data-cell h-fit p-4 lg:sticky lg:top-24">
-                                <div className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-blue-700" /><p className="data-cell-header">Laboratorio</p></div>
-                                <p className="mt-2 text-sm text-muted">Descarga la guía, desarrolla la práctica y utiliza una pista solo cuando la necesites.</p>
-                                <button onClick={() => downloadMaterial(lesson.title, lesson.topics)} className="mt-4 flex w-full items-center justify-center gap-2 rounded-cell border border-blue-300 px-3 py-2 text-sm font-medium text-blue-700 transition-colors hover:bg-blue-50"><Download className="h-4 w-4" /> Descargar material</button>
+                                <div className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-blue-700" /><p className="data-cell-header">Paso 2 · Practica</p></div>
+                                <p className="mt-2 text-sm text-muted">Descarga una guía breve para practicar los conceptos de esta clase a tu ritmo.</p>
+                                <button onClick={() => downloadMaterial(lesson.title, lesson.topics)} aria-label={`Descargar material de práctica de ${lesson.title}`} className="mt-4 flex w-full items-center justify-center gap-2 rounded-cell border border-blue-300 px-3 py-2 text-sm font-medium text-blue-700 transition-colors hover:bg-blue-50"><Download className="h-4 w-4" /> Descargar material</button>
                               </aside>
                             </div>
                             <div className="mt-5 flex flex-col gap-3 border-l-4 border-blue-500 bg-blue-50 p-4 sm:flex-row sm:items-center sm:justify-between">
-                              <div><p className="font-display text-sm font-bold text-ink">Competencia lograda</p><p className="mt-1 text-sm text-muted">{isFinalLesson ? "Has integrado las habilidades del curso en una aplicación final." : `Has consolidado los conocimientos de esta clase del nivel ${level.name}.`}</p></div>
+                              <div><p className="font-display text-sm font-bold text-ink">Paso 3 · Confirma tu avance</p><p className="mt-1 text-sm text-muted">{isFinalLesson ? "Termina esta clase para pasar a la evaluación final." : "Marca la clase como completada cuando hayas revisado el video y la práctica."}</p></div>
                               <button disabled={!isEnrolled || isDone || isCompletionLocked} onClick={() => markCompleted(lessonId)} className="w-full shrink-0 rounded-cell bg-accent px-4 py-2 text-sm font-bold text-white transition-colors hover:bg-ink disabled:cursor-not-allowed disabled:bg-line disabled:text-muted sm:w-auto">{isDone ? "Clase completada" : "Completar clase"}</button>
                             </div>
                             {isCompletionLocked && <p className="mt-2 text-xs text-muted">Puedes ver esta clase, pero debes completar la clase anterior antes de marcarla como terminada.</p>}

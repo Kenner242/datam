@@ -73,66 +73,28 @@ export default function Home() {
             Conoce DataM y comienza tu camino de aprendizaje tecnológico.
           </p>
         </div>
-        <div>
-          <div>
-            <span className="data-cell-header">DataM · Educación tecnológica gratuita en Perú</span>
-            <h1 className="mt-3 font-display text-4xl font-bold leading-tight text-ink md:text-5xl">
-              Tecnología al alcance de todos, desde Perú
-            </h1>
-            <p className="mt-5 max-w-md text-base text-muted">
-              Democratizamos la educación tecnológica con cursos gratuitos y
-              prácticos de Excel, Power BI, Python, SQL e Inteligencia
-              Artificial para aprender, crecer y tomar mejores decisiones.
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href="/cursos"
-                className="rounded-cell bg-ink px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-accent"
-              >
-                Explorar cursos
-              </a>
-              <a
-                href="/registro"
-                className="rounded-cell border border-line bg-panel px-6 py-3 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent"
-              >
-                Empezar gratis
-              </a>
-            </div>
-          </div>
-
-        </div>
-      </section>
-
-      {/* Flyers de lanzamiento */}
-      <section className="border-y border-blue-100 bg-blue-50 py-16">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="text-center">
-            <span className="data-cell-header">Conoce DataM</span>
-            <h2 className="mt-2 font-display text-2xl font-bold text-ink md:text-3xl">
-              Aprende, practica y transforma tu futuro
-            </h2>
-            <p className="mx-auto mt-3 max-w-xl text-sm text-muted">
-              Descubre nuestros cursos prácticos y servicios de acompañamiento
-              para impulsar tu desarrollo académico y profesional.
-            </p>
-          </div>
-          <div className="mx-auto mt-10 grid max-w-5xl items-start gap-6 md:grid-cols-[1.1fr_0.9fr]">
-            <figure className="mx-auto w-full max-w-[440px] overflow-hidden rounded-cell border border-blue-200 bg-ink shadow-lg">
-              <img
-                src="/images/flayer_01.jpg"
-                alt="Flyer de DataM con cursos prácticos de Excel, Power BI, SQL y análisis de datos"
-                className="h-auto w-full"
-                loading="lazy"
-              />
-            </figure>
-            <figure className="mx-auto w-full max-w-[360px] overflow-hidden rounded-cell border border-blue-200 bg-panel shadow-md">
-              <img
-                src="/images/flayer_02.jpg"
-                alt="Flyer de DataM con asesoría personalizada, proyectos y herramientas de datos"
-                className="h-auto w-full"
-                loading="lazy"
-              />
-            </figure>
+        <div className="mx-auto max-w-3xl text-center">
+          <span className="data-cell-header">DataM · Educación tecnológica desde Perú</span>
+          <h1 className="mt-3 font-display text-4xl font-bold leading-tight text-ink md:text-5xl">
+            Aprende habilidades para convertir tus ideas en oportunidades.
+          </h1>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-muted">
+            Formación accesible en datos, tecnología e innovación para jóvenes,
+            estudiantes y emprendedores que quieren avanzar con herramientas reales.
+          </p>
+          <div className="mt-8 flex flex-wrap justify-center gap-3">
+            <a
+              href="/cursos"
+              className="rounded-cell bg-ink px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-accent"
+            >
+              Explorar cursos
+            </a>
+            <a
+              href="/registro"
+              className="rounded-cell border border-line bg-panel px-6 py-3 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent"
+            >
+              Empezar gratis
+            </a>
           </div>
         </div>
       </section>
@@ -184,35 +146,25 @@ export default function Home() {
 
       <section id="nosotros" className="border-t border-blue-100 bg-blue-50 py-16">
         <div className="mx-auto max-w-6xl px-6">
-          <span className="data-cell-header">Sobre DataM</span>
+          <span className="data-cell-header">Identidad DataM</span>
           <h2 className="mt-2 max-w-3xl font-display text-2xl font-bold text-ink md:text-3xl">
-            Educación, tecnología e innovación para crear oportunidades
+            Conocimiento que se transforma en posibilidades reales.
           </h2>
-          <div className="mt-8 max-w-4xl space-y-8 text-base leading-8 text-muted">
-            <article>
-              <h3 className="font-display text-xl font-bold text-ink">¿Qué es DataM?</h3>
-              <p className="mt-3">
-                <strong className="font-display text-ink">DataM es una startup peruana de educación e innovación tecnológica.</strong>{" "}
-                Busca acercar el conocimiento a jóvenes y usar la tecnología como
-                herramienta para crear oportunidades, desarrollando capacidades
-                en estudiantes y emprendedores.
-              </p>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            <article className="data-cell border-t-4 border-accent p-6">
+              <p className="data-cell-header">Quiénes somos</p>
+              <h3 className="mt-2 font-display text-xl font-bold text-ink">DataM</h3>
+              <p className="mt-3 text-sm leading-6 text-muted">Startup peruana de educación e innovación tecnológica que acerca el conocimiento a jóvenes, estudiantes y emprendedores.</p>
             </article>
-            <article>
-              <h3 className="font-display text-xl font-bold text-ink">Misión</h3>
-              <p className="mt-3">
-                <strong className="font-display text-ink">Impulsar competencias digitales y profesionales</strong>{" "}
-                mediante educación accesible e innovadora, conectando tecnología
-                con necesidades reales para generar oportunidades de crecimiento.
-              </p>
+            <article className="data-cell border-t-4 border-blue-600 p-6">
+              <p className="data-cell-header">Nuestra misión</p>
+              <h3 className="mt-2 font-display text-xl font-bold text-ink">Impulsar capacidades</h3>
+              <p className="mt-3 text-sm leading-6 text-muted">Conectar competencias digitales y profesionales con necesidades reales para abrir oportunidades de crecimiento.</p>
             </article>
-            <article>
-              <h3 className="font-display text-xl font-bold text-ink">Visión</h3>
-              <p className="mt-3">
-                <strong className="font-display text-ink">Ser la plataforma peruana referente en educación tecnológica</strong>,
-                formando personas capaces de transformar ideas y contribuir al
-                desarrollo del país.
-              </p>
+            <article className="data-cell border-t-4 border-green-600 p-6">
+              <p className="data-cell-header">Nuestra visión</p>
+              <h3 className="mt-2 font-display text-xl font-bold text-ink">Transformar el país</h3>
+              <p className="mt-3 text-sm leading-6 text-muted">Ser una plataforma peruana referente, formando personas capaces de transformar ideas y contribuir al desarrollo del país.</p>
             </article>
           </div>
           <div className="mt-10 border-t border-blue-200 pt-6">

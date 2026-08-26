@@ -3,15 +3,6 @@ import Footer from "@/components/Footer";
 import CourseCard from "@/components/CourseCard";
 import { Facebook, Linkedin, MessageCircle, Instagram, Mail, Code2, Database, BarChart3, FileSpreadsheet } from "lucide-react";
 
-const skills = [
-  { code: "A1", name: "Excel" },
-  { code: "A2", name: "Power BI" },
-  { code: "A3", name: "Power Query" },
-  { code: "A4", name: "Python" },
-  { code: "A5", name: "SQL" },
-  { code: "A6", name: "Inteligencia Artificial" },
-];
-
 const featuredCourses = [
   {
     slug: "excel-avanzado",
@@ -82,7 +73,7 @@ export default function Home() {
             Conoce DataM y comienza tu camino de aprendizaje tecnológico.
           </p>
         </div>
-        <div className="grid gap-10 md:grid-cols-2 md:items-center">
+        <div>
           <div>
             <span className="data-cell-header">DataM · Educación tecnológica gratuita en Perú</span>
             <h1 className="mt-3 font-display text-4xl font-bold leading-tight text-ink md:text-5xl">
@@ -109,19 +100,6 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Signature: hoja de cálculo estilizada como "tabla de habilidades" */}
-          <div className="data-cell overflow-hidden">
-            <div className="grid grid-cols-2 divide-x divide-y divide-line">
-              {skills.map((s) => (
-                <div key={s.code} className="p-4">
-                  <p className="data-cell-header">{s.code}</p>
-                  <p className="mt-1 font-display text-sm font-bold text-ink">
-                    {s.name}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
         </div>
       </section>
 
@@ -214,35 +192,26 @@ export default function Home() {
             <article>
               <h3 className="font-display text-xl font-bold text-ink">¿Qué es DataM?</h3>
               <p className="mt-3">
-                <strong className="font-display text-ink">DataM es una iniciativa peruana de educación e innovación tecnológica</strong>{" "}
-                que nace para acercar el conocimiento a las personas y convertir
-                la tecnología en una herramienta para crear oportunidades.
-                Construimos un espacio donde estudiantes, jóvenes y emprendedores
-                puedan desarrollar capacidades, descubrir nuevas posibilidades y
-                transformar sus ideas en soluciones reales. Creemos que aprender
-                tecnología no consiste únicamente en conocer herramientas, sino
-                en adquirir la capacidad de pensar, crear, resolver problemas y
-                adaptarse a un mundo en constante evolución.
+                <strong className="font-display text-ink">DataM es una startup peruana de educación e innovación tecnológica.</strong>{" "}
+                Busca acercar el conocimiento a jóvenes y usar la tecnología como
+                herramienta para crear oportunidades, desarrollando capacidades
+                en estudiantes y emprendedores.
               </p>
             </article>
             <article>
               <h3 className="font-display text-xl font-bold text-ink">Misión</h3>
               <p className="mt-3">
-                <strong className="font-display text-ink">Impulsar el desarrollo de capacidades digitales y profesionales</strong>{" "}
-                mediante una educación accesible, práctica e innovadora,
-                conectando conocimiento y tecnología con las necesidades reales
-                de las personas y su entorno. Buscamos que cada aprendizaje
-                pueda convertirse en una herramienta para crecer, crear y generar
-                nuevas oportunidades.
+                <strong className="font-display text-ink">Impulsar competencias digitales y profesionales</strong>{" "}
+                mediante educación accesible e innovadora, conectando tecnología
+                con necesidades reales para generar oportunidades de crecimiento.
               </p>
             </article>
             <article>
               <h3 className="font-display text-xl font-bold text-ink">Visión</h3>
               <p className="mt-3">
-                <strong className="font-display text-ink">Ser una plataforma peruana referente en educación e innovación tecnológica</strong>,
-                reconocida por impulsar personas capaces de utilizar el
-                conocimiento y la tecnología para transformar sus ideas, resolver
-                desafíos y contribuir al desarrollo del país.
+                <strong className="font-display text-ink">Ser la plataforma peruana referente en educación tecnológica</strong>,
+                formando personas capaces de transformar ideas y contribuir al
+                desarrollo del país.
               </p>
             </article>
           </div>

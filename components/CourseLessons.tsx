@@ -159,7 +159,6 @@ export default function CourseLessons({ course }: { course: Course }) {
           const moduleProgress = module.lessons.length ? Math.round((completedInModule / module.lessons.length) * 100) : 0;
           const moduleStatus = moduleProgress === 100 ? "Completado" : completedInModule ? "En progreso" : "Por comenzar";
           const level = levels[Math.min(moduleIndex, levels.length - 1)];
-          const bloomLabel = module.bloomLevel ? module.bloomLevel.charAt(0).toUpperCase() + module.bloomLevel.slice(1) : level.name;
 
           return (
             <section key={module.title} className="relative sm:pl-16">
@@ -170,9 +169,10 @@ export default function CourseLessons({ course }: { course: Course }) {
                 <header className="border-b border-line bg-blue-50 px-4 pb-4 pt-8 sm:p-5">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <p className="data-cell-header">Nivel {String(moduleIndex + 1).padStart(2, "0")} · Bloom: {bloomLabel} · {moduleStatus}</p>
+                      <p className="data-cell-header">Módulo {String(moduleIndex + 1).padStart(2, "0")} · {moduleStatus}</p>
                       <h3 className="mt-1 font-display text-xl font-bold text-ink">{module.title}</h3>
-                      <p className="mt-2 text-sm text-muted">{module.learningOutcome ?? level.description}</p>
+                      <p className="mt-2 text-sm text-muted">{module.lessons.length} clases para avanzar a tu ritmo.</p>
+                      {module.learningOutcome && <details className="mt-3 text-sm text-muted"><summary className="cursor-pointer font-medium text-blue-700">Ver objetivo del módulo</summary><p className="mt-2 leading-6">{module.learningOutcome}</p></details>}
                     </div>
                     <div className="w-full sm:w-28">
                       <p className="text-left font-mono text-xs text-blue-700 sm:text-right">{moduleProgress}%</p>

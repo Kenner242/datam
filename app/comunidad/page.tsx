@@ -28,7 +28,7 @@ export default function ComunidadPage() {
       <Navbar />
       <main>
         <section className="border-b border-blue-200 bg-blue-50">
-          <div className="mx-auto grid max-w-6xl gap-10 px-6 py-12 md:grid-cols-[minmax(0,1fr)_460px] md:items-center md:py-16">
+          <div className="mx-auto grid max-w-6xl gap-10 px-6 py-12 lg:grid-cols-[minmax(0,1fr)_460px] lg:items-center md:py-16">
             <div className="max-w-3xl">
               <p className="data-cell-header">Comunidad DataM</p>
               <h1 className="mt-3 max-w-3xl font-display text-4xl font-bold leading-tight text-ink md:text-5xl">Aprender es mejor cuando avanzamos juntos.</h1>
@@ -36,8 +36,8 @@ export default function ComunidadPage() {
               <p className="mt-5 font-display text-sm font-bold text-ink">Únete, participa y construye tu futuro junto a la comunidad.</p>
               <a href={communityUrl} target="_blank" rel="noreferrer" className="mt-5 inline-flex items-center justify-center gap-2 rounded-cell bg-[#25D366] px-5 py-3 text-sm font-bold text-white transition-colors hover:bg-ink"><MessageCircle className="h-5 w-5" /> Unirme por WhatsApp <ArrowUpRight className="h-4 w-4" /></a>
             </div>
-            <figure className="relative mx-auto flex h-96 w-full max-w-md items-end justify-center overflow-hidden border-b-4 border-accent bg-white/60 md:h-[500px] md:max-w-none">
-              <img src="/images/kener_01.png" alt="Kenner, fundador de DataM, invitando a los estudiantes a la comunidad" className="h-[96%] w-[96%] object-contain object-bottom brightness-90 contrast-110 drop-shadow-2xl" />
+            <figure className="relative mx-auto flex h-80 w-full max-w-md items-end justify-center overflow-hidden border-b-4 border-accent bg-white/60 sm:h-96 lg:h-[500px] lg:max-w-none">
+              <img src="/images/kener_01.png" alt="Kenner, fundador de DataM, invitando a los estudiantes a la comunidad" className="h-[94%] w-[94%] object-contain object-bottom brightness-90 contrast-110 drop-shadow-2xl" />
               <figcaption className="absolute bottom-4 left-4 rounded-cell bg-ink px-4 py-2 text-sm font-medium text-white md:left-6">Comunidad DataM · Aprende acompañado</figcaption>
             </figure>
           </div>

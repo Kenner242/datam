@@ -43,7 +43,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Dax no tiene una clave real de Gemini. Reemplaza el valor de GEMINI_API_KEY en .env.local y Vercel." }, { status: 503 });
     }
 
-    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+    const configuredModel = process.env.GEMINI_MODEL?.trim();
+    const model = !configuredModel || configuredModel === "gemini-1.5-flash" || configuredModel === "gemini-1.5-flash-latest"
+      ? "gemini-2.5-flash"
+      : configuredModel;
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -55,7 +58,17 @@ export async function POST(request: NextRequest) {
       signal: AbortSignal.timeout(30_000),
     });
 
-    if (!response.ok) return NextResponse.json({ error: "Dax no pudo conectarse con Gemini. Intenta nuevamente en unos segundos." }, { status: 502 });
+    if (!response.ok) {
+      console.error("Gemini request failed", { status: response.status, model });
+      const errorMessage = response.status === 400
+        ? "Gemini rechazó la solicitud. Revisa el modelo configurado en Vercel."
+        : response.status === 401 || response.status === 403
+          ? "La clave de Gemini no es válida o no tiene permisos. Genera una nueva clave."
+          : response.status === 404
+            ? `El modelo ${model} no está disponible para esta API key.`
+            : "Gemini no respondió correctamente. Intenta nuevamente en unos segundos.";
+      return NextResponse.json({ error: errorMessage }, { status: 502 });
+    }
     const data = (await response.json()) as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> };
     const reply = data.candidates?.[0]?.content?.parts?.map((part) => part.text ?? "").join("").trim();
     return NextResponse.json({ reply: reply || "No pude generar una respuesta. Intenta de nuevo." });

@@ -9,6 +9,58 @@ type Language = "es-PE" | "qu-PE";
 type SpeechRecognitionInstance = { lang: string; continuous: boolean; interimResults: boolean; start: () => void; stop: () => void; onresult: (event: { results: ArrayLike<ArrayLike<{ transcript: string }>> }) => void; onerror: () => void; onend: () => void };
 type SpeechRecognitionConstructor = new () => SpeechRecognitionInstance;
 
+function renderInline(text: string) {
+  return text.split(/(`[^`]+`|\*\*[^*]+\*\*)/g).map((part, index) => {
+    if (part.startsWith("`") && part.endsWith("`")) {
+      return <code key={index} className="rounded bg-ink/10 px-1.5 py-0.5 font-mono text-[0.9em]">{part.slice(1, -1)}</code>;
+    }
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={index} className="font-bold text-ink">{part.slice(2, -2)}</strong>;
+    }
+    return <span key={index}>{part}</span>;
+  });
+}
+
+function renderAssistantMessage(content: string) {
+  const lines = content.split(/\r?\n/);
+  const blocks: JSX.Element[] = [];
+  let listItems: { type: "ul" | "ol"; text: string }[] = [];
+
+  function flushList() {
+    if (!listItems.length) return;
+    const list = listItems;
+    const ListTag = list[0].type;
+    blocks.push(<ListTag key={`list-${blocks.length}`} className="my-2 space-y-1 pl-5">{list.map((item, index) => <li key={`${item.text}-${index}`}>{renderInline(item.text)}</li>)}</ListTag>);
+    listItems = [];
+  }
+
+  lines.forEach((line, index) => {
+    const trimmed = line.trim();
+    if (!trimmed) {
+      flushList();
+      return;
+    }
+    const heading = trimmed.match(/^#{1,3}\s+(.+)$/);
+    const unordered = trimmed.match(/^[-*]\s+(.+)$/);
+    const ordered = trimmed.match(/^\d+[.)]\s+(.+)$/);
+    if (heading) {
+      flushList();
+      blocks.push(<h3 key={`heading-${index}`} className="mt-3 font-display font-bold text-ink">{renderInline(heading[1])}</h3>);
+    } else if (unordered) {
+      if (listItems[0]?.type !== "ul") flushList();
+      listItems.push({ type: "ul", text: unordered[1] });
+    } else if (ordered) {
+      if (listItems[0]?.type !== "ol") flushList();
+      listItems.push({ type: "ol", text: ordered[1] });
+    } else {
+      flushList();
+      blocks.push(<p key={`paragraph-${index}`} className="my-2 leading-6">{renderInline(trimmed)}</p>);
+    }
+  });
+  flushList();
+  return <div>{blocks}</div>;
+}
+
 export default function DaxAssistant() {
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
@@ -109,7 +161,7 @@ export default function DaxAssistant() {
           <button type="button" onClick={() => setIsOpen(false)} aria-label="Cerrar Dax" className="p-1 text-white hover:text-blue-200"><X className="h-5 w-5" /></button>
         </header>
         <div className="flex items-center justify-between border-b border-line px-4 py-2"><label htmlFor="dax-language" className="text-xs font-medium text-muted">Idioma de Dax</label><select id="dax-language" value={language} onChange={(event) => setLanguage(event.target.value as Language)} className="rounded-cell border border-line px-2 py-1 text-xs text-ink"><option value="es-PE">Español (Perú)</option><option value="qu-PE">Quechua</option></select></div>
-        <div className="flex-1 space-y-3 overflow-y-auto p-4" aria-live="polite">{messages.map((message, index) => <div key={`${message.role}-${index}`} className={`max-w-[90%] rounded-cell px-3 py-2 text-sm leading-6 ${message.role === "user" ? "ml-auto bg-ink text-white" : "bg-blue-50 text-ink"}`}><p>{message.content}</p>{message.role === "assistant" && <button type="button" onClick={() => speak(message.content)} className="mt-2 flex items-center gap-1 text-xs font-medium text-blue-700"><Volume2 className="h-3.5 w-3.5" /> Escuchar</button>}</div>)}{isLoading && <div className="rounded-cell bg-blue-50 px-3 py-2 text-sm text-muted">Dax está pensando...</div>}{isSpeaking && <p className="text-xs text-blue-700">Dax está hablando...</p>}</div>
+        <div className="flex-1 space-y-3 overflow-y-auto p-4" aria-live="polite">{messages.map((message, index) => <div key={`${message.role}-${index}`} className={`max-w-[90%] rounded-cell px-3 py-2 text-sm leading-6 ${message.role === "user" ? "ml-auto bg-ink text-white" : "bg-blue-50 text-ink"}`}>{message.role === "assistant" ? renderAssistantMessage(message.content) : <p className="whitespace-pre-wrap">{message.content}</p>}{message.role === "assistant" && <button type="button" onClick={() => speak(message.content)} className="mt-2 flex items-center gap-1 text-xs font-medium text-blue-700"><Volume2 className="h-3.5 w-3.5" /> Escuchar</button>}</div>)}{isLoading && <div className="rounded-cell bg-blue-50 px-3 py-2 text-sm text-muted">Dax está pensando...</div>}{isSpeaking && <p className="text-xs text-blue-700">Dax está hablando...</p>}</div>
         <form onSubmit={sendMessage} className="border-t border-line p-3"><div className="flex items-center gap-2"><input value={input} onChange={(event) => setInput(event.target.value)} placeholder={isListening ? "Escuchando..." : "Escribe tu consulta..."} aria-label="Consulta para Dax" className="min-w-0 flex-1 rounded-cell border border-line px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none" /><button type="button" onClick={startListening} aria-label={isListening ? "Escuchando" : "Hablar con Dax"} className={`rounded-cell p-2 text-white ${isListening ? "bg-red-600" : "bg-blue-700 hover:bg-accent"}`}>{isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}</button><button type="submit" aria-label="Enviar consulta" className="rounded-cell bg-ink p-2 text-white hover:bg-accent"><Send className="h-5 w-5" /></button></div></form>
       </section>}
       <button type="button" onClick={() => setIsOpen((open) => !open)} aria-label={isOpen ? "Cerrar asistente Dax" : "Abrir asistente Dax"} className={`h-16 w-16 overflow-hidden rounded-full border-4 border-white bg-ink shadow-lg transition-transform hover:scale-105 ${isSpeaking || isListening ? "ring-4 ring-accent2" : ""}`}><img src="/images/tools/agente_IA.png" alt="" className="h-full w-full object-cover object-top" /><span className="sr-only">Dax</span></button>

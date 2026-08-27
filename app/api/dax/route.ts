@@ -38,10 +38,12 @@ export async function POST(request: NextRequest) {
     const messages = body.messages?.filter((message) => message.content.trim()).slice(-12);
     if (!messages?.length) return NextResponse.json({ error: "Escribe una consulta para Dax." }, { status: 400 });
 
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) return NextResponse.json({ error: "Dax aún no está configurado en el servidor." }, { status: 503 });
+    const apiKey = process.env.GEMINI_API_KEY?.trim();
+    if (!apiKey || apiKey === "TU_CLAVE_REAL_DE_GOOGLE_AI_STUDIO" || apiKey === "tu_clave_de_google_ai_studio") {
+      return NextResponse.json({ error: "Dax no tiene una clave real de Gemini. Reemplaza el valor de GEMINI_API_KEY en .env.local y Vercel." }, { status: 503 });
+    }
 
-    const model = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

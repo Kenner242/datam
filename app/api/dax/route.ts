@@ -38,27 +38,28 @@ export async function POST(request: NextRequest) {
     const messages = body.messages?.filter((message) => message.content.trim()).slice(-12);
     if (!messages?.length) return NextResponse.json({ error: "Escribe una consulta para Dax." }, { status: 400 });
 
-    const apiKey = process.env.ANTHROPIC_API_KEY;
-    if (!apiKey) return NextResponse.json({ error: "Dax aún no está configurado en el servidor." }, { status: 503 });
+    const ollamaUrl = process.env.OLLAMA_BASE_URL || "http://127.0.0.1:11434";
+    const ollamaModel = process.env.OLLAMA_MODEL || "qwen3:latest";
 
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch(`${ollamaUrl}/api/chat`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "x-api-key": apiKey,
-        "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: process.env.ANTHROPIC_MODEL || "claude-3-5-sonnet-latest",
-        max_tokens: 700,
-        system: buildSystemPrompt(body.language ?? "es-PE", body.courseSlug),
-        messages: messages.map(({ role, content }) => ({ role: role === "assistant" ? "assistant" : "user", content })),
+        model: ollamaModel,
+        stream: false,
+        messages: [
+          { role: "system", content: buildSystemPrompt(body.language ?? "es-PE", body.courseSlug) },
+          ...messages.map(({ role, content }) => ({ role: role === "assistant" ? "assistant" : "user", content })),
+        ],
       }),
+      signal: AbortSignal.timeout(45_000),
     });
 
-    if (!response.ok) return NextResponse.json({ error: "El servicio de Dax no respondió correctamente." }, { status: 502 });
-    const data = (await response.json()) as { content?: Array<{ type: string; text?: string }> };
-    const reply = data.content?.filter((block) => block.type === "text").map((block) => block.text ?? "").join("\n").trim();
+    if (!response.ok) return NextResponse.json({ error: "Ollama no respondió correctamente. Verifica que esté iniciado y que Qwen3 esté instalado." }, { status: 502 });
+    const data = (await response.json()) as { message?: { content?: string } };
+    const reply = data.message?.content?.trim();
     return NextResponse.json({ reply: reply || "No pude generar una respuesta. Intenta de nuevo." });
   } catch {
     return NextResponse.json({ error: "No pude procesar la consulta de Dax." }, { status: 500 });

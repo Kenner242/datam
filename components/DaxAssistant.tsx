@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, PointerEvent, useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { GripHorizontal, Mic, MicOff, Send, Volume2, VolumeX, X } from "lucide-react";
 
 type Message = { role: "user" | "assistant"; content: string };
@@ -9,6 +10,7 @@ type SpeechRecognitionInstance = { lang: string; continuous: boolean; interimRes
 type SpeechRecognitionConstructor = new () => SpeechRecognitionInstance;
 
 export default function DaxAssistant() {
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [language, setLanguage] = useState<Language>("es-PE");
   const [input, setInput] = useState("");
@@ -46,7 +48,8 @@ export default function DaxAssistant() {
     setInput("");
     setIsLoading(true);
     try {
-      const response = await fetch("/api/dax", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: nextMessages, language }) });
+      const courseSlug = pathname.match(/^\/cursos\/([^/]+)/)?.[1];
+      const response = await fetch("/api/dax", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages: nextMessages, language, courseSlug }) });
       const data = (await response.json()) as { reply?: string; error?: string };
       const reply = data.reply ?? data.error ?? "No pude responder. Intenta nuevamente.";
       setMessages((current) => [...current, { role: "assistant", content: reply }]);

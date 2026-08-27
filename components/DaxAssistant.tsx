@@ -24,6 +24,15 @@ export default function DaxAssistant() {
 
   useEffect(() => () => window.speechSynthesis?.cancel(), []);
 
+  useEffect(() => {
+    function handleOpenRequest() {
+      setIsOpen(true);
+    }
+
+    window.addEventListener("datam:open-dax", handleOpenRequest);
+    return () => window.removeEventListener("datam:open-dax", handleOpenRequest);
+  }, []);
+
   function speak(text: string) {
     if (!voiceEnabled || !("speechSynthesis" in window)) return;
     window.speechSynthesis.cancel();

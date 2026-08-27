@@ -38,28 +38,24 @@ export async function POST(request: NextRequest) {
     const messages = body.messages?.filter((message) => message.content.trim()).slice(-12);
     if (!messages?.length) return NextResponse.json({ error: "Escribe una consulta para Dax." }, { status: 400 });
 
-    const ollamaUrl = process.env.OLLAMA_BASE_URL || "http://127.0.0.1:11434";
-    const ollamaModel = process.env.OLLAMA_MODEL || "qwen3:latest";
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) return NextResponse.json({ error: "Dax aún no está configurado en el servidor." }, { status: 503 });
 
-    const response = await fetch(`${ollamaUrl}/api/chat`, {
+    const model = process.env.GEMINI_MODEL || "gemini-1.5-flash";
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: ollamaModel,
-        stream: false,
-        messages: [
-          { role: "system", content: buildSystemPrompt(body.language ?? "es-PE", body.courseSlug) },
-          ...messages.map(({ role, content }) => ({ role: role === "assistant" ? "assistant" : "user", content })),
-        ],
+        systemInstruction: { role: "system", parts: [{ text: buildSystemPrompt(body.language ?? "es-PE", body.courseSlug) }] },
+        contents: messages.map(({ role, content }) => ({ role: role === "assistant" ? "model" : "user", parts: [{ text: content }] })),
+        generationConfig: { temperature: 0.6, maxOutputTokens: 700 },
       }),
-      signal: AbortSignal.timeout(45_000),
+      signal: AbortSignal.timeout(30_000),
     });
 
-    if (!response.ok) return NextResponse.json({ error: "Ollama no respondió correctamente. Verifica que esté iniciado y que Qwen3 esté instalado." }, { status: 502 });
-    const data = (await response.json()) as { message?: { content?: string } };
-    const reply = data.message?.content?.trim();
+    if (!response.ok) return NextResponse.json({ error: "Dax no pudo conectarse con Gemini. Intenta nuevamente en unos segundos." }, { status: 502 });
+    const data = (await response.json()) as { candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }> };
+    const reply = data.candidates?.[0]?.content?.parts?.map((part) => part.text ?? "").join("").trim();
     return NextResponse.json({ reply: reply || "No pude generar una respuesta. Intenta de nuevo." });
   } catch {
     return NextResponse.json({ error: "No pude procesar la consulta de Dax." }, { status: 500 });

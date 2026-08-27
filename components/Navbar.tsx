@@ -68,6 +68,9 @@ export default function Navbar() {
           <Link href="/comunidad" className="transition-colors hover:text-accent">
             Comunidad
           </Link>
+          <Link href="/dax" className="transition-colors hover:text-accent">
+            Dax IA
+          </Link>
           <Link href="/" className="transition-colors hover:text-accent">
             Metodología
           </Link>
@@ -112,6 +115,7 @@ export default function Navbar() {
           <div className="mx-auto flex max-w-6xl flex-col gap-3 text-sm">
             <Link href="/cursos" onClick={closeMenu}>Cursos</Link>
             <Link href="/comunidad" onClick={closeMenu}>Comunidad</Link>
+            <Link href="/dax" onClick={closeMenu}>Dax IA</Link>
             <Link href="/" onClick={closeMenu}>Metodología</Link>
             <Link href="/nosotros" onClick={closeMenu}>Nosotros</Link>
             <Link href="/fundador" onClick={closeMenu}>Fundador</Link>

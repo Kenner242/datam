@@ -32,6 +32,15 @@ Reglas:
 - No solicites contraseñas, claves API ni datos personales sensibles.`;
 }
 
+async function findAvailableModel(apiKey: string, preferredModel: string) {
+  const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${apiKey}`, { signal: AbortSignal.timeout(10_000) });
+  if (!response.ok) return preferredModel;
+  const data = (await response.json()) as { models?: Array<{ name?: string; supportedGenerationMethods?: string[] }> };
+  const available = data.models?.find((item) => item.name?.endsWith(`/${preferredModel}`) && item.supportedGenerationMethods?.includes("generateContent"))
+    ?? data.models?.find((item) => item.name?.includes("flash") && item.supportedGenerationMethods?.includes("generateContent"));
+  return available?.name?.replace(/^models\//, "") ?? preferredModel;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = (await request.json()) as DaxRequest;
@@ -47,7 +56,7 @@ export async function POST(request: NextRequest) {
     const model = !configuredModel || configuredModel === "gemini-1.5-flash" || configuredModel === "gemini-1.5-flash-latest"
       ? "gemini-2.5-flash"
       : configuredModel;
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
+    let response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -57,6 +66,22 @@ export async function POST(request: NextRequest) {
       }),
       signal: AbortSignal.timeout(30_000),
     });
+
+    if (response.status === 404) {
+      const availableModel = await findAvailableModel(apiKey, model);
+      if (availableModel !== model) {
+        response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${availableModel}:generateContent?key=${apiKey}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            systemInstruction: { role: "system", parts: [{ text: buildSystemPrompt(body.language ?? "es-PE", body.courseSlug) }] },
+            contents: messages.map(({ role, content }) => ({ role: role === "assistant" ? "model" : "user", parts: [{ text: content }] })),
+            generationConfig: { temperature: 0.6, maxOutputTokens: 700 },
+          }),
+          signal: AbortSignal.timeout(30_000),
+        });
+      }
+    }
 
     if (!response.ok) {
       console.error("Gemini request failed", { status: response.status, model });

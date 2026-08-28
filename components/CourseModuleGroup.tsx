@@ -15,7 +15,8 @@ export default function CourseModuleGroup({ track, title, image, description, pr
   return (
     <Link
       href={`/cursos/modulo/${track}`}
-      className="data-cell group flex flex-col gap-3 overflow-hidden transition-shadow hover:shadow-md"
+      className="data-cell group flex h-full min-h-[31rem] cursor-pointer flex-col gap-3 overflow-hidden transition-shadow hover:shadow-md focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+      aria-label={`Ingresar al módulo de ${title}`}
     >
       <div className="flex aspect-[16/10] items-center justify-center p-5 sm:p-6">
         <img src={image} alt={`Herramienta ${title}`} className="h-24 w-24 object-contain transition-transform duration-300 group-hover:scale-105 sm:h-28 sm:w-28" loading="lazy" />

@@ -135,7 +135,7 @@ export default function CourseSearch() {
           </h2>
 
           {totalResults > 0 ? (
-            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+            <div className="grid items-stretch gap-5 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
               {groups.map(({ track, levels }) => (
                 <CourseModuleGroup
                   key={track}

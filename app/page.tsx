@@ -3,14 +3,6 @@ import Footer from "@/components/Footer";
 import CourseCard from "@/components/CourseCard";
 import { Facebook, Linkedin, MessageCircle, Instagram, Mail, Code2, Database, BarChart3, FileSpreadsheet } from "lucide-react";
 
-const founderSocialLinks = [
-  { label: "Correo", href: "mailto:kenersalhuana@gmail.com", icon: Mail, className: "text-accent" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/kenner-estibens-villvicencio-salhuana-8a9b822a3/?skipRedirect=true", icon: Linkedin, className: "text-[#0A66C2]" },
-  { label: "Instagram", href: "https://www.instagram.com/kener_stiven24?igsi=c2ZiaDM4d2N0MDRz", icon: Instagram, className: "text-pink-600" },
-  { label: "Facebook", href: "https://www.facebook.com/stiven.pachas.3", icon: Facebook, className: "text-[#1877F2]" },
-  { label: "WhatsApp", href: "https://chat.whatsapp.com/EFX2VJi9CoXGVU8SVVu6ZL", icon: MessageCircle, className: "text-[#25D366]" },
-];
-
 const featuredCourses = [
   {
     slug: "excel-intermedio",
@@ -175,27 +167,34 @@ export default function Home() {
           <div className="mt-14 border-t border-line pt-10">
             <p className="data-cell-header">Fundador</p>
             <h3 className="mt-2 max-w-2xl font-display text-2xl font-bold text-ink">La persona detrás de DataM</h3>
-            <div className="mt-8 grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-center">
-              <figure className="data-cell mx-auto w-full max-w-xs overflow-hidden bg-base">
-                <img src="/images/foto - kenner.jpg" alt="Kenner Estibens Villavicencio Salhuana, fundador de DataM" className="h-auto w-full object-contain mix-blend-multiply" />
-              </figure>
-              <article>
-                <p className="font-mono text-xs uppercase tracking-[0.16em] text-blue-700">Fundador de DataM · Tecnología e innovación</p>
-                <h4 className="mt-2 font-display text-xl font-bold text-ink">Kenner Estibens Villavicencio Salhuana</h4>
+            <div className="mt-8 grid items-center gap-10 lg:grid-cols-[280px_1fr]">
+              <div className="mx-auto w-full max-w-[280px] overflow-hidden border border-line bg-base shadow-sm">
+                <img src="/images/foto - kenner.jpg" alt="Villavicencio Salhuana Kenner Estibens, fundador de DataM" className="h-auto w-full object-contain mix-blend-multiply" />
+              </div>
+              <div>
+                <p className="font-mono text-xs uppercase tracking-[0.16em] text-blue-700">Fundador de DataM · Administración y Finanzas · Tecnología e Innovación</p>
+                <h4 className="mt-3 font-display text-xl font-bold text-ink">Villavicencio Salhuana Kenner Estibens</h4>
                 <div className="mt-4 max-w-2xl space-y-3 text-sm leading-7 text-muted">
-                  <p>Soy un estudiante de 21 años apasionado por la tecnología y la innovación.</p>
+                  <p>Soy <strong className="font-display text-ink">Kenner Estibens Villavicencio Salhuana</strong>, estudiante de 21 años apasionado por la tecnología y la innovación.</p>
                   <p>Creé <strong className="font-display text-ink">DataM</strong> porque creo que el conocimiento no debe quedarse en las aulas: debe convertirse en una herramienta para transformar realidades.</p>
                   <p>Mi propósito es conectar educación, tecnología e innovación para formar personas capaces de crear, resolver problemas y transformar su entorno.</p>
                 </div>
                 <blockquote className="mt-5 max-w-2xl border-l-4 border-accent bg-white px-5 py-4 font-display text-lg font-bold leading-7 text-ink shadow-sm">“Una oportunidad puede cambiar un momento, pero el conocimiento puede cambiar un futuro.”</blockquote>
                 <div className="mt-5 flex flex-wrap gap-3">
-                  {founderSocialLinks.map(({ label, href, icon: Icon, className }) => (
-                    <a key={label} href={href} target={href.startsWith("http") ? "_blank" : undefined} rel={href.startsWith("http") ? "noreferrer" : undefined} className="data-cell flex items-center gap-2 px-4 py-3 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent">
-                      <Icon aria-hidden="true" className={`h-5 w-5 ${className}`} /> {label}
-                    </a>
-                  ))}
+                  <a href="mailto:kenersalhuana@gmail.com" className="data-cell flex items-center gap-2 px-4 py-3 text-sm font-medium text-ink hover:border-accent hover:text-accent"><Mail aria-hidden="true" className="h-5 w-5 text-accent" /> Correo</a>
+                  <a href="https://www.facebook.com/stiven.pachas.3" target="_blank" rel="noreferrer" className="data-cell flex items-center gap-2 px-4 py-3 text-sm font-medium text-ink hover:border-blue-500 hover:text-blue-700"><Facebook aria-hidden="true" className="h-5 w-5 text-[#1877F2]" /> Facebook</a>
+                  <a href="https://www.linkedin.com/in/kenner-estibens-villvicencio-salhuana-8a9b822a3/?skipRedirect=true" target="_blank" rel="noreferrer" className="data-cell flex items-center gap-2 px-4 py-3 text-sm font-medium text-ink hover:border-blue-500 hover:text-blue-700"><Linkedin aria-hidden="true" className="h-5 w-5 text-[#0A66C2]" /> LinkedIn</a>
+                  <a href="https://www.instagram.com/kener_stiven24?igsi=c2ZiaDM4d2N0MDRz" target="_blank" rel="noreferrer" className="data-cell flex items-center gap-2 px-4 py-3 text-sm font-medium text-ink hover:border-pink-400 hover:text-pink-600"><Instagram aria-hidden="true" className="h-5 w-5 text-pink-600" /> Instagram</a>
+                  <a href="https://www.tiktok.com/@datam" target="_blank" rel="noreferrer" className="data-cell flex items-center gap-2 px-4 py-3 text-sm font-medium text-ink hover:border-ink"><MessageCircle aria-hidden="true" className="h-5 w-5 text-ink" /> TikTok</a>
+                  <a href="https://chat.whatsapp.com/EFX2VJi9CoXGVU8SVVu6ZL" target="_blank" rel="noreferrer" className="data-cell flex items-center gap-2 px-4 py-3 text-sm font-medium text-ink hover:border-green-500 hover:text-green-700"><MessageCircle aria-hidden="true" className="h-5 w-5 text-[#25D366]" /> WhatsApp</a>
                 </div>
-              </article>
+              </div>
+            </div>
+            <div className="relative mx-auto mt-14 flex max-w-2xl items-center justify-center gap-8 overflow-hidden border-y border-blue-100 py-7 text-blue-600">
+              <Code2 className="tech-float h-8 w-8" aria-label="Programación" />
+              <Database className="tech-float-delay h-8 w-8" aria-label="Bases de datos" />
+              <BarChart3 className="tech-float h-8 w-8" aria-label="Análisis de datos" />
+              <FileSpreadsheet className="tech-float-delay h-8 w-8" aria-label="Hojas de cálculo" />
             </div>
           </div>
         </div>
@@ -237,46 +236,6 @@ export default function Home() {
                 <MessageCircle aria-hidden="true" className="h-5 w-5 text-[#25D366]" /> WhatsApp
               </a>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="fundador" className="border-t border-line bg-panel py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <div className="mb-10 text-center">
-            <span className="data-cell-header">FUNDADOR</span>
-            <h2 className="mt-2 font-display text-3xl font-bold text-ink md:text-4xl">
-              La persona detrás de DataM
-            </h2>
-          </div>
-          <div className="grid items-center gap-10 md:grid-cols-[280px_1fr]">
-            <div className="mx-auto w-full max-w-[280px] overflow-hidden border border-line bg-base shadow-sm">
-              <img src="/images/foto - kenner.jpg" alt="Villavicencio Salhuana Kenner Estibens, fundador de DataM" className="h-auto w-full object-contain mix-blend-multiply" />
-            </div>
-            <div>
-              <p className="font-mono text-xs uppercase tracking-[0.16em] text-blue-700">Fundador de DataM · Administración y Finanzas · Tecnología e Innovación</p>
-              <h3 className="mt-3 font-display text-2xl font-bold text-ink md:text-3xl">Villavicencio Salhuana Kenner Estibens</h3>
-              <div className="mt-6 space-y-4 text-base leading-8 text-muted">
-                <p>Soy <strong className="font-display text-ink">Kenner Estibens Villavicencio Salhuana</strong>, estudiante de 21 años apasionado por la tecnología y la innovación.</p>
-                <p>Creé <strong className="font-display text-ink">DataM</strong> porque creo que el conocimiento no debe quedarse en las aulas: debe convertirse en una herramienta para transformar realidades.</p>
-                <p>Mi propósito es conectar educación, tecnología e innovación para formar personas capaces de crear, resolver problemas y transformar su entorno.</p>
-              </div>
-              <blockquote className="mt-6 border-l-4 border-accent bg-blue-50 px-5 py-4 font-display text-lg font-bold leading-7 text-ink">“Una oportunidad puede cambiar un momento, pero el conocimiento puede cambiar un futuro.”</blockquote>
-              <div className="mt-7 flex flex-wrap gap-3">
-                <a href="mailto:kenersalhuana@gmail.com" className="data-cell flex items-center gap-2 px-4 py-3 text-sm font-medium text-ink hover:border-accent hover:text-accent"><Mail aria-hidden="true" className="h-5 w-5 text-accent" /> Correo</a>
-                <a href="https://www.facebook.com/stiven.pachas.3" target="_blank" rel="noreferrer" className="data-cell flex items-center gap-2 px-4 py-3 text-sm font-medium text-ink hover:border-blue-500 hover:text-blue-700"><Facebook aria-hidden="true" className="h-5 w-5 text-[#1877F2]" /> Facebook</a>
-                <a href="https://www.linkedin.com/in/kenner-estibens-villvicencio-salhuana-8a9b822a3/?skipRedirect=true" target="_blank" rel="noreferrer" className="data-cell flex items-center gap-2 px-4 py-3 text-sm font-medium text-ink hover:border-blue-500 hover:text-blue-700"><Linkedin aria-hidden="true" className="h-5 w-5 text-[#0A66C2]" /> LinkedIn</a>
-                <a href="https://www.instagram.com/kener_stiven24?igsi=c2ZiaDM4d2N0MDRz" target="_blank" rel="noreferrer" className="data-cell flex items-center gap-2 px-4 py-3 text-sm font-medium text-ink hover:border-pink-400 hover:text-pink-600"><Instagram aria-hidden="true" className="h-5 w-5 text-pink-600" /> Instagram</a>
-                <a href="https://www.tiktok.com/@datam" target="_blank" rel="noreferrer" className="data-cell flex items-center gap-2 px-4 py-3 text-sm font-medium text-ink hover:border-ink"><MessageCircle aria-hidden="true" className="h-5 w-5 text-ink" /> TikTok</a>
-                <a href="https://chat.whatsapp.com/EFX2VJi9CoXGVU8SVVu6ZL" target="_blank" rel="noreferrer" className="data-cell flex items-center gap-2 px-4 py-3 text-sm font-medium text-ink hover:border-green-500 hover:text-green-700"><MessageCircle aria-hidden="true" className="h-5 w-5 text-[#25D366]" /> WhatsApp</a>
-              </div>
-            </div>
-          </div>
-          <div className="relative mx-auto mt-16 flex max-w-2xl items-center justify-center gap-8 overflow-hidden border-y border-blue-100 py-7 text-blue-600">
-            <Code2 className="tech-float h-8 w-8" aria-label="Programación" />
-            <Database className="tech-float-delay h-8 w-8" aria-label="Bases de datos" />
-            <BarChart3 className="tech-float h-8 w-8" aria-label="Análisis de datos" />
-            <FileSpreadsheet className="tech-float-delay h-8 w-8" aria-label="Hojas de cálculo" />
           </div>
         </div>
       </section>

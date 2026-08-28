@@ -71,14 +71,11 @@ export default function Navbar() {
           <Link href="/dax" className="transition-colors hover:text-accent">
             Dax IA
           </Link>
-          <Link href="/" className="transition-colors hover:text-accent">
+          <Link href="/#metodologia" className="transition-colors hover:text-accent">
             Metodología
           </Link>
           <Link href="/nosotros" className="transition-colors hover:text-accent">
             Nosotros
-          </Link>
-          <Link href="/fundador" className="transition-colors hover:text-accent">
-            Fundador
           </Link>
         </div>
 
@@ -116,9 +113,8 @@ export default function Navbar() {
             <Link href="/cursos" onClick={closeMenu}>Cursos</Link>
             <Link href="/comunidad" onClick={closeMenu}>Comunidad</Link>
             <Link href="/dax" onClick={closeMenu}>Dax IA</Link>
-            <Link href="/" onClick={closeMenu}>Metodología</Link>
+            <Link href="/#metodologia" onClick={closeMenu}>Metodología</Link>
             <Link href="/nosotros" onClick={closeMenu}>Nosotros</Link>
-            <Link href="/fundador" onClick={closeMenu}>Fundador</Link>
             {isAuthenticated ? (
               <>
                 <Link href="/dashboard" onClick={closeMenu}>Dashboard del estudiante</Link>

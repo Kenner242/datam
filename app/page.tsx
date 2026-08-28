@@ -3,6 +3,14 @@ import Footer from "@/components/Footer";
 import CourseCard from "@/components/CourseCard";
 import { Facebook, Linkedin, MessageCircle, Instagram, Mail, Code2, Database, BarChart3, FileSpreadsheet } from "lucide-react";
 
+const founderSocialLinks = [
+  { label: "Correo", href: "mailto:kenersalhuana@gmail.com", icon: Mail, className: "text-accent" },
+  { label: "LinkedIn", href: "https://www.linkedin.com/in/kenner-estibens-villvicencio-salhuana-8a9b822a3/?skipRedirect=true", icon: Linkedin, className: "text-[#0A66C2]" },
+  { label: "Instagram", href: "https://www.instagram.com/kener_stiven24?igsi=c2ZiaDM4d2N0MDRz", icon: Instagram, className: "text-pink-600" },
+  { label: "Facebook", href: "https://www.facebook.com/stiven.pachas.3", icon: Facebook, className: "text-[#1877F2]" },
+  { label: "WhatsApp", href: "https://chat.whatsapp.com/EFX2VJi9CoXGVU8SVVu6ZL", icon: MessageCircle, className: "text-[#25D366]" },
+];
+
 const featuredCourses = [
   {
     slug: "excel-intermedio",
@@ -161,6 +169,33 @@ export default function Home() {
               <p className="mt-2 text-sm text-muted">
                 Al completar el curso y aprobar la evaluación, obtienes tu certificado verificable.
               </p>
+            </div>
+          </div>
+
+          <div className="mt-14 border-t border-line pt-10">
+            <p className="data-cell-header">Fundador</p>
+            <h3 className="mt-2 max-w-2xl font-display text-2xl font-bold text-ink">La persona detrás de DataM</h3>
+            <div className="mt-8 grid gap-8 lg:grid-cols-[280px_minmax(0,1fr)] lg:items-center">
+              <figure className="data-cell mx-auto w-full max-w-xs overflow-hidden bg-base">
+                <img src="/images/foto - kenner.jpg" alt="Kenner Estibens Villavicencio Salhuana, fundador de DataM" className="h-auto w-full object-contain mix-blend-multiply" />
+              </figure>
+              <article>
+                <p className="font-mono text-xs uppercase tracking-[0.16em] text-blue-700">Fundador de DataM · Tecnología e innovación</p>
+                <h4 className="mt-2 font-display text-xl font-bold text-ink">Kenner Estibens Villavicencio Salhuana</h4>
+                <div className="mt-4 max-w-2xl space-y-3 text-sm leading-7 text-muted">
+                  <p>Soy un estudiante de 21 años apasionado por la tecnología y la innovación.</p>
+                  <p>Creé <strong className="font-display text-ink">DataM</strong> porque creo que el conocimiento no debe quedarse en las aulas: debe convertirse en una herramienta para transformar realidades.</p>
+                  <p>Mi propósito es conectar educación, tecnología e innovación para formar personas capaces de crear, resolver problemas y transformar su entorno.</p>
+                </div>
+                <blockquote className="mt-5 max-w-2xl border-l-4 border-accent bg-white px-5 py-4 font-display text-lg font-bold leading-7 text-ink shadow-sm">“Una oportunidad puede cambiar un momento, pero el conocimiento puede cambiar un futuro.”</blockquote>
+                <div className="mt-5 flex flex-wrap gap-3">
+                  {founderSocialLinks.map(({ label, href, icon: Icon, className }) => (
+                    <a key={label} href={href} target={href.startsWith("http") ? "_blank" : undefined} rel={href.startsWith("http") ? "noreferrer" : undefined} className="data-cell flex items-center gap-2 px-4 py-3 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent">
+                      <Icon aria-hidden="true" className={`h-5 w-5 ${className}`} /> {label}
+                    </a>
+                  ))}
+                </div>
+              </article>
             </div>
           </div>
         </div>

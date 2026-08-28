@@ -1,9 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-
-export type MaterialType = "plantilla" | "guia" | "solucion";
-export type LessonMaterial = { label: string; href: string; sizeKB: number; ext: string };
-export type LessonMaterials = Partial<Record<MaterialType, LessonMaterial>>;
+import type { LessonMaterials, MaterialType } from "@/lib/materialTypes";
 
 const MATERIAL_LABELS: Record<MaterialType, string> = {
 	plantilla: "Archivo de trabajo",
@@ -42,8 +39,4 @@ export function getCourseMaterials(slug: string): Record<string, LessonMaterials
 	}
 
 	return result;
-}
-
-export function lessonMaterialsKey(moduleIndex: number, lessonIndex: number) {
-	return `${String(moduleIndex + 1).padStart(2, "0")}-${String(lessonIndex + 1).padStart(2, "0")}`;
 }

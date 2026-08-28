@@ -5,8 +5,8 @@ import { useRouter } from "next/navigation";
 import { BookOpen, Check, ChevronDown, Download, FileSpreadsheet, FileText, Target } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import type { Course } from "@/lib/courses";
-import type { LessonMaterials, MaterialType } from "@/lib/materials";
-import { lessonMaterialsKey } from "@/lib/materials";
+import type { LessonMaterials, MaterialType } from "@/lib/materialTypes";
+import { lessonMaterialsKey } from "@/lib/materialTypes";
 
 const MATERIAL_STYLES: Record<MaterialType, { badge: string; icon: string; Icon: typeof FileText; title: (lessonTitle: string) => string; description: string }> = {
   plantilla: {

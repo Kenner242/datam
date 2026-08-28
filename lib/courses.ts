@@ -1,4 +1,21 @@
-export type Lesson = { title: string; topics: string[]; videoUrl?: string };
+export type ResourceCategory = "starter" | "guide" | "solution";
+export type ResourceFormat = "excel" | "pbix" | "sql" | "python" | "pdf" | "txt" | "zip";
+
+export type CourseResource = {
+	title: string;
+	category: ResourceCategory;
+	format: ResourceFormat;
+	fileUrl?: string;
+	size?: string;
+	description?: string;
+};
+
+export type Lesson = {
+	title: string;
+	topics: string[];
+	videoUrl?: string;
+	resources?: CourseResource[];
+};
 export type BloomLevel = "recordar" | "comprender" | "aplicar" | "analizar" | "evaluar" | "crear";
 export type LearningOutcome = { bloomLevel: BloomLevel; outcome: string };
 export type CourseModule = { title: string; lessons: Lesson[]; bloomLevel?: BloomLevel; learningOutcome?: string };
@@ -29,7 +46,7 @@ const images = {
 	finance: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=900&q=80",
 };
 
-const lesson = (title: string, topics: string[], videoUrl?: string): Lesson => ({ title, topics, videoUrl });
+const lesson = (title: string, topics: string[], videoUrl?: string, resources?: CourseResource[]): Lesson => ({ title, topics, videoUrl, resources });
 const module = (title: string, lessons: Lesson[]): CourseModule => ({ title, lessons });
 const common = (slug: string, code: string, title: string, level: string, duration: string, description: string, image: string, summary: string, professionalUse: string, modules: CourseModule[]): Course => ({ slug, code, title, level, duration, description, image, summary, professionalUse, modules });
 

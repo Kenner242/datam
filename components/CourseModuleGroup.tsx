@@ -32,7 +32,6 @@ export default function CourseModuleGroup({ track, title, image, description, pr
           <p className="mt-1 text-sm leading-5 text-ink">{professionalUse}</p>
         </div>
         <div className="mt-auto flex items-center justify-between pt-2">
-          <span className="font-mono text-xs text-muted">Básico → Intermedio → Avanzado</span>
           <span className="text-sm font-medium text-accent group-hover:underline">Ver módulo →</span>
         </div>
       </div>

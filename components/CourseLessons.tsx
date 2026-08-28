@@ -2,293 +2,37 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  BookOpen,
-  Check,
-  ChevronDown,
-  Database,
-  Download,
-  FileBarChart,
-  FileCode,
-  FileSpreadsheet,
-  FileText,
-  FolderArchive,
-  Target,
-} from "lucide-react";
+import { BookOpen, Check, ChevronDown, Download, FileSpreadsheet, FileText, Target } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
-import type { Course, CourseResource, ResourceCategory, ResourceFormat } from "@/lib/courses";
-import { getTopicConcept } from "@/lib/topicConcepts";
+import type { Course } from "@/lib/courses";
+import type { LessonMaterials, MaterialType } from "@/lib/materials";
+import { lessonMaterialsKey } from "@/lib/materials";
 
-function getDefaultResources(courseSlug: string, lessonTitle: string): CourseResource[] {
-  const isExcel = courseSlug.startsWith("excel") || courseSlug === "finanzas-para-emprendedores";
-  const isPowerBi = courseSlug.startsWith("power-bi");
-  const isSql = courseSlug.startsWith("sql");
-  const isPython = courseSlug.startsWith("python");
-  const isWeb = courseSlug === "programacion-desarrollo-web";
+const MATERIAL_STYLES: Record<MaterialType, { badge: string; icon: string; Icon: typeof FileText; title: (lessonTitle: string) => string; description: string }> = {
+  plantilla: {
+    badge: "bg-blue-100 text-blue-700",
+    icon: "bg-green-50 text-green-600",
+    Icon: FileSpreadsheet,
+    title: (lessonTitle) => `Plantilla de trabajo (${lessonTitle})`,
+    description: "Archivo inicial con datos y ejercicios preparados sin resolver.",
+  },
+  guia: {
+    badge: "bg-purple-100 text-purple-700",
+    icon: "bg-red-50 text-red-500",
+    Icon: FileText,
+    title: () => "Guía de laboratorio y Cheat Sheet",
+    description: "Paso a paso con explicaciones de fórmulas y funciones.",
+  },
+  solucion: {
+    badge: "bg-green-100 text-green-700",
+    icon: "bg-green-50 text-green-600",
+    Icon: FileSpreadsheet,
+    title: (lessonTitle) => `Modelo resuelto (${lessonTitle})`,
+    description: "Archivo final con cálculos y resultados completados.",
+  },
+};
 
-  if (isExcel) {
-    return [
-      {
-        title: `Plantilla de trabajo (${lessonTitle})`,
-        category: "starter",
-        format: "excel",
-        size: "540 KB",
-        description: "Dataset inicial con datos y tablas preparadas sin resolver.",
-      },
-      {
-        title: "Guía de laboratorio & Cheat Sheet",
-        category: "guide",
-        format: "pdf",
-        size: "320 KB",
-        description: "Paso a paso con explicaciones de fórmulas y funciones.",
-      },
-      {
-        title: `Modelo resuelto (${lessonTitle})`,
-        category: "solution",
-        format: "excel",
-        size: "580 KB",
-        description: "Archivo final con cálculos y resultados completados.",
-      },
-    ];
-  }
-
-  if (isPowerBi) {
-    return [
-      {
-        title: "Origen de datos (Excel / CSV)",
-        category: "starter",
-        format: "excel",
-        size: "820 KB",
-        description: "Archivos origen listos para importar y relacionar en Power BI.",
-      },
-      {
-        title: "Guía de modelo & Medidas DAX",
-        category: "guide",
-        format: "pdf",
-        size: "410 KB",
-        description: "Documentación del esquema de datos y fórmulas DAX.",
-      },
-      {
-        title: "Informe Power BI resuelto (.pbix)",
-        category: "solution",
-        format: "pbix",
-        size: "1.2 MB",
-        description: "Dashboard interactivo terminado con visualizaciones.",
-      },
-    ];
-  }
-
-  if (isSql) {
-    return [
-      {
-        title: "Script SQL inicial (DDL/DML)",
-        category: "starter",
-        format: "sql",
-        size: "120 KB",
-        description: "Sentencias de creación de tablas e inserción de datos.",
-      },
-      {
-        title: "Guía de consultas & Diagrama ER",
-        category: "guide",
-        format: "pdf",
-        size: "290 KB",
-        description: "Requerimientos de negocio y modelo entidad-relación.",
-      },
-      {
-        title: "Queries SQL resueltas",
-        category: "solution",
-        format: "sql",
-        size: "145 KB",
-        description: "Consultas finales con JOINs, agrupaciones y filtros.",
-      },
-    ];
-  }
-
-  if (isPython) {
-    return [
-      {
-        title: "Script inicial de trabajo (.py)",
-        category: "starter",
-        format: "python",
-        size: "210 KB",
-        description: "Código base con estructuras e importaciones iniciales.",
-      },
-      {
-        title: "Guía sintáctica & Ejercicios",
-        category: "guide",
-        format: "pdf",
-        size: "350 KB",
-        description: "Manual con sintaxis, funciones y ejercicios prácticos.",
-      },
-      {
-        title: "Script Python resuelto",
-        category: "solution",
-        format: "python",
-        size: "230 KB",
-        description: "Código completo funcional listo para ejecutar.",
-      },
-    ];
-  }
-
-  if (isWeb) {
-    return [
-      {
-        title: "Estructura base del proyecto (.zip)",
-        category: "starter",
-        format: "zip",
-        size: "450 KB",
-        description: "Archivos HTML, CSS y assets iniciales del sitio.",
-      },
-      {
-        title: "Cheat Sheet HTML / CSS / JS",
-        category: "guide",
-        format: "pdf",
-        size: "380 KB",
-        description: "Resumen de etiquetas, selectores y sintaxis web.",
-      },
-      {
-        title: "Código fuente resuelto (.zip)",
-        category: "solution",
-        format: "zip",
-        size: "510 KB",
-        description: "Proyecto completado y responsive para verificar.",
-      },
-    ];
-  }
-
-  return [
-    {
-      title: "Ficha de actividades prácticas",
-      category: "starter",
-      format: "pdf",
-      size: "280 KB",
-      description: "Documento de trabajo para aplicar los conceptos.",
-    },
-    {
-      title: "Guía metodológica & Conceptos",
-      category: "guide",
-      format: "pdf",
-      size: "310 KB",
-      description: "Resumen teórico y marco de trabajo de la lección.",
-    },
-    {
-      title: "Ejemplo modelo resuelto",
-      category: "solution",
-      format: "pdf",
-      size: "330 KB",
-      description: "Caso práctico de referencia con respuestas esperadas.",
-    },
-  ];
-}
-
-function getFormatStyle(format: ResourceFormat) {
-  switch (format) {
-    case "excel":
-      return { label: "XLSX", color: "bg-emerald-50 text-emerald-700 border-emerald-200", icon: FileSpreadsheet };
-    case "pbix":
-      return { label: "PBIX", color: "bg-amber-50 text-amber-700 border-amber-200", icon: FileBarChart };
-    case "sql":
-      return { label: "SQL", color: "bg-blue-50 text-blue-700 border-blue-200", icon: Database };
-    case "python":
-      return { label: "PY", color: "bg-sky-50 text-sky-700 border-sky-200", icon: FileCode };
-    case "zip":
-      return { label: "ZIP", color: "bg-purple-50 text-purple-700 border-purple-200", icon: FolderArchive };
-    case "pdf":
-    default:
-      return { label: "PDF", color: "bg-rose-50 text-rose-700 border-rose-200", icon: FileText };
-  }
-}
-
-function getCategoryStyle(category: ResourceCategory) {
-  switch (category) {
-    case "starter":
-      return { label: "Archivo de trabajo", badge: "bg-blue-100 text-blue-800 border-blue-200" };
-    case "guide":
-      return { label: "Guía & Resumen", badge: "bg-purple-100 text-purple-800 border-purple-200" };
-    case "solution":
-      return { label: "Solución final", badge: "bg-emerald-100 text-emerald-800 border-emerald-200" };
-  }
-}
-
-function handleDownloadResource(course: Course, lessonTitle: string, topics: string[], resource: CourseResource) {
-  if (resource.fileUrl) {
-    const link = document.createElement("a");
-    link.href = resource.fileUrl;
-    link.download = resource.fileUrl.split("/").pop() || `${course.slug}-${resource.category}`;
-    link.target = "_blank";
-    link.click();
-    return;
-  }
-
-  let content = "";
-  const ext = resource.format;
-  const fileName = `${course.slug}-${lessonTitle.toLowerCase().replace(/[^a-z0-9]+/g, "-")}-${resource.category}.${ext === "excel" ? "txt" : ext === "python" ? "py" : ext === "sql" ? "sql" : "txt"}`;
-
-  if (resource.category === "starter") {
-    content = [
-      `DataM - ARCHIVO DE TRABAJO INICIAL (${resource.format.toUpperCase()})`,
-      `============================================================`,
-      `Curso: ${course.title}`,
-      `Clase: ${lessonTitle}`,
-      `============================================================`,
-      ``,
-      `INSTRUCCIONES DE USO:`,
-      `Revisa el video de la clase y utiliza esta plantilla/dataset para realizar la práctica guiada.`,
-      ``,
-      `CONCEPTOS A DESARROLLAR:`,
-      ...topics.map((t, i) => `${i + 1}. ${t}`),
-      ``,
-      `GUÍA DE APRENDIZAJE:`,
-      ...topics.map((t) => `- ${t}: ${getTopicConcept(t)}`),
-      ``,
-      `[DATOS Y RECURSOS LISTOS PARA PRACTICAR EN ESTA LECCIÓN]`,
-    ].join("\n");
-  } else if (resource.category === "guide") {
-    content = [
-      `DataM - GUÍA PRÁCTICA DE APRENDIZAJE & CHEAT SHEET`,
-      `============================================================`,
-      `Curso: ${course.title}`,
-      `Clase: ${lessonTitle}`,
-      `============================================================`,
-      ``,
-      `1. OBJETIVOS DE LA CLASE:`,
-      ...topics.map((t) => `   * Dominar y aplicar: ${t}`),
-      ``,
-      `2. CONCEPTOS Y CLAVES TÉCNICAS:`,
-      ...topics.map((t, i) => `   ${i + 1}. ${t}:\n      ${getTopicConcept(t)}`),
-      ``,
-      `3. METODOLOGÍA PASO A PASO:`,
-      `   Paso 1: Visualiza la demostración en el video de la lección.`,
-      `   Paso 2: Descarga el 'Archivo de trabajo' para aplicar las técnicas.`,
-      `   Paso 3: Desarrolla los ejercicios apoyándote en esta guía.`,
-      `   Paso 4: Compara tu resultado final con la 'Solución resuelta'.`,
-    ].join("\n");
-  } else {
-    content = [
-      `DataM - SOLUCIÓN Y MODELO DE REFERENCIA FINAL`,
-      `============================================================`,
-      `Curso: ${course.title}`,
-      `Clase: ${lessonTitle}`,
-      `Estado: EJERCICIO COMPLETADO`,
-      `============================================================`,
-      ``,
-      `DEMOSTRACIÓN DE RESULTADOS ESPERADOS:`,
-      ...topics.map((t, i) => `[PASO RESUELTO ${i + 1}] ${t}\n   Resultado esperado: Implementación exitosa basada en ${getTopicConcept(t)}`),
-      ``,
-      `RECOMENDACIÓN DE AUTO-EVALUACIÓN:`,
-      `Utiliza este archivo para contrastar tus resultados antes de avanzar a la siguiente clase.`,
-    ].join("\n");
-  }
-
-  const blobUrl = URL.createObjectURL(new Blob([content], { type: "text/plain;charset=utf-8" }));
-  const link = document.createElement("a");
-  link.href = blobUrl;
-  link.download = fileName;
-  link.click();
-  URL.revokeObjectURL(blobUrl);
-}
-
-export default function CourseLessons({ course }: { course: Course }) {
+export default function CourseLessons({ course, materials }: { course: Course; materials: Record<string, LessonMaterials> }) {
   const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);
   const [watched, setWatched] = useState<string[]>([]);
@@ -305,6 +49,11 @@ export default function CourseLessons({ course }: { course: Course }) {
   const completedLessons = watched.filter((id) => lessonIds.includes(id)).length;
   const courseProgress = lessonIds.length ? Math.round((completedLessons / lessonIds.length) * 100) : 0;
   const isComplete = lessonIds.length > 0 && completedLessons === lessonIds.length;
+  const levels = [
+    { name: "Fundamentos", description: "Comprende los conceptos y herramientas esenciales." },
+    { name: "Desarrollo", description: "Aplica los conocimientos en ejercicios guiados." },
+    { name: "Dominio", description: "Integra lo aprendido en situaciones profesionales." },
+  ];
 
   useEffect(() => {
     void supabase.auth.getUser().then(async ({ data }) => {
@@ -387,9 +136,9 @@ export default function CourseLessons({ course }: { course: Course }) {
       <section className="data-cell overflow-hidden">
         <div className="grid gap-4 bg-ink p-4 text-white sm:gap-5 sm:p-5 md:grid-cols-[minmax(0,1fr)_auto] md:items-center">
           <div>
-            <p className="font-mono text-xs uppercase tracking-[0.14em] text-blue-200">Metodología progresiva</p>
+            <p className="font-mono text-xs uppercase tracking-[0.14em] text-blue-200">Metodologia progresiva</p>
             <h3 className="mt-1 font-display text-lg font-bold leading-6 sm:text-xl sm:leading-tight">Aprende desde los fundamentos hasta el dominio profesional</h3>
-            <p className="mt-2 text-sm leading-6 text-blue-100 sm:leading-normal">Cada nivel combina explicación, demostración, práctica guiada y aplicación para consolidar tus habilidades.</p>
+            <p className="mt-2 text-sm leading-6 text-blue-100 sm:leading-normal">Cada nivel combina explicacion, demostracion, practica guiada y aplicacion para consolidar tus habilidades.</p>
           </div>
           <div className="w-full border border-white/20 bg-white/10 p-4 text-center md:min-w-32 md:w-auto">
             <p className="font-mono text-2xl text-white">{courseProgress}%</p>
@@ -399,7 +148,7 @@ export default function CourseLessons({ course }: { course: Course }) {
         <div className="h-2 bg-blue-100"><div className="h-full bg-accent transition-all" style={{ width: `${courseProgress}%` }} /></div>
         <div className="p-4 sm:p-5">
           {!isEnrolled && <button onClick={enroll} className="w-full rounded-cell bg-accent px-4 py-3 text-base font-bold text-white transition-colors hover:bg-ink sm:w-auto sm:px-4 sm:py-2 sm:text-sm">Inscribirme y empezar</button>}
-          {isEnrolled && <p className="text-sm font-medium text-green-700">Estás inscrito. Continúa con la siguiente clase de tu nivel.</p>}
+          {isEnrolled && <p className="text-sm font-medium text-green-700">Estas inscrito. Continúa con la siguiente clase de tu nivel.</p>}
           {isComplete && <button onClick={() => router.push(`/cursos/${course.slug}/evaluacion`)} className="mt-3 w-full rounded-cell bg-accent px-4 py-3 text-base font-bold text-white transition-colors hover:bg-ink sm:w-auto sm:py-2 sm:text-sm">Ir a evaluación final</button>}
           {message && <p role="status" className="mt-3 text-sm text-blue-800">{message}</p>}
         </div>
@@ -411,6 +160,7 @@ export default function CourseLessons({ course }: { course: Course }) {
           const completedInModule = moduleLessonIds.filter((id) => watched.includes(id)).length;
           const moduleProgress = module.lessons.length ? Math.round((completedInModule / module.lessons.length) * 100) : 0;
           const moduleStatus = moduleProgress === 100 ? "Completado" : completedInModule ? "En progreso" : "Por comenzar";
+          const level = levels[Math.min(moduleIndex, levels.length - 1)];
 
           return (
             <section key={module.title} className="relative sm:pl-16">
@@ -443,10 +193,6 @@ export default function CourseLessons({ course }: { course: Course }) {
                     const previousLessonId = lessonPosition > 0 ? lessonIds[lessonPosition - 1] : null;
                     const isCompletionLocked = Boolean(previousLessonId && !watched.includes(previousLessonId));
 
-                    const resources = lesson.resources && lesson.resources.length > 0
-                      ? lesson.resources
-                      : getDefaultResources(course.slug, lesson.title);
-
                     return (
                       <article key={lesson.title}>
                         <button
@@ -454,7 +200,7 @@ export default function CourseLessons({ course }: { course: Course }) {
                           onClick={() => setOpenLessonId(isOpen ? "" : lessonId)}
                           aria-expanded={isOpen}
                           aria-controls={`lesson-content-${course.slug}-${moduleIndex}-${lessonIndex}`}
-                          className="flex w-full items-start gap-3 px-4 py-4 text-left transition-colors hover:bg-blue-50 sm:items-center sm:gap-4 sm:px-5"
+                            className="flex w-full items-start gap-3 px-4 py-4 text-left transition-colors hover:bg-blue-50 sm:items-center sm:gap-4 sm:px-5"
                         >
                           <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border text-sm font-bold ${isDone ? "border-green-600 bg-green-600 text-white" : "border-blue-200 bg-white text-blue-700"}`}>
                             {isDone ? <Check className="h-4 w-4" /> : lessonIndex + 1}
@@ -466,7 +212,11 @@ export default function CourseLessons({ course }: { course: Course }) {
                           <ChevronDown className={`mt-1 h-5 w-5 shrink-0 text-blue-700 transition-transform sm:mt-0 ${isOpen ? "rotate-180" : ""}`} />
                         </button>
 
-                        {isOpen && (
+                        {isOpen && (() => {
+                          const materialsKey = lessonMaterialsKey(moduleIndex, lessonIndex);
+                          const lessonMaterials = materials[materialsKey] ?? {};
+                          const materialTypes = (Object.keys(lessonMaterials) as (keyof typeof lessonMaterials)[]);
+                          return (
                           <div id={`lesson-content-${course.slug}-${moduleIndex}-${lessonIndex}`} className="border-t border-line bg-base px-3 py-5 sm:px-5">
                             <div className="grid gap-4 lg:grid-cols-[1.25fr_0.75fr]">
                               <div>
@@ -481,54 +231,37 @@ export default function CourseLessons({ course }: { course: Course }) {
                                 )}
                               </div>
                               <aside className="data-cell h-fit p-4 sm:p-5 lg:sticky lg:top-24">
-                                <div className="flex items-center justify-between border-b border-line pb-3">
-                                  <div className="flex items-center gap-2">
-                                    <BookOpen className="h-4 w-4 text-blue-700" />
-                                    <p className="data-cell-header">Paso 2 · Materiales de trabajo</p>
+                                <div className="flex items-center justify-between gap-2">
+                                  <div className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-blue-700" /><p className="data-cell-header">Paso 2 · Materiales</p></div>
+                                  {materialTypes.length > 0 && <span className="rounded-cell bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">{materialTypes.length} archivo{materialTypes.length === 1 ? "" : "s"}</span>}
+                                </div>
+                                {materialTypes.length > 0 ? (
+                                  <div className="mt-3 flex flex-col gap-3">
+                                    {materialTypes.map((type) => {
+                                      const material = lessonMaterials[type];
+                                      if (!material) return null;
+                                      const style = MATERIAL_STYLES[type];
+                                      return (
+                                        <div key={type} className="data-cell p-3">
+                                          <div className="flex items-center justify-between gap-2">
+                                            <span className={`rounded-cell px-2 py-1 text-xs font-bold uppercase ${style.badge}`}>{material.label}</span>
+                                            <span className="text-xs text-muted">{material.sizeKB} KB</span>
+                                          </div>
+                                          <div className="mt-3 flex items-start gap-3">
+                                            <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-cell ${style.icon}`}><style.Icon className="h-4 w-4" /></span>
+                                            <div className="min-w-0">
+                                              <p className="break-words text-sm font-bold text-ink">{style.title(lesson.title)}</p>
+                                              <p className="mt-1 text-xs text-muted">{style.description}</p>
+                                            </div>
+                                          </div>
+                                          <a href={material.href} download aria-label={`Descargar ${style.title(lesson.title)}`} className="mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-cell border border-blue-300 bg-white px-3 py-3 text-base font-medium text-blue-700 transition-colors hover:bg-blue-50 sm:py-2 sm:text-sm"><Download className="h-4 w-4" /> Descargar ({material.ext})</a>
+                                        </div>
+                                      );
+                                    })}
                                   </div>
-                                  <span className="rounded-full bg-blue-100 px-2 py-0.5 font-mono text-[11px] font-bold text-blue-800">
-                                    {resources.length} archivos
-                                  </span>
-                                </div>
-                                <p className="mt-2 text-xs leading-5 text-muted">
-                                  Descarga tus materiales para realizar los ejercicios de esta clase y contrastar tu avance:
-                                </p>
-                                <div className="mt-3 space-y-3">
-                                  {resources.map((res, i) => {
-                                    const formatStyle = getFormatStyle(res.format);
-                                    const categoryStyle = getCategoryStyle(res.category);
-                                    const FormatIcon = formatStyle.icon;
-
-                                    return (
-                                      <div key={i} className="flex flex-col gap-2 rounded-cell border border-line bg-white p-3 text-xs shadow-2xs transition-colors hover:border-blue-300">
-                                        <div className="flex items-center justify-between gap-2">
-                                          <span className={`inline-flex items-center gap-1 rounded-sm border px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase ${categoryStyle.badge}`}>
-                                            {categoryStyle.label}
-                                          </span>
-                                          <span className="font-mono text-[10px] text-muted">{res.size || "Descarga libre"}</span>
-                                        </div>
-                                        <div className="flex items-start gap-2.5">
-                                          <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-md border ${formatStyle.color}`}>
-                                            <FormatIcon className="h-4 w-4" />
-                                          </div>
-                                          <div className="min-w-0 flex-1">
-                                            <p className="font-bold leading-tight text-ink">{res.title}</p>
-                                            <p className="mt-0.5 truncate text-[11px] text-muted">{res.description || `Formato ${res.format.toUpperCase()}`}</p>
-                                          </div>
-                                        </div>
-                                        <button
-                                          type="button"
-                                          onClick={() => handleDownloadResource(course, lesson.title, lesson.topics, res)}
-                                          aria-label={`Descargar ${res.title}`}
-                                          className="mt-1 flex w-full items-center justify-center gap-1.5 rounded-cell border border-blue-200 bg-blue-50 py-1.5 font-medium text-blue-700 transition-colors hover:bg-blue-600 hover:text-white"
-                                        >
-                                          <Download className="h-3.5 w-3.5" />
-                                          <span>Descargar ({formatStyle.label})</span>
-                                        </button>
-                                      </div>
-                                    );
-                                  })}
-                                </div>
+                                ) : (
+                                  <p className="mt-2 text-base leading-6 text-muted sm:text-sm sm:leading-normal">Los materiales de esta clase estarán disponibles próximamente.</p>
+                                )}
                               </aside>
                             </div>
                             <div className="mt-5 flex flex-col gap-4 border-t-4 border-blue-500 bg-blue-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:border-l-4 sm:border-t-0 sm:gap-3 sm:p-5">
@@ -538,7 +271,8 @@ export default function CourseLessons({ course }: { course: Course }) {
                             {isCompletionLocked && <p className="mt-2 text-xs text-muted">Puedes ver esta clase, pero debes completar la clase anterior antes de marcarla como terminada.</p>}
                             {!isEnrolled && <p className="mt-2 text-xs text-muted">Inscríbete en el curso para registrar tus clases completadas.</p>}
                           </div>
-                        )}
+                          );
+                        })()}
                       </article>
                     );
                   })}

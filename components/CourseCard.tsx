@@ -24,16 +24,16 @@ export default function CourseCard({
       <div className="flex aspect-[16/10] items-center justify-center bg-base p-5 sm:p-6">
         <img src={image} alt={`Imagen del curso ${title}`} className="h-full w-full object-contain" loading="lazy" />
       </div>
-      <div className="flex flex-1 flex-col gap-3 p-5">
+      <div className="flex flex-1 flex-col gap-3 p-5 sm:p-6">
         <div className="flex items-center justify-between">
           <span className="data-cell-header">{code}</span>
           <span className="rounded-cell bg-base px-2 py-1 text-xs font-medium text-muted">{level}</span>
         </div>
-        <h3 className="font-display text-lg font-bold text-ink">{title}</h3>
-        <p className="text-sm text-muted">{description}</p>
+        <h3 className="font-display text-xl font-bold leading-tight text-ink sm:text-lg">{title}</h3>
+        <p className="text-base leading-6 text-muted sm:text-sm sm:leading-normal">{description}</p>
         <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2">
-          <span className="font-mono text-xs text-muted">{duration}</span>
-          <Link href={`/cursos/${slug}`} className="text-sm font-medium text-accent group-hover:underline">
+          <span className="font-mono text-sm text-muted sm:text-xs">{duration}</span>
+          <Link href={`/cursos/${slug}`} className="text-base font-medium text-accent group-hover:underline sm:text-sm">
             Ver curso →
           </Link>
         </div>

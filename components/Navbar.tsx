@@ -46,14 +46,14 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-line bg-base/90 backdrop-blur">
-      <nav className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+      <nav className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-6 sm:py-4">
         <Link href="/" aria-label="DataM, inicio" className="flex items-center">
           <Image
             src="/images/datam-logo.svg"
             alt="DataM"
             width={90}
             height={60}
-            className="datam-logo-nav h-12 w-[72px] object-contain"
+            className="datam-logo-nav h-12 w-[82px] object-contain sm:w-[90px]"
             priority
           />
         </Link>
@@ -111,7 +111,7 @@ export default function Navbar() {
         </button>
       </nav>
       {isMenuOpen && (
-        <div className="border-t border-line bg-base px-6 py-4 md:hidden">
+        <div className="max-h-[calc(100vh-72px)] overflow-y-auto border-t border-line bg-base px-4 py-4 md:hidden sm:px-6">
           <div className="mx-auto flex max-w-6xl flex-col gap-3 text-sm">
             <Link href="/cursos" onClick={closeMenu}>Cursos</Link>
             <Link href="/comunidad" onClick={closeMenu}>Comunidad</Link>

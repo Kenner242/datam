@@ -77,11 +77,11 @@ export default function CourseSearch() {
   return (
     <section className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Búscador Principal */}
-      <div className="mx-auto max-w-6xl px-6 pt-16 pb-12">
-        <h1 className="mb-2 font-display text-2xl font-bold text-ink sm:text-3xl md:text-4xl">
+      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-16">
+        <h1 className="mb-2 font-display text-3xl font-bold text-ink sm:text-3xl md:text-4xl">
           Cursos de DataM
         </h1>
-        <p className="mb-8 text-lg text-muted">
+        <p className="mb-8 text-base leading-6 text-muted sm:text-lg sm:leading-7">
           Desarrolla tus habilidades en análisis de datos, programación y más
         </p>
 
@@ -94,7 +94,7 @@ export default function CourseSearch() {
               placeholder="¿Qué habilidad deseas desarrollar?"
               value={searchTerm}
               onChange={handleSearch}
-              className="w-full border-none bg-transparent py-4 pl-12 pr-4 text-ink placeholder-muted focus:outline-none focus:ring-0"
+              className="w-full border-none bg-transparent py-4 pl-12 pr-4 text-base text-ink placeholder-muted focus:outline-none focus:ring-0 sm:text-lg"
             />
             {searchTerm && (
               <button
@@ -135,7 +135,7 @@ export default function CourseSearch() {
           </h2>
 
           {totalResults > 0 ? (
-            <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:gap-6">
+            <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3 lg:gap-6">
               {groups.map(({ track, levels }) => (
                 <CourseModuleGroup
                   key={track}

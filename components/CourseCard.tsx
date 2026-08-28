@@ -21,7 +21,7 @@ export default function CourseCard({
 }: CourseCardProps) {
   return (
     <div className="data-cell group flex flex-col gap-3 overflow-hidden transition-shadow hover:shadow-md">
-      <div className="flex h-40 items-center justify-center bg-base p-6">
+      <div className="flex aspect-[16/10] items-center justify-center bg-base p-5 sm:p-6">
         <img src={image} alt={`Imagen del curso ${title}`} className="h-full w-full object-contain" loading="lazy" />
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
@@ -31,7 +31,7 @@ export default function CourseCard({
         </div>
         <h3 className="font-display text-lg font-bold text-ink">{title}</h3>
         <p className="text-sm text-muted">{description}</p>
-        <div className="mt-auto flex items-center justify-between pt-2">
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2">
           <span className="font-mono text-xs text-muted">{duration}</span>
           <Link href={`/cursos/${slug}`} className="text-sm font-medium text-accent group-hover:underline">
             Ver curso →

@@ -78,7 +78,7 @@ export default function CourseSearch() {
     <section className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
       {/* Búscador Principal */}
       <div className="mx-auto max-w-6xl px-6 pt-16 pb-12">
-        <h1 className="mb-2 font-display text-4xl font-bold text-ink">
+        <h1 className="mb-2 font-display text-2xl font-bold text-ink sm:text-3xl md:text-4xl">
           Cursos de DataM
         </h1>
         <p className="mb-8 text-lg text-muted">
@@ -135,7 +135,7 @@ export default function CourseSearch() {
           </h2>
 
           {totalResults > 0 ? (
-            <div className="grid gap-6 md:grid-cols-3">
+            <div className="grid gap-5 sm:grid-cols-2 md:grid-cols-3 lg:gap-6">
               {groups.map(({ track, levels }) => (
                 <CourseModuleGroup
                   key={track}

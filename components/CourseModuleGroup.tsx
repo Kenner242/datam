@@ -17,8 +17,8 @@ export default function CourseModuleGroup({ track, title, image, description, pr
       href={`/cursos/modulo/${track}`}
       className="data-cell group flex flex-col gap-3 overflow-hidden transition-shadow hover:shadow-md"
     >
-      <div className="flex h-44 items-center justify-center p-5">
-        <img src={image} alt={`Herramienta ${title}`} className="h-28 w-28 object-contain transition-transform duration-300 group-hover:scale-105" loading="lazy" />
+      <div className="flex aspect-[16/10] items-center justify-center p-5 sm:p-6">
+        <img src={image} alt={`Herramienta ${title}`} className="h-24 w-24 object-contain transition-transform duration-300 group-hover:scale-105 sm:h-28 sm:w-28" loading="lazy" />
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="flex items-center justify-between">
@@ -31,7 +31,7 @@ export default function CourseModuleGroup({ track, title, image, description, pr
           <p className="data-cell-header">Lograrás</p>
           <p className="mt-1 text-sm leading-5 text-ink">{professionalUse}</p>
         </div>
-        <div className="mt-auto flex items-center justify-between pt-2">
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2">
           <span className="text-sm font-medium text-accent group-hover:underline">Ver módulo →</span>
         </div>
       </div>

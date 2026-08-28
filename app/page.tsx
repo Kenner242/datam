@@ -5,32 +5,32 @@ import { Facebook, Linkedin, MessageCircle, Instagram, Mail, Code2, Database, Ba
 
 const featuredCourses = [
   {
-    slug: "excel-avanzado",
-    code: "B1",
-    title: "Excel Avanzado para Análisis de Datos",
+    slug: "excel-intermedio",
+    code: "B2",
+    title: "Excel Intermedio para Análisis de Datos",
     level: "Intermedio",
     duration: "6 semanas",
-    image: "https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=900&q=80",
+    image: "/images/tools/excel.svg",
     description:
       "Tablas dinámicas, fórmulas avanzadas y automatización básica para el trabajo diario.",
   },
   {
-    slug: "power-bi-desde-cero",
-    code: "B2",
-    title: "Power BI desde Cero",
-    level: "Principiante",
+    slug: "power-bi-basico",
+    code: "B4",
+    title: "Power BI Básico desde Cero",
+    level: "Básico",
     duration: "5 semanas",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=900&q=80",
+    image: "/images/tools/power%20bi.png",
     description:
       "Construye dashboards reales conectando y modelando datos de distintas fuentes.",
   },
   {
-    slug: "python-para-datos",
-    code: "B3",
-    title: "Python para Análisis de Datos",
+    slug: "python-intermedio",
+    code: "B11",
+    title: "Python Intermedio para Análisis de Datos",
     level: "Intermedio",
     duration: "8 semanas",
-    image: "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=900&q=80",
+    image: "https://cdn.simpleicons.org/python/3776AB",
     description:
       "Pandas, visualización y automatización de reportes con proyectos aplicados.",
   },

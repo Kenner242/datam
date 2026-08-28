@@ -21,7 +21,9 @@ export default function CourseCard({
 }: CourseCardProps) {
   return (
     <div className="data-cell group flex flex-col gap-3 overflow-hidden transition-shadow hover:shadow-md">
-      <img src={image} alt={`Imagen del curso ${title}`} className="h-40 w-full object-cover" loading="lazy" />
+      <div className="flex h-40 items-center justify-center bg-base p-6">
+        <img src={image} alt={`Imagen del curso ${title}`} className="h-full w-full object-contain" loading="lazy" />
+      </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div className="flex items-center justify-between">
           <span className="data-cell-header">{code}</span>

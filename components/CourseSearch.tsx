@@ -2,8 +2,9 @@
 
 import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
-import { courses } from "@/lib/courses";
+import { courses, GROUPED_TRACKS, getTrack } from "@/lib/courses";
 import CourseCard from "./CourseCard";
+import CourseModuleGroup from "./CourseModuleGroup";
 
 const trends = [
   "Python",
@@ -18,12 +19,14 @@ const trends = [
   "Research Methods",
 ];
 
+const LEVEL_ORDER: Record<string, number> = { Básico: 0, Intermedio: 1, Avanzado: 2 };
+
 export default function CourseSearch() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredCourses = useMemo(() => {
     if (!searchTerm.trim()) return courses;
-    
+
     const lowerSearch = searchTerm.toLowerCase();
     return courses.filter(
       (course) =>
@@ -33,6 +36,31 @@ export default function CourseSearch() {
         course.professionalUse.toLowerCase().includes(lowerSearch)
     );
   }, [searchTerm]);
+
+  const { groups, singleCourses } = useMemo(() => {
+    const groupMap = new Map<string, typeof courses>();
+    const singles: typeof courses = [];
+
+    for (const course of filteredCourses) {
+      const track = getTrack(course.slug);
+      if (GROUPED_TRACKS.has(track)) {
+        const existing = groupMap.get(track) ?? [];
+        existing.push(course);
+        groupMap.set(track, existing);
+      } else {
+        singles.push(course);
+      }
+    }
+
+    const groupList = Array.from(groupMap.entries()).map(([track, levels]) => ({
+      track,
+      levels: [...levels].sort((a, b) => (LEVEL_ORDER[a.level] ?? 0) - (LEVEL_ORDER[b.level] ?? 0)),
+    }));
+
+    return { groups: groupList, singleCourses: singles };
+  }, [filteredCourses]);
+
+  const totalResults = groups.length + singleCourses.length;
 
   const handleTrendClick = (trend: string) => {
     setSearchTerm(trend);
@@ -102,13 +130,24 @@ export default function CourseSearch() {
         <div>
           <h2 className="mb-6 font-display text-2xl font-bold text-ink">
             {searchTerm
-              ? `Cursos encontrados: ${filteredCourses.length}`
+              ? `Cursos encontrados: ${totalResults}`
               : "Todos los cursos"}
           </h2>
 
-          {filteredCourses.length > 0 ? (
+          {totalResults > 0 ? (
             <div className="grid gap-6 md:grid-cols-3">
-              {filteredCourses.map((course) => (
+              {groups.map(({ track, levels }) => (
+                <CourseModuleGroup
+                  key={track}
+                  track={track}
+                  title={levels[0].title.replace(/\s*(Básico|Intermedio|Avanzado)$/, "")}
+                  image={levels[0].image}
+                  description={levels[0].description}
+                  professionalUse={levels[levels.length - 1].professionalUse}
+                  levels={levels}
+                />
+              ))}
+              {singleCourses.map((course) => (
                 <CourseCard key={course.code} {...course} />
               ))}
             </div>
@@ -133,3 +172,4 @@ export default function CourseSearch() {
     </section>
   );
 }
+

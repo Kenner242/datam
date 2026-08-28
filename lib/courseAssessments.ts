@@ -25,7 +25,17 @@ const sharedQuestions: AssessmentQuestion[] = [
 ];
 
 const assessments: Record<string, CourseAssessment> = {
-  "excel-avanzado": {
+  "excel-basico": {
+    projectTitle: "Registro ordenado en Excel",
+    projectInstructions: "Crea una hoja de cálculo con una base de datos simple, aplica formato de tabla, filtros y al menos tres fórmulas básicas (SUMA, PROMEDIO, SI).",
+    acceptedFormats: "Comparte un enlace de OneDrive, Google Drive o GitHub con tu archivo .xlsx.",
+    questions: [
+      { prompt: "¿Qué función suma valores que cumplen una condición?", options: ["SUMAR.SI", "PROMEDIO", "CONTAR", "BUSCARV"], correctOption: 0 },
+      { prompt: "¿Qué referencia cambia al copiar una fórmula hacia otra celda?", options: ["Relativa", "Absoluta", "Mixta con $ en fila y columna", "Ninguna"], correctOption: 0 },
+      ...sharedQuestions,
+    ],
+  },
+  "excel-intermedio": {
     projectTitle: "Dashboard de ventas en Excel",
     projectInstructions: "Crea un archivo con una base de ventas, fórmulas de análisis, una tabla dinámica y un dashboard que permita identificar el producto o región con mejor desempeño.",
     acceptedFormats: "Comparte un enlace de OneDrive, Google Drive o GitHub con tu archivo .xlsx.",
@@ -35,7 +45,17 @@ const assessments: Record<string, CourseAssessment> = {
       ...sharedQuestions,
     ],
   },
-  "power-bi-desde-cero": {
+  "excel-avanzado": {
+    projectTitle: "Modelo de datos automatizado en Excel",
+    projectInstructions: "Importa y transforma datos con Power Query, crea un modelo con Power Pivot y automatiza al menos una tarea con una macro grabada.",
+    acceptedFormats: "Comparte un enlace de OneDrive, Google Drive o GitHub con tu archivo .xlsx habilitado para macros.",
+    questions: [
+      { prompt: "¿Qué herramienta se usa para importar y transformar datos antes de analizarlos?", options: ["Power Query", "Formato condicional", "Buscar y reemplazar", "Validación de datos"], correctOption: 0 },
+      { prompt: "¿Qué permite automatizar tareas repetitivas en Excel?", options: ["Una macro", "Un filtro", "Un comentario", "Un hipervínculo"], correctOption: 0 },
+      ...sharedQuestions,
+    ],
+  },
+  "power-bi-basico": {
     projectTitle: "Dashboard comercial en Power BI",
     projectInstructions: "Construye un dashboard con ventas, fecha, producto y región. Incluye al menos tres indicadores, segmentadores y una conclusión de negocio.",
     acceptedFormats: "Comparte un enlace de OneDrive, Google Drive o Power BI Service con tu archivo .pbix o informe publicado.",
@@ -45,17 +65,27 @@ const assessments: Record<string, CourseAssessment> = {
       ...sharedQuestions,
     ],
   },
-  "python-para-datos": {
-    projectTitle: "Reporte automatizado con Python",
-    projectInstructions: "Analiza un archivo CSV con Pandas, limpia datos relevantes, calcula al menos dos métricas y genera un gráfico con una conclusión.",
-    acceptedFormats: "Comparte un enlace de GitHub, Google Drive o Colab con tu archivo .ipynb o .py.",
+  "power-bi-intermedio": {
+    projectTitle: "Modelo de datos con medidas DAX",
+    projectInstructions: "Diseña un modelo con una tabla calendario y relaciones correctas, y crea al menos tres medidas DAX que comparen periodos.",
+    acceptedFormats: "Comparte un enlace de OneDrive, Google Drive o Power BI Service con tu archivo .pbix.",
     questions: [
-      { prompt: "¿Qué estructura usa Pandas para trabajar con datos tabulares?", options: ["DataFrame", "Variable global", "Lista CSS", "Tabla dinámica"], correctOption: 0 },
-      { prompt: "¿Qué acción es clave antes de analizar una base?", options: ["Limpiar y revisar datos", "Cambiar todos los nombres", "Eliminar columnas al azar", "Exportar sin revisar"], correctOption: 0 },
+      { prompt: "¿Qué función se usa para modificar el contexto de filtro en DAX?", options: ["CALCULATE", "SUM", "IF", "COUNT"], correctOption: 0 },
+      { prompt: "¿Para qué sirve una tabla calendario?", options: ["Calcular indicadores de tiempo", "Guardar imágenes", "Ordenar columnas de texto", "Crear segmentadores visuales"], correctOption: 0 },
       ...sharedQuestions,
     ],
   },
-  "sql-para-analisis": {
+  "power-bi-avanzado": {
+    projectTitle: "Informe seguro y publicado en Power BI Service",
+    projectInstructions: "Aplica seguridad a nivel de fila (RLS) a un modelo, prueba al menos dos roles y publica el informe con actualización programada.",
+    acceptedFormats: "Comparte un enlace de Power BI Service con el informe publicado y la configuración de roles documentada.",
+    questions: [
+      { prompt: "¿Qué mecanismo restringe los datos que ve cada usuario en Power BI?", options: ["Seguridad a nivel de fila (RLS)", "Un marcador", "Un tema visual", "Un tooltip"], correctOption: 0 },
+      { prompt: "¿Dónde se publican y comparten los informes de Power BI?", options: ["Power BI Service", "Un correo electrónico", "Una hoja de Excel", "Un documento PDF"], correctOption: 0 },
+      ...sharedQuestions,
+    ],
+  },
+  "sql-basico": {
     projectTitle: "Consulta de indicadores con SQL",
     projectInstructions: "Diseña consultas que filtren información, unan dos tablas y calculen un indicador de negocio usando una base de práctica.",
     acceptedFormats: "Comparte un enlace de GitHub, Google Drive o un archivo .sql.",
@@ -65,13 +95,93 @@ const assessments: Record<string, CourseAssessment> = {
       ...sharedQuestions,
     ],
   },
-  "power-query": {
-    projectTitle: "Proceso de limpieza de datos",
-    projectInstructions: "Importa una base con problemas de calidad, transforma sus columnas y deja una consulta lista para actualizar y analizar.",
-    acceptedFormats: "Comparte un enlace de OneDrive, Google Drive o un archivo .xlsx con la consulta.",
+  "sql-intermedio": {
+    projectTitle: "Reporte con múltiples tablas y subconsultas",
+    projectInstructions: "Escribe consultas que combinen al menos tres tablas, incluyan una subconsulta y una vista o CTE reutilizable.",
+    acceptedFormats: "Comparte un enlace de GitHub, Google Drive o un archivo .sql.",
     questions: [
-      { prompt: "¿Para qué sirve Power Query?", options: ["Importar y transformar datos", "Diseñar diapositivas", "Enviar correos", "Crear contraseñas"], correctOption: 0 },
-      { prompt: "¿Qué mejora la repetición de un proceso de limpieza?", options: ["Pasos documentados y actualizables", "Copiar datos manualmente", "Eliminar el origen", "Usar capturas"], correctOption: 0 },
+      { prompt: "¿Qué permite reutilizar una consulta compleja dentro de otra?", options: ["Una CTE", "Un ORDER BY", "Un LIMIT", "Un DELETE"], correctOption: 0 },
+      { prompt: "¿Qué función asigna un número de fila dentro de una partición?", options: ["ROW_NUMBER", "SUM", "AVG", "COUNT"], correctOption: 0 },
+      ...sharedQuestions,
+    ],
+  },
+  "sql-avanzado": {
+    projectTitle: "Optimización y procedimiento almacenado",
+    projectInstructions: "Optimiza una consulta lenta usando índices, y crea un procedimiento almacenado que reciba parámetros y controle errores.",
+    acceptedFormats: "Comparte un enlace de GitHub, Google Drive o un archivo .sql.",
+    questions: [
+      { prompt: "¿Qué estructura mejora el rendimiento de búsquedas frecuentes?", options: ["Un índice", "Un comentario", "Un alias", "Un LIMIT"], correctOption: 0 },
+      { prompt: "¿Qué instrucción confirma los cambios de una transacción?", options: ["COMMIT", "SELECT", "JOIN", "WHERE"], correctOption: 0 },
+      ...sharedQuestions,
+    ],
+  },
+  "python-basico": {
+    projectTitle: "Programa básico en Python",
+    projectInstructions: "Escribe un programa que use variables, condicionales, un ciclo y al menos una función propia para resolver un problema simple.",
+    acceptedFormats: "Comparte un enlace de GitHub, Google Drive o Colab con tu archivo .py.",
+    questions: [
+      { prompt: "¿Qué estructura repite instrucciones mientras se cumple una condición?", options: ["Ciclo while", "Diccionario", "Función", "Comentario"], correctOption: 0 },
+      { prompt: "¿Qué permite reutilizar un bloque de código con distintos valores?", options: ["Una función", "Una variable global", "Un comentario", "Un print"], correctOption: 0 },
+      ...sharedQuestions,
+    ],
+  },
+  "python-intermedio": {
+    projectTitle: "Reporte automatizado con Python",
+    projectInstructions: "Analiza un archivo CSV con Pandas, limpia datos relevantes, calcula al menos dos métricas y genera un gráfico con una conclusión.",
+    acceptedFormats: "Comparte un enlace de GitHub, Google Drive o Colab con tu archivo .ipynb o .py.",
+    questions: [
+      { prompt: "¿Qué estructura usa Pandas para trabajar con datos tabulares?", options: ["DataFrame", "Variable global", "Lista CSS", "Tabla dinámica"], correctOption: 0 },
+      { prompt: "¿Qué acción es clave antes de analizar una base?", options: ["Limpiar y revisar datos", "Cambiar todos los nombres", "Eliminar columnas al azar", "Exportar sin revisar"], correctOption: 0 },
+      ...sharedQuestions,
+    ],
+  },
+  "python-avanzado": {
+    projectTitle: "Script orientado a objetos con consumo de API",
+    projectInstructions: "Crea al menos una clase con métodos propios y un script que consuma una API pública, maneje errores y guarde el resultado en un archivo.",
+    acceptedFormats: "Comparte un enlace de GitHub con tu repositorio y archivo .py.",
+    questions: [
+      { prompt: "¿Qué palabra clave define una clase en Python?", options: ["class", "def", "import", "return"], correctOption: 0 },
+      { prompt: "¿Qué formato usan comúnmente las respuestas de una API?", options: ["JSON", "XLSX", "DOCX", "PPTX"], correctOption: 0 },
+      ...sharedQuestions,
+    ],
+  },
+  "ingles-basico": {
+    projectTitle: "Presentación personal en inglés",
+    projectInstructions: "Graba o escribe una presentación breve sobre ti usando presente simple, incluyendo tu rutina diaria y datos personales básicos.",
+    acceptedFormats: "Comparte un enlace de Google Drive con un audio, video o documento de texto.",
+    questions: [
+      { prompt: "¿Qué verbo se usa para describir estados y características (soy, estoy)?", options: ["To be", "To do", "To have", "To go"], correctOption: 0 },
+      { prompt: "¿Qué tiempo verbal se usa para describir rutinas diarias?", options: ["Presente simple", "Pasado simple", "Futuro", "Presente perfecto"], correctOption: 0 },
+      ...sharedQuestions,
+    ],
+  },
+  "ingles-intermedio": {
+    projectTitle: "Correo profesional en inglés",
+    projectInstructions: "Redacta un correo formal en inglés solicitando información o proponiendo una reunión, usando pasado o futuro según corresponda.",
+    acceptedFormats: "Comparte un enlace de Google Drive o un archivo PDF/Word con tu correo.",
+    questions: [
+      { prompt: "¿Qué tono se recomienda usar en un correo de trabajo?", options: ["Formal", "Muy informal", "Con abreviaciones", "Sin saludo"], correctOption: 0 },
+      { prompt: "¿Qué tiempo verbal se usa para narrar experiencias pasadas?", options: ["Pasado simple", "Presente simple", "Futuro", "Imperativo"], correctOption: 0 },
+      ...sharedQuestions,
+    ],
+  },
+  "ingles-avanzado": {
+    projectTitle: "Presentación de negociación en inglés",
+    projectInstructions: "Prepara una presentación o simulación de negociación en inglés, incluyendo una propuesta, argumentos y respuesta a posibles objeciones.",
+    acceptedFormats: "Comparte un enlace de Google Drive con un video, audio o documento de la presentación.",
+    questions: [
+      { prompt: "¿Qué elemento es clave en una negociación efectiva?", options: ["Argumentar una postura con claridad", "Hablar sin escuchar", "Evitar llegar a acuerdos", "Usar solo vocabulario informal"], correctOption: 0 },
+      { prompt: "¿Qué característica debe tener un reporte profesional en inglés?", options: ["Cohesión y registro formal", "Errores intencionales", "Lenguaje coloquial", "Frases inconexas"], correctOption: 0 },
+      ...sharedQuestions,
+    ],
+  },
+  "programacion-desarrollo-web": {
+    projectTitle: "Sitio web funcional",
+    projectInstructions: "Crea una página web responsive con estructura semántica, estilos propios y una interacción básica en JavaScript.",
+    acceptedFormats: "Comparte el enlace publicado y el repositorio de GitHub.",
+    questions: [
+      { prompt: "¿Qué lenguaje aporta estructura semántica a una página web?", options: ["HTML", "CSS", "SQL", "Power BI"], correctOption: 0 },
+      { prompt: "¿Qué técnica ayuda a adaptar un sitio a celulares?", options: ["Diseño responsive", "Texto fijo", "Imágenes sin tamaño", "Solo escritorio"], correctOption: 0 },
       ...sharedQuestions,
     ],
   },
@@ -92,16 +202,6 @@ const assessments: Record<string, CourseAssessment> = {
     questions: [
       { prompt: "¿Qué debe responder un objetivo de investigación?", options: ["Qué se busca lograr", "El color del informe", "La opinión personal", "El nombre del archivo"], correctOption: 0 },
       { prompt: "¿Por qué se citan las fuentes?", options: ["Para respaldar y atribuir información", "Para llenar páginas", "Para evitar analizar", "Para usar más texto"], correctOption: 0 },
-      ...sharedQuestions,
-    ],
-  },
-  "programacion-desarrollo-web": {
-    projectTitle: "Sitio web funcional",
-    projectInstructions: "Crea una página web responsive con estructura semántica, estilos propios y una interacción básica en JavaScript.",
-    acceptedFormats: "Comparte el enlace publicado y el repositorio de GitHub.",
-    questions: [
-      { prompt: "¿Qué lenguaje aporta estructura semántica a una página web?", options: ["HTML", "CSS", "SQL", "Power BI"], correctOption: 0 },
-      { prompt: "¿Qué técnica ayuda a adaptar un sitio a celulares?", options: ["Diseño responsive", "Texto fijo", "Imágenes sin tamaño", "Solo escritorio"], correctOption: 0 },
       ...sharedQuestions,
     ],
   },

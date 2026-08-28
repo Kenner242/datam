@@ -16,17 +16,26 @@ type SearchResult = {
 };
 
 const toolImages: Record<string, string> = {
+  "excel-basico": "/images/tools/excel.svg",
+  "excel-intermedio": "/images/tools/excel.svg",
   "excel-avanzado": "/images/tools/excel.svg",
-  "power-bi-desde-cero": "https://cdn.simpleicons.org/powerbi/F2C811",
-  "python-para-datos": "https://cdn.simpleicons.org/python/3776AB",
-  "sql-para-analisis": "https://cdn.simpleicons.org/postgresql/4169E1",
-  "power-query": "https://cdn.simpleicons.org/microsoft/00A4EF",
+  "power-bi-basico": "/images/tools/power%20bi.png",
+  "power-bi-intermedio": "/images/tools/power%20bi.png",
+  "power-bi-avanzado": "/images/tools/power%20bi.png",
+  "python-basico": "https://cdn.simpleicons.org/python/3776AB",
+  "python-intermedio": "https://cdn.simpleicons.org/python/3776AB",
+  "python-avanzado": "https://cdn.simpleicons.org/python/3776AB",
+  "sql-basico": "https://cdn.simpleicons.org/postgresql/4169E1",
+  "sql-intermedio": "https://cdn.simpleicons.org/postgresql/4169E1",
+  "sql-avanzado": "https://cdn.simpleicons.org/postgresql/4169E1",
+  "ingles-basico": "https://cdn.simpleicons.org/googletranslate/4285F4",
+  "ingles-intermedio": "https://cdn.simpleicons.org/googletranslate/4285F4",
+  "ingles-avanzado": "https://cdn.simpleicons.org/googletranslate/4285F4",
   "introduccion-a-la-ia": "https://cdn.simpleicons.org/openai/412991",
-  "investigacion-aplicada": "https://cdn.simpleicons.org/googlescholar/4285F4",
+  "investigacion-aplicada": "https://cdn.simpleicons.org/mendeley/9D1720",
   "programacion-desarrollo-web": "https://cdn.simpleicons.org/html5/E34F26",
-  "finanzas-para-emprendedores": "/images/tools/excel.svg",
+  "finanzas-para-emprendedores": "https://cdn.simpleicons.org/xero/13B5EA",
 };
-
 export default function NavbarSearch() {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);

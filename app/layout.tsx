@@ -30,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es">
+    <html lang="es" data-scroll-behavior="smooth">
       <body
         className={`${display.variable} ${body.variable} ${mono.variable} font-body antialiased`}
       >

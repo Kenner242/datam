@@ -8,34 +8,46 @@ const MATERIAL_LABELS: Record<MaterialType, string> = {
 	solucion: "Solución final",
 };
 
-const FILENAME_PATTERN = /^(\d{2})-(\d{2})-(plantilla|guia|solucion)\.([a-zA-Z0-9]+)$/;
+const MODULE_PATTERN = /^modulo-(\d{2})-/;
+const LESSON_PATTERN = /^clase-(\d{2})-/;
+const MATERIAL_PATTERN = /^(plantilla|guia|solucion)\.([a-zA-Z0-9]+)$/;
 const materialsRoot = path.join(process.cwd(), "public", "materiales");
 
-// Escanea public/materiales/{slug} y agrupa los archivos por clase (modulo-clase).
+// Escanea public/materiales/{curso}/modulo-{nn}/clase-{nn} y agrupa los archivos por clase.
 export function getCourseMaterials(slug: string): Record<string, LessonMaterials> {
 	const courseDir = path.join(materialsRoot, slug);
 	const result: Record<string, LessonMaterials> = {};
 	if (!fs.existsSync(courseDir)) return result;
 
-	const files = fs.readdirSync(courseDir, { withFileTypes: true }).filter((entry) => entry.isFile());
+	for (const moduleEntry of fs.readdirSync(courseDir, { withFileTypes: true })) {
+		const moduleMatch = moduleEntry.name.match(MODULE_PATTERN);
+		if (!moduleEntry.isDirectory() || !moduleMatch) continue;
+		const moduleDir = path.join(courseDir, moduleEntry.name);
 
-	for (const file of files) {
-		const match = file.name.match(FILENAME_PATTERN);
-		if (!match) continue;
-		const [, moduleNum, lessonNum, type, ext] = match;
-		const key = `${moduleNum}-${lessonNum}`;
-		const materialType = type as MaterialType;
-		const stats = fs.statSync(path.join(courseDir, file.name));
+		for (const lessonEntry of fs.readdirSync(moduleDir, { withFileTypes: true })) {
+			const lessonMatch = lessonEntry.name.match(LESSON_PATTERN);
+			if (!lessonEntry.isDirectory() || !lessonMatch) continue;
+			const lessonDir = path.join(moduleDir, lessonEntry.name);
+			const key = `${moduleMatch[1]}-${lessonMatch[1]}`;
 
-		result[key] = {
-			...result[key],
-			[materialType]: {
-				label: MATERIAL_LABELS[materialType],
-				href: `/materiales/${slug}/${encodeURIComponent(file.name)}`,
-				sizeKB: Math.max(1, Math.round(stats.size / 1024)),
-				ext: ext.toUpperCase(),
-			},
-		};
+			for (const file of fs.readdirSync(lessonDir, { withFileTypes: true })) {
+				const materialMatch = file.name.match(MATERIAL_PATTERN);
+				if (!file.isFile() || !materialMatch) continue;
+				const [, type, ext] = materialMatch;
+				const materialType = type as MaterialType;
+				const stats = fs.statSync(path.join(lessonDir, file.name));
+
+				result[key] = {
+					...result[key],
+					[materialType]: {
+						label: MATERIAL_LABELS[materialType],
+						href: `/materiales/${slug}/${encodeURIComponent(moduleEntry.name)}/${encodeURIComponent(lessonEntry.name)}/${encodeURIComponent(file.name)}`,
+						sizeKB: Math.max(1, Math.round(stats.size / 1024)),
+						ext: ext.toUpperCase(),
+					},
+				};
+			}
+		}
 	}
 
 	return result;

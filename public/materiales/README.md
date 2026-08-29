@@ -1,29 +1,32 @@
 # Materiales descargables por curso
 
-Aquí subes los archivos que los estudiantes podrán descargar dentro de cada clase (plantilla de trabajo, guía/resumen y solución final). No necesitas tocar código: solo copia tus archivos dentro de la carpeta del curso correspondiente, con el nombre exacto indicado abajo, y la plataforma los mostrará automáticamente.
+Aquí subes los archivos que los estudiantes podrán descargar dentro de cada clase (plantilla de trabajo, guía/resumen y solución final). No necesitas tocar código: entra a la carpeta del curso, módulo y clase correspondiente, luego copia tus archivos con uno de los nombres indicados abajo. La plataforma los mostrará automáticamente.
 
 ## Cómo nombrar cada archivo
 
-`{modulo}-{clase}-{tipo}.{extension}`
+La ruta se organiza así:
 
-- `modulo` y `clase`: número de 2 dígitos (01, 02, 03...) según la tabla de cada curso más abajo.
-- `tipo`: uno de estos 3 valores exactos: `plantilla`, `guia`, `solucion`.
-- `extension`: la que corresponda a tu archivo (xlsx, pdf, docx, pbix, sql, py, ipynb, zip, etc.). Puedes usar cualquier extensión, la plataforma solo detecta el nombre.
+`{curso}/modulo-{nn}-{nombre}/clase-{nn}-{nombre}/{tipo}.{extension}`
 
-Ejemplos válidos dentro de `excel-intermedio/`:
+- `tipo`: uno de estos 3 nombres exactos: `plantilla`, `guia`, `solucion`.
+- `extension`: la que corresponda a tu archivo (`xlsx`, `pdf`, `docx`, `pbix`, `sql`, `py`, `ipynb`, `zip`, etc.).
+
+Ejemplo para Excel Intermedio, Módulo 02, clase Dashboards en Excel:
 
 ```
-01-01-plantilla.xlsx
-01-01-guia.pdf
-01-01-solucion.xlsx
-02-01-plantilla.xlsx
+excel-intermedio/
+	modulo-02-analisis-y-visualizacion/
+		clase-02-dashboards-en-excel/
+			plantilla.xlsx
+			guia.pdf
+			solucion.xlsx
 ```
 
 Puedes subir 1, 2 o los 3 archivos por clase. Si una clase no tiene archivos todavía, la plataforma muestra "Los materiales de esta clase estarán disponibles próximamente" — así que puedes ir subiendo material de forma progresiva sin romper nada.
 
-## Carpetas ya creadas (una por curso)
+## Carpetas ya creadas
 
-Cada carpeta ya existe dentro de `public/materiales/`, lista para recibir tus archivos:
+Cada curso tiene sus carpetas de módulos y clases creadas dentro de `public/materiales/`, listas para recibir tus archivos. Usa la misma organización que en `public/videos/`.
 
 ### Excel
 - `excel-basico/` — M01 Primeros pasos en Excel: C01 Interfaz y navegación · C02 Fórmulas básicas | M02 Organizar y presentar datos: C01 Tablas y formato · C02 Funciones esenciales

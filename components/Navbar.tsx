@@ -53,7 +53,7 @@ export default function Navbar() {
             alt="DataM"
             width={90}
             height={60}
-            className="datam-logo-nav h-12 w-[82px] object-contain sm:w-[90px]"
+            className="datam-logo-nav h-auto w-[82px] object-contain sm:w-[90px]"
             priority
           />
         </Link>

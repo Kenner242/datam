@@ -8,6 +8,11 @@ import type { Course } from "@/lib/courses";
 import type { LessonMaterials, MaterialType } from "@/lib/materialTypes";
 import { lessonMaterialsKey } from "@/lib/materialTypes";
 
+function getYouTubeEmbedUrl(url: string) {
+  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]{11})/);
+  return match ? `https://www.youtube.com/embed/${match[1]}` : null;
+}
+
 const MATERIAL_STYLES: Record<MaterialType, { badge: string; icon: string; Icon: typeof FileText; title: (lessonTitle: string) => string; description: string }> = {
   plantilla: {
     badge: "bg-blue-100 text-blue-700",
@@ -225,7 +230,11 @@ export default function CourseLessons({ course, materials }: { course: Course; m
                                   <p className="mt-2 text-base font-medium leading-6 text-ink">Al terminar podrás aplicar: {lesson.topics.join(", ")}.</p>
                                 </div>
                                 {lesson.videoUrl ? (
-                                  <video controls preload="metadata" src={lesson.videoUrl} onEnded={() => markCompleted(lessonId)} aria-label={`Video de la clase ${lesson.title}`} className="mt-4 aspect-video w-full rounded-cell bg-ink" />
+                                  getYouTubeEmbedUrl(lesson.videoUrl) ? (
+                                    <iframe src={getYouTubeEmbedUrl(lesson.videoUrl) ?? undefined} title={`Video de la clase ${lesson.title}`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen className="mt-4 aspect-video w-full rounded-cell bg-ink" />
+                                  ) : (
+                                    <video controls preload="metadata" src={lesson.videoUrl} onEnded={() => markCompleted(lessonId)} aria-label={`Video de la clase ${lesson.title}`} className="mt-4 aspect-video w-full rounded-cell bg-ink" />
+                                  )
                                 ) : (
                                   <div role="status" className="mt-4 flex aspect-video items-center justify-center rounded-cell bg-blue-950 px-4 text-center text-sm text-blue-100">El video de esta clase estará disponible próximamente.</div>
                                 )}

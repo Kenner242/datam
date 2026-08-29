@@ -32,6 +32,29 @@ const MATERIAL_STYLES: Record<MaterialType, { badge: string; icon: string; Icon:
   },
 };
 
+function getYouTubeEmbedUrl(videoUrl?: string): string | null {
+  if (!videoUrl) return null;
+
+  try {
+    const url = new URL(videoUrl);
+    const host = url.hostname.toLowerCase();
+
+    if (host.includes("youtu.be")) {
+      const videoId = url.pathname.replace(/^\//, "").split("/")[0];
+      return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+    }
+
+    if (host.includes("youtube.com")) {
+      const videoId = url.searchParams.get("v");
+      return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
+    }
+  } catch {
+    return null;
+  }
+
+  return null;
+}
+
 export default function CourseLessons({ course, materials }: { course: Course; materials: Record<string, LessonMaterials> }) {
   const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);
@@ -224,9 +247,37 @@ export default function CourseLessons({ course, materials }: { course: Course; m
                                   <div className="flex items-center gap-2"><Target className="h-4 w-4 text-accent" /><p className="data-cell-header">Paso 1 · Aprende</p></div>
                                   <p className="mt-2 text-base font-medium leading-6 text-ink">Al terminar podrás aplicar: {lesson.topics.join(", ")}.</p>
                                 </div>
-                                {lesson.videoUrl ? (
-                                  <video controls preload="metadata" src={lesson.videoUrl} onEnded={() => markCompleted(lessonId)} aria-label={`Video de la clase ${lesson.title}`} className="mt-4 aspect-video w-full rounded-cell bg-ink" />
-                                ) : (
+                                {lesson.videoUrl ? (() => {
+                                  const youtubeEmbedUrl = getYouTubeEmbedUrl(lesson.videoUrl);
+
+                                  if (youtubeEmbedUrl) {
+                                    return (
+                                      <div className="mt-4 overflow-hidden rounded-cell bg-ink">
+                                        <div className="relative aspect-video w-full">
+                                          <iframe
+                                            src={youtubeEmbedUrl}
+                                            title={`Video de la clase ${lesson.title}`}
+                                            className="h-full w-full"
+                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                            referrerPolicy="strict-origin-when-cross-origin"
+                                            allowFullScreen
+                                          />
+                                        </div>
+                                      </div>
+                                    );
+                                  }
+
+                                  return (
+                                    <video
+                                      controls
+                                      preload="metadata"
+                                      src={lesson.videoUrl}
+                                      onEnded={() => markCompleted(lessonId)}
+                                      aria-label={`Video de la clase ${lesson.title}`}
+                                      className="mt-4 aspect-video w-full rounded-cell bg-ink"
+                                    />
+                                  );
+                                })() : (
                                   <div role="status" className="mt-4 flex aspect-video items-center justify-center rounded-cell bg-blue-950 px-4 text-center text-sm text-blue-100">El video de esta clase estará disponible próximamente.</div>
                                 )}
                               </div>

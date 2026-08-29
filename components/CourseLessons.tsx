@@ -241,7 +241,7 @@ export default function CourseLessons({ course, materials }: { course: Course; m
                           const materialTypes = (Object.keys(lessonMaterials) as (keyof typeof lessonMaterials)[]);
                           return (
                           <div id={`lesson-content-${course.slug}-${moduleIndex}-${lessonIndex}`} className="border-t border-line bg-base px-3 py-5 sm:px-5">
-                            <div className="grid gap-4 lg:grid-cols-[1.25fr_0.75fr]">
+                            <div className="grid gap-4 lg:grid-cols-[1.5fr_0.85fr] xl:grid-cols-[1.7fr_0.8fr]">
                               <div>
                                 <div className="border-l-4 border-accent bg-blue-50 p-4">
                                   <div className="flex items-center gap-2"><Target className="h-4 w-4 text-accent" /><p className="data-cell-header">Paso 1 · Aprende</p></div>
@@ -249,10 +249,11 @@ export default function CourseLessons({ course, materials }: { course: Course; m
                                 </div>
                                 {lesson.videoUrl ? (() => {
                                   const youtubeEmbedUrl = getYouTubeEmbedUrl(lesson.videoUrl);
+                                  const videoFrameClassName = "mt-4 aspect-video w-full rounded-cell bg-ink shadow-lg ring-1 ring-blue-200";
 
                                   if (youtubeEmbedUrl) {
                                     return (
-                                      <div className="mt-4 overflow-hidden rounded-cell bg-ink">
+                                      <div className="mt-4 overflow-hidden rounded-cell bg-ink shadow-lg ring-1 ring-blue-200">
                                         <div className="relative aspect-video w-full">
                                           <iframe
                                             src={youtubeEmbedUrl}
@@ -274,11 +275,11 @@ export default function CourseLessons({ course, materials }: { course: Course; m
                                       src={lesson.videoUrl}
                                       onEnded={() => markCompleted(lessonId)}
                                       aria-label={`Video de la clase ${lesson.title}`}
-                                      className="mt-4 aspect-video w-full rounded-cell bg-ink"
+                                      className={videoFrameClassName}
                                     />
                                   );
                                 })() : (
-                                  <div role="status" className="mt-4 flex aspect-video items-center justify-center rounded-cell bg-blue-950 px-4 text-center text-sm text-blue-100">El video de esta clase estará disponible próximamente.</div>
+                                  <div role="status" className="mt-4 flex aspect-video items-center justify-center rounded-cell bg-blue-950 px-4 text-center text-sm text-blue-100 shadow-lg ring-1 ring-blue-200">El video de esta clase estará disponible próximamente.</div>
                                 )}
                               </div>
                               <aside className="data-cell h-fit p-4 sm:p-5 lg:sticky lg:top-24">

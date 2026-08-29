@@ -107,10 +107,8 @@ export default function VideoFolderUploader() {
       await uploadFolderProgressively(
         folder,
         async (video) => {
-          await new Promise((resolve) => {
-            setTimeout(resolve, 350);
-          });
-          void video;
+          await new Promise((resolve) => { setTimeout(resolve, 350); });
+          return Promise.resolve(video);
         },
         (payload) => {
           setFolderStates((current) => ({

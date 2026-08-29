@@ -22,6 +22,36 @@ const sharedQuestions: AssessmentQuestion[] = [
     options: ["Que tenga muchos colores", "Que responda al objetivo planteado", "Que use una herramienta avanzada", "Que sea lo más largo posible"],
     correctOption: 1,
   },
+  {
+    prompt: "¿Qué actitud ayuda más a superar un error durante la práctica?",
+    options: ["Revisar el error y corregirlo", "Ignorarlo y continuar", "Borrar todo el trabajo", "Culpar a la herramienta"],
+    correctOption: 0,
+  },
+  {
+    prompt: "¿Por qué es importante seguir el orden de los módulos de un curso?",
+    options: ["Porque cada tema se construye sobre el anterior", "Porque es un requisito sin razón", "Para tardar más tiempo", "No es importante"],
+    correctOption: 0,
+  },
+  {
+    prompt: "¿Qué debes hacer si un concepto no queda claro?",
+    options: ["Repasar el material y practicar de nuevo", "Avanzar sin entenderlo", "Adivinar en el examen", "Copiar la respuesta de otra persona"],
+    correctOption: 0,
+  },
+  {
+    prompt: "¿Cuál es un buen hábito antes de enviar un proyecto final?",
+    options: ["Revisar que cumple con todos los requisitos pedidos", "Enviarlo sin revisar", "Cambiar el formato al azar", "Omitir las instrucciones"],
+    correctOption: 0,
+  },
+  {
+    prompt: "¿Qué papel cumple la práctica constante en el aprendizaje de una herramienta?",
+    options: ["Refuerza la habilidad y la memoria a largo plazo", "No tiene ningún efecto", "Solo sirve para pasar el tiempo", "Reemplaza la teoría por completo"],
+    correctOption: 0,
+  },
+  {
+    prompt: "¿Qué se recomienda hacer con la retroalimentación de un revisor?",
+    options: ["Aplicarla para mejorar el proyecto", "Ignorarla completamente", "Discutir sin analizarla", "Borrar el proyecto"],
+    correctOption: 0,
+  },
 ];
 
 const assessments: Record<string, CourseAssessment> = {

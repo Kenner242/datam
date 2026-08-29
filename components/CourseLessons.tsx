@@ -32,29 +32,6 @@ const MATERIAL_STYLES: Record<MaterialType, { badge: string; icon: string; Icon:
   },
 };
 
-function getYouTubeEmbedUrl(videoUrl?: string): string | null {
-  if (!videoUrl) return null;
-
-  try {
-    const url = new URL(videoUrl);
-    const host = url.hostname.toLowerCase();
-
-    if (host.includes("youtu.be")) {
-      const videoId = url.pathname.replace(/^\//, "").split("/")[0];
-      return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
-    }
-
-    if (host.includes("youtube.com")) {
-      const videoId = url.searchParams.get("v");
-      return videoId ? `https://www.youtube.com/embed/${videoId}` : null;
-    }
-  } catch {
-    return null;
-  }
-
-  return null;
-}
-
 export default function CourseLessons({ course, materials }: { course: Course; materials: Record<string, LessonMaterials> }) {
   const router = useRouter();
   const [userId, setUserId] = useState<string | null>(null);
@@ -241,45 +218,16 @@ export default function CourseLessons({ course, materials }: { course: Course; m
                           const materialTypes = (Object.keys(lessonMaterials) as (keyof typeof lessonMaterials)[]);
                           return (
                           <div id={`lesson-content-${course.slug}-${moduleIndex}-${lessonIndex}`} className="border-t border-line bg-base px-3 py-5 sm:px-5">
-                            <div className="grid gap-4 lg:grid-cols-[1.5fr_0.85fr] xl:grid-cols-[1.7fr_0.8fr]">
+                            <div className="grid gap-4 lg:grid-cols-[1.25fr_0.75fr]">
                               <div>
                                 <div className="border-l-4 border-accent bg-blue-50 p-4">
                                   <div className="flex items-center gap-2"><Target className="h-4 w-4 text-accent" /><p className="data-cell-header">Paso 1 · Aprende</p></div>
                                   <p className="mt-2 text-base font-medium leading-6 text-ink">Al terminar podrás aplicar: {lesson.topics.join(", ")}.</p>
                                 </div>
-                                {lesson.videoUrl ? (() => {
-                                  const youtubeEmbedUrl = getYouTubeEmbedUrl(lesson.videoUrl);
-                                  const videoFrameClassName = "mt-4 aspect-video w-full rounded-cell bg-ink shadow-lg ring-1 ring-blue-200";
-
-                                  if (youtubeEmbedUrl) {
-                                    return (
-                                      <div className="mt-4 overflow-hidden rounded-cell bg-ink shadow-lg ring-1 ring-blue-200">
-                                        <div className="relative aspect-video w-full">
-                                          <iframe
-                                            src={youtubeEmbedUrl}
-                                            title={`Video de la clase ${lesson.title}`}
-                                            className="h-full w-full"
-                                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                            referrerPolicy="strict-origin-when-cross-origin"
-                                            allowFullScreen
-                                          />
-                                        </div>
-                                      </div>
-                                    );
-                                  }
-
-                                  return (
-                                    <video
-                                      controls
-                                      preload="metadata"
-                                      src={lesson.videoUrl}
-                                      onEnded={() => markCompleted(lessonId)}
-                                      aria-label={`Video de la clase ${lesson.title}`}
-                                      className={videoFrameClassName}
-                                    />
-                                  );
-                                })() : (
-                                  <div role="status" className="mt-4 flex aspect-video items-center justify-center rounded-cell bg-blue-950 px-4 text-center text-sm text-blue-100 shadow-lg ring-1 ring-blue-200">El video de esta clase estará disponible próximamente.</div>
+                                {lesson.videoUrl ? (
+                                  <video controls preload="metadata" src={lesson.videoUrl} onEnded={() => markCompleted(lessonId)} aria-label={`Video de la clase ${lesson.title}`} className="mt-4 aspect-video w-full rounded-cell bg-ink" />
+                                ) : (
+                                  <div role="status" className="mt-4 flex aspect-video items-center justify-center rounded-cell bg-blue-950 px-4 text-center text-sm text-blue-100">El video de esta clase estará disponible próximamente.</div>
                                 )}
                               </div>
                               <aside className="data-cell h-fit p-4 sm:p-5 lg:sticky lg:top-24">

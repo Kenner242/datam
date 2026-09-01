@@ -2,7 +2,7 @@ export type Lesson = { title: string; topics: string[]; videoUrl?: string };
 export type BloomLevel = "recordar" | "comprender" | "aplicar" | "analizar" | "evaluar" | "crear";
 export type LearningOutcome = { bloomLevel: BloomLevel; outcome: string };
 export type CourseModule = { title: string; lessons: Lesson[]; bloomLevel?: BloomLevel; learningOutcome?: string };
-export type Course = {
+export type Course = { 
 	slug: string;
 	code: string;
 	title: string;

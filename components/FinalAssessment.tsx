@@ -7,7 +7,6 @@ import { supabase } from "@/lib/supabase/client";
 import type { Course } from "@/lib/courses";
 import { getCourseAssessment } from "@/lib/courseAssessments";
 
-const POINTS_PER_QUESTION = 10;
 const PASSING_SCORE = 70;
 
 export default function FinalAssessment({ course }: { course: Course }) {
@@ -44,6 +43,7 @@ export default function FinalAssessment({ course }: { course: Course }) {
   }, [course]);
 
   if (!assessment) return null;
+  const pointsEach = Math.round((100 / assessment.questions.length) * 10) / 10;
 
   async function submitExam(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -53,7 +53,7 @@ export default function FinalAssessment({ course }: { course: Course }) {
     }
 
     const correct = assessment.questions.reduce((total, question, index) => total + Number(answers[index] === question.correctOption), 0);
-    const nextScore = correct * POINTS_PER_QUESTION;
+    const nextScore = Math.round((correct / assessment.questions.length) * 100);
     const passed = nextScore >= PASSING_SCORE;
     const { data: auth } = await supabase.auth.getUser();
     if (!auth.user) return;
@@ -93,7 +93,7 @@ export default function FinalAssessment({ course }: { course: Course }) {
     <main className="mx-auto max-w-4xl px-6 py-14">
       <span className="data-cell-header">Cierre del curso</span>
       <h1 className="mt-2 font-display text-3xl font-bold text-ink">Evaluación final</h1>
-      <p className="mt-3 text-muted">El examen tiene {assessment.questions.length} preguntas, cada una vale {POINTS_PER_QUESTION} puntos. Para aprobar y certificarte debes obtener al menos {PASSING_SCORE}/100.</p>
+      <p className="mt-3 text-muted">El examen tiene {assessment.questions.length} preguntas. Para aprobar y certificarte debes obtener al menos {PASSING_SCORE}/100.</p>
 
       <section className="data-cell mt-8 p-6">
         <div className="flex items-center gap-3"><ClipboardCheck className="h-6 w-6 text-accent" /><div><p className="data-cell-header">Examen</p><h2 className="font-display text-xl font-bold text-ink">Preguntas del curso</h2></div></div>
@@ -113,7 +113,7 @@ export default function FinalAssessment({ course }: { course: Course }) {
                   <fieldset key={question.prompt} className={`border-l-4 p-4 ${isCorrect ? "border-green-500 bg-green-50" : "border-red-500 bg-red-50"}`}>
                     <legend className="flex items-center gap-2 font-medium text-ink">
                       {isCorrect ? <CheckCircle2 className="h-4 w-4 text-green-600" /> : <XCircle className="h-4 w-4 text-red-600" />}
-                      {questionIndex + 1}. {question.prompt} <span className="ml-auto text-xs font-normal text-muted">{isCorrect ? `+${POINTS_PER_QUESTION} pts` : "0 pts"}</span>
+                      {questionIndex + 1}. {question.prompt} <span className="ml-auto text-xs font-normal text-muted">{isCorrect ? `+${pointsEach} pts` : "0 pts"}</span>
                     </legend>
                     <div className="mt-3 grid gap-2">
                       {question.options.map((option, optionIndex) => {
@@ -144,7 +144,7 @@ export default function FinalAssessment({ course }: { course: Course }) {
           <form onSubmit={submitExam} className="mt-6 space-y-6">
             {assessment.questions.map((question, questionIndex) => (
               <fieldset key={question.prompt}>
-                <legend className="font-medium text-ink">{questionIndex + 1}. {question.prompt} <span className="text-xs font-normal text-muted">({POINTS_PER_QUESTION} pts)</span></legend>
+                <legend className="font-medium text-ink">{questionIndex + 1}. {question.prompt} <span className="text-xs font-normal text-muted">({pointsEach} pts)</span></legend>
                 <div className="mt-3 grid gap-2">
                   {question.options.map((option, optionIndex) => (
                     <label key={option} className="flex cursor-pointer items-center gap-3 border border-line bg-white p-3 text-sm text-ink hover:border-accent">

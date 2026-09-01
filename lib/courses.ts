@@ -1,4 +1,4 @@
-export type Lesson = { title: string; topics: string[]; videoUrl?: string };
+export type Lesson = { title: string; topics: string[] };
 export type BloomLevel = "recordar" | "comprender" | "aplicar" | "analizar" | "evaluar" | "crear";
 export type LearningOutcome = { bloomLevel: BloomLevel; outcome: string };
 export type CourseModule = { title: string; lessons: Lesson[]; bloomLevel?: BloomLevel; learningOutcome?: string };
@@ -12,7 +12,6 @@ export type Course = {
 	image: string;
 	summary: string;
 	professionalUse: string;
-	presentationVideoUrl?: string;
 	graduateProfile?: string;
 	learningOutcomes?: LearningOutcome[];
 	modules: CourseModule[];
@@ -30,13 +29,13 @@ const images = {
 	finance: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=900&q=80",
 };
 
-const lesson = (title: string, topics: string[], videoUrl?: string): Lesson => ({ title, topics, videoUrl });
+const lesson = (title: string, topics: string[]): Lesson => ({ title, topics });
 const module = (title: string, lessons: Lesson[]): CourseModule => ({ title, lessons });
 const common = (slug: string, code: string, title: string, level: string, duration: string, description: string, image: string, summary: string, professionalUse: string, modules: CourseModule[]): Course => ({ slug, code, title, level, duration, description, image, summary, professionalUse, modules });
 
 const baseCourses: Course[] = [
 	// Excel
-	common("excel-basico", "B1", "Excel Básico", "Básico", "4 semanas", "Primeros pasos para organizar y calcular información en Excel.", images.excel, "Aprenderás la interfaz, fórmulas esenciales y el orden de datos para empezar a trabajar con hojas de cálculo con confianza.", "Te permitirá llevar registros simples, calcular totales y presentar información ordenada en cualquier trabajo.", [module("Primeros pasos en Excel", [lesson("Interfaz y navegación", ["Celdas, filas y columnas", "Tipos de datos", "Guardar y compartir archivos"], "https://youtu.be/hoCmAgr-oLM?si=rrnP6V4Hs-V4ZSC6"), lesson("Fórmulas básicas", ["Suma, promedio y conteo", "Referencias relativas", "Orden de operaciones"])]), module("Organizar y presentar datos", [lesson("Tablas y formato", ["Formato como tabla", "Filtros simples", "Formato condicional básico"]), lesson("Funciones esenciales", ["Función SI", "CONTAR.SI", "BUSCARV básico"])])]),
+	common("excel-basico", "B1", "Excel Básico", "Básico", "4 semanas", "Primeros pasos para organizar y calcular información en Excel.", images.excel, "Aprenderás la interfaz, fórmulas esenciales y el orden de datos para empezar a trabajar con hojas de cálculo con confianza.", "Te permitirá llevar registros simples, calcular totales y presentar información ordenada en cualquier trabajo.", [module("Primeros pasos en Excel", [lesson("Interfaz y navegación", ["Celdas, filas y columnas", "Tipos de datos", "Guardar y compartir archivos"]), lesson("Fórmulas básicas", ["Suma, promedio y conteo", "Referencias relativas", "Orden de operaciones"])]), module("Organizar y presentar datos", [lesson("Tablas y formato", ["Formato como tabla", "Filtros simples", "Formato condicional básico"]), lesson("Funciones esenciales", ["Función SI", "CONTAR.SI", "BUSCARV básico"])])]),
 	common("excel-intermedio", "B2", "Excel Intermedio", "Intermedio", "6 semanas", "Tablas dinámicas, fórmulas avanzadas y automatización.", images.excel, "Aprenderás a organizar, analizar y automatizar información en Excel mediante fórmulas avanzadas, tablas dinámicas y reportes claros.", "Te ayudará a crear reportes, controlar presupuestos, analizar ventas y presentar información para tomar decisiones.", [module("Fundamentos para trabajar con datos", [lesson("Estructura de una base de datos", ["Tablas y registros", "Tipos de datos", "Orden y filtros"]), lesson("Fórmulas esenciales", ["Referencias absolutas y relativas", "Funciones lógicas", "Funciones de texto y fecha"])]), module("Análisis y visualización", [lesson("Tablas dinámicas", ["Campos y segmentaciones", "Agrupación de información", "Indicadores de resumen"]), lesson("Dashboards en Excel", ["Gráficos adecuados", "Diseño de reportes", "Presentación de hallazgos"])]), module("Automatización aplicada", [lesson("Procesos eficientes", ["Validación de datos", "Plantillas reutilizables", "Introducción a macros"])])]),
 	common("excel-avanzado", "B3", "Excel Avanzado", "Avanzado", "6 semanas", "Automatiza y modela datos combinando Power Query, Power Pivot y macros.", images.excel, "Dominarás fórmulas avanzadas, Power Query, Power Pivot y macros básicas para construir soluciones robustas de análisis en Excel.", "Te permitirá automatizar procesos repetitivos, consolidar múltiples fuentes y construir modelos de datos confiables para decisiones complejas.", [module("Conectar y transformar datos", [lesson("Importación organizada", ["Excel y CSV", "Tipos de origen", "Actualización de consultas"]), lesson("Preparar datos con Power Query", ["Valores nulos", "Dividir y combinar columnas", "Unir consultas"])]), module("Fórmulas y modelado avanzado", [lesson("Fórmulas de nivel avanzado", ["BUSCARX e INDICE/COINCIDIR", "Fórmulas matriciales", "Funciones anidadas"]), lesson("Power Pivot y modelo de datos", ["Tablas relacionadas", "Medidas con DAX básico", "Modelo de datos en Excel"])]), module("Automatización con macros", [lesson("Macros y VBA básico", ["Grabadora de macros", "Editor de VBA", "Protección y seguridad de archivos"])])]),
 	// Power BI
@@ -144,32 +143,8 @@ function learningOutcomes(courseTitle: string): LearningOutcome[] {
 	];
 }
 
-// Video de presentación por curso (opcional). Pega aquí el enlace de YouTube de cada curso.
-const presentationVideos: Record<string, string> = {
-	"excel-basico": "",
-	"excel-intermedio": "",
-	"excel-avanzado": "",
-	"power-bi-basico": "",
-	"power-bi-intermedio": "",
-	"power-bi-avanzado": "",
-	"sql-basico": "",
-	"sql-intermedio": "",
-	"sql-avanzado": "",
-	"python-basico": "",
-	"python-intermedio": "",
-	"python-avanzado": "",
-	"ingles-basico": "",
-	"ingles-intermedio": "",
-	"ingles-avanzado": "",
-	"programacion-desarrollo-web": "",
-	"introduccion-a-la-ia": "",
-	"investigacion-aplicada": "",
-	"finanzas-para-emprendedores": "",
-};
-
 export const courses: Course[] = baseCourses.map((course) => ({
 	...course,
-	presentationVideoUrl: presentationVideos[course.slug] || undefined,
 	graduateProfile: graduateProfiles[course.slug],
 	learningOutcomes: learningOutcomes(course.title),
 	modules: course.modules.map((courseModule, moduleIndex) => ({

@@ -7,7 +7,6 @@ import { supabase } from "@/lib/supabase/client";
 import type { Course } from "@/lib/courses";
 import type { LessonMaterials, MaterialType } from "@/lib/materialTypes";
 import { lessonMaterialsKey } from "@/lib/materialTypes";
-import { getYouTubeEmbedUrl } from "@/lib/youtube";
 
 const MATERIAL_STYLES: Record<MaterialType, { badge: string; icon: string; Icon: typeof FileText; title: (lessonTitle: string) => string; description: string }> = {
   plantilla: {
@@ -225,15 +224,6 @@ export default function CourseLessons({ course, materials }: { course: Course; m
                                   <div className="flex items-center gap-2"><Target className="h-4 w-4 text-accent" /><p className="data-cell-header">Paso 1 · Aprende</p></div>
                                   <p className="mt-2 text-base font-medium leading-6 text-ink">Al terminar podrás aplicar: {lesson.topics.join(", ")}.</p>
                                 </div>
-                                {lesson.videoUrl ? (
-                                  getYouTubeEmbedUrl(lesson.videoUrl) ? (
-                                    <iframe src={getYouTubeEmbedUrl(lesson.videoUrl) ?? undefined} title={`Video de la clase ${lesson.title}`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen className="mt-4 aspect-video w-full rounded-cell bg-ink" />
-                                  ) : (
-                                    <video controls preload="metadata" src={lesson.videoUrl} onEnded={() => markCompleted(lessonId)} aria-label={`Video de la clase ${lesson.title}`} className="mt-4 aspect-video w-full rounded-cell bg-ink" />
-                                  )
-                                ) : (
-                                  <div role="status" className="mt-4 flex aspect-video items-center justify-center rounded-cell bg-blue-950 px-4 text-center text-sm text-blue-100">El video de esta clase estará disponible próximamente.</div>
-                                )}
                               </div>
                               <aside className="data-cell h-fit p-4 sm:p-5 lg:sticky lg:top-24">
                                 <div className="flex items-center justify-between gap-2">

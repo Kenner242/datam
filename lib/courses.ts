@@ -2,7 +2,7 @@ export type Lesson = { title: string; topics: string[]; videoUrl?: string };
 export type BloomLevel = "recordar" | "comprender" | "aplicar" | "analizar" | "evaluar" | "crear";
 export type LearningOutcome = { bloomLevel: BloomLevel; outcome: string };
 export type CourseModule = { title: string; lessons: Lesson[]; bloomLevel?: BloomLevel; learningOutcome?: string };
-export type Course = { 
+export type Course = {
 	slug: string;
 	code: string;
 	title: string;
@@ -12,6 +12,7 @@ export type Course = {
 	image: string;
 	summary: string;
 	professionalUse: string;
+	presentationVideoUrl?: string;
 	graduateProfile?: string;
 	learningOutcomes?: LearningOutcome[];
 	modules: CourseModule[];
@@ -143,8 +144,32 @@ function learningOutcomes(courseTitle: string): LearningOutcome[] {
 	];
 }
 
+// Video de presentación por curso (opcional). Pega aquí el enlace de YouTube de cada curso.
+const presentationVideos: Record<string, string> = {
+	"excel-basico": "",
+	"excel-intermedio": "",
+	"excel-avanzado": "",
+	"power-bi-basico": "",
+	"power-bi-intermedio": "",
+	"power-bi-avanzado": "",
+	"sql-basico": "",
+	"sql-intermedio": "",
+	"sql-avanzado": "",
+	"python-basico": "",
+	"python-intermedio": "",
+	"python-avanzado": "",
+	"ingles-basico": "",
+	"ingles-intermedio": "",
+	"ingles-avanzado": "",
+	"programacion-desarrollo-web": "",
+	"introduccion-a-la-ia": "",
+	"investigacion-aplicada": "",
+	"finanzas-para-emprendedores": "",
+};
+
 export const courses: Course[] = baseCourses.map((course) => ({
 	...course,
+	presentationVideoUrl: presentationVideos[course.slug] || undefined,
 	graduateProfile: graduateProfiles[course.slug],
 	learningOutcomes: learningOutcomes(course.title),
 	modules: course.modules.map((courseModule, moduleIndex) => ({

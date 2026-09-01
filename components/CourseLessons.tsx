@@ -7,11 +7,7 @@ import { supabase } from "@/lib/supabase/client";
 import type { Course } from "@/lib/courses";
 import type { LessonMaterials, MaterialType } from "@/lib/materialTypes";
 import { lessonMaterialsKey } from "@/lib/materialTypes";
-
-function getYouTubeEmbedUrl(url: string) {
-  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/))([\w-]{11})/);
-  return match ? `https://www.youtube.com/embed/${match[1]}` : null;
-}
+import { getYouTubeEmbedUrl } from "@/lib/youtube";
 
 const MATERIAL_STYLES: Record<MaterialType, { badge: string; icon: string; Icon: typeof FileText; title: (lessonTitle: string) => string; description: string }> = {
   plantilla: {

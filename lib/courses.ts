@@ -1,7 +1,19 @@
-export type Lesson = { title: string; topics: string[] };
+export type Lesson = { title: string; topics: string[]; content?: LessonContent };
 export type BloomLevel = "recordar" | "comprender" | "aplicar" | "analizar" | "evaluar" | "crear";
 export type LearningOutcome = { bloomLevel: BloomLevel; outcome: string };
 export type CourseModule = { title: string; lessons: Lesson[]; bloomLevel?: BloomLevel; learningOutcome?: string };
+export type LessonQuizQuestion = { prompt: string; options: string[]; correctOption: number };
+export type LessonContent = {
+	introduction: string;
+	keyConcepts: string[];
+	realExample: { title: string; description: string };
+	practicalCase: { title: string; description: string };
+	guidedActivity: { title: string; instructions: string };
+	reflectionQuestion: string;
+	imageUrl: string;
+	imageAlt: string;
+	quiz: LessonQuizQuestion[];
+};
 export type Course = {
 	slug: string;
 	code: string;
@@ -29,13 +41,166 @@ const images = {
 	finance: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=900&q=80",
 };
 
-const lesson = (title: string, topics: string[]): Lesson => ({ title, topics });
+const lesson = (title: string, topics: string[], content?: LessonContent): Lesson => ({ title, topics, content });
 const module = (title: string, lessons: Lesson[]): CourseModule => ({ title, lessons });
 const common = (slug: string, code: string, title: string, level: string, duration: string, description: string, image: string, summary: string, professionalUse: string, modules: CourseModule[]): Course => ({ slug, code, title, level, duration, description, image, summary, professionalUse, modules });
 
+// Contenido completo de ejemplo (plantilla para replicar en el resto de clases).
+const excelTablasYFormatoContent: LessonContent = {
+	introduction: "En el mundo actual, dominar Excel es fundamental en casi cualquier entorno profesional. Convertir un rango de celdas en una tabla de datos te permite ordenar, filtrar y dar formato a tu información de forma automática, sin importar cuántas filas nuevas agregues. En esta clase aprenderás a transformar listas simples en tablas dinámicas y a aplicar formato profesional en segundos.",
+	keyConcepts: [
+		"Rango vs. tabla: una tabla crece automáticamente al agregar filas o columnas nuevas.",
+		"Fila de encabezados: la primera fila identifica cada columna y habilita filtros.",
+		"Formato como tabla: aplica colores y estilos consistentes en un solo clic.",
+		"Filtros simples: permiten mostrar solo los datos que cumplen una condición.",
+		"Formato condicional básico: resalta automáticamente valores según una regla (por ejemplo, ventas menores a una meta).",
+	],
+	realExample: {
+		title: "Base de cursos vendidos",
+		description: "Imagina una lista con las columnas Curso, Duración, Cliente, Importe y Fecha. Al convertirla en tabla (ficha Insertar → Tabla), Excel agrega automaticamente flechas de filtro en cada encabezado y aplica un diseño alterno de colores para leer mejor cada fila.",
+	},
+	practicalCase: {
+		title: "Filtrar cursos con importe mayor a S/ 500",
+		description: "Usando la flecha de filtro de la columna Importe, selecciona 'Filtros de número → Mayor que...' e ingresa 500. La tabla mostrará solo los cursos que superan ese monto, sin afectar el resto de los datos ni las fórmulas que dependan de ellos.",
+	},
+	guidedActivity: {
+		title: "Convierte tu propia lista en tabla",
+		instructions: "1) Crea una lista con al menos 10 filas y 4 columnas (por ejemplo: Producto, Categoría, Precio, Stock). 2) Selecciona cualquier celda de la lista. 3) Ve a Insertar → Tabla y confirma que 'La tabla tiene encabezados' esté marcado. 4) Aplica un filtro a la columna Precio para mostrar solo los valores mayores al promedio. 5) Aplica formato condicional para resaltar en rojo el stock menor a 5 unidades.",
+	},
+	reflectionQuestion: "¿Por qué crees que una tabla dinámica es más confiable que un rango normal cuando trabajas con datos que se actualizan constantemente?",
+	imageUrl: "/images/tools/excel.svg",
+	imageAlt: "Ícono de Microsoft Excel",
+	quiz: [
+		{ prompt: "¿Qué ventaja principal tiene una tabla frente a un rango normal?", options: ["Se actualiza y crece automáticamente al agregar filas", "Ocupa menos espacio en el archivo", "Cambia el idioma de Excel", "Elimina automáticamente los duplicados"], correctOption: 0 },
+		{ prompt: "¿Dónde se encuentra el botón para insertar una tabla?", options: ["Ficha Insertar → Tablas", "Ficha Inicio → Fuente", "Ficha Vista → Zoom", "Ficha Fórmulas → Auditoría"], correctOption: 0 },
+		{ prompt: "¿Qué representa la fila de encabezados en una tabla?", options: ["El nombre de cada columna", "El total de la tabla", "Un comentario oculto", "El nombre del archivo"], correctOption: 0 },
+		{ prompt: "¿Qué permite hacer un filtro simple en una tabla?", options: ["Mostrar solo los datos que cumplen una condición", "Cambiar el color de toda la hoja", "Eliminar columnas permanentemente", "Proteger el archivo con contraseña"], correctOption: 0 },
+		{ prompt: "El formato condicional básico sirve para...", options: ["Resaltar automáticamente valores según una regla", "Cambiar el nombre de las columnas", "Convertir texto en números", "Ordenar hojas del libro"], correctOption: 0 },
+		{ prompt: "Si agregas una fila nueva al final de una tabla, ¿qué sucede?", options: ["La tabla se expande e incluye la fila automáticamente", "Excel genera un error", "La fila queda fuera del formato", "Se borran los encabezados"], correctOption: 0 },
+		{ prompt: "¿Qué opción del cuadro 'Crear tabla' indica que la primera fila son títulos?", options: ["La tabla tiene encabezados", "Tabla dinámica recomendada", "Formato numérico", "Autoajustar columnas"], correctOption: 0 },
+		{ prompt: "¿Cuál de estas es una buena práctica antes de convertir un rango en tabla?", options: ["Verificar que no haya filas o columnas vacías en medio de los datos", "Eliminar todos los formatos previos", "Cambiar el nombre del archivo", "Cerrar Excel y volver a abrirlo"], correctOption: 0 },
+		{ prompt: "¿Qué herramienta usarías para resaltar en rojo los productos con stock bajo?", options: ["Formato condicional", "Buscar y reemplazar", "Validación de datos", "Combinar celdas"], correctOption: 0 },
+		{ prompt: "En el caso práctico de filtrar cursos con importe mayor a S/ 500, ¿qué tipo de filtro usaste?", options: ["Filtro de número → Mayor que", "Filtro de texto → Comienza con", "Filtro de fecha → Este mes", "Filtro de color"], correctOption: 0 },
+	],
+};
+
+const excelInterfazContent: LessonContent = {
+	introduction: "Antes de crear cualquier hoja de cálculo, es esencial conocer el entorno de trabajo de Excel: cómo se organiza la información en celdas, filas y columnas, y cómo guardar tu trabajo de forma segura. Esta clase te da las bases para moverte con confianza dentro del programa.",
+	keyConcepts: [
+		"Una hoja de cálculo se organiza en filas (números) y columnas (letras); cada celda se identifica con una combinación única, por ejemplo B4.",
+		"Los tipos de datos más comunes son texto, números, fechas y valores lógicos (verdadero/falso).",
+		"La barra de fórmulas muestra el contenido real de la celda seleccionada, aunque en pantalla se vea con formato.",
+		"Guardar con Ctrl+S evita perder tu trabajo; puedes elegir formato .xlsx para editar o .pdf para compartir sin permitir cambios.",
+		"Puedes navegar rápidamente con las flechas del teclado o con Ctrl+Flecha para saltar al final de una lista de datos.",
+	],
+	realExample: {
+		title: "Ficha de datos de un cliente",
+		description: "La celda A1 puede contener el texto \"Nombre\", B1 el nombre real del cliente, A2 \"Teléfono\" y B2 el número. Aunque se ve como una tabla simple, cada celda guarda un dato independiente que se puede usar después en fórmulas.",
+	},
+	practicalCase: {
+		title: "Organizar una lista de contactos",
+		description: "Un asistente administrativo recibe una lista desordenada de contactos por correo. Al pasarla a Excel y ubicar cada dato en su columna correspondiente (Nombre, Teléfono, Correo), puede después ordenar, buscar y filtrar la información fácilmente.",
+	},
+	guidedActivity: {
+		title: "Crea tu primera hoja de datos",
+		instructions: "1) Abre un libro nuevo en Excel. 2) En la celda A1 escribe \"Producto\", en B1 \"Precio\", en C1 \"Stock\". 3) Completa 5 filas con productos reales. 4) Guarda el archivo con Ctrl+S usando el nombre \"mi_primera_hoja\". 5) Verifica que cada dato quedó en el tipo correcto (texto para nombres, números para precios).",
+	},
+	reflectionQuestion: "¿Qué problemas podrían surgir si mezclas texto y números en la misma columna de una hoja de cálculo?",
+	imageUrl: "/images/tools/excel.svg",
+	imageAlt: "Ícono de Microsoft Excel",
+	quiz: [
+		{ prompt: "¿Cómo se identifica una celda en Excel?", options: ["Con la letra de su columna y el número de su fila", "Solo con un número", "Con el nombre de la hoja", "Con un color asignado"], correctOption: 0 },
+		{ prompt: "¿Qué muestra la barra de fórmulas?", options: ["El contenido real de la celda seleccionada", "El nombre del archivo", "La cantidad de hojas del libro", "El idioma de Excel"], correctOption: 0 },
+		{ prompt: "¿Cuál es un tipo de dato válido en Excel?", options: ["Fecha", "Macro", "Hipervínculo oculto", "Etiqueta HTML"], correctOption: 0 },
+		{ prompt: "¿Qué combinación de teclas guarda un archivo?", options: ["Ctrl+S", "Ctrl+P", "Ctrl+Z", "Ctrl+N"], correctOption: 0 },
+		{ prompt: "¿Qué formato eliges si quieres compartir un archivo sin que se pueda editar?", options: ["PDF", "XLSX", "CSV", "TXT"], correctOption: 0 },
+		{ prompt: "¿Qué combinación de teclas te lleva al final de una lista de datos?", options: ["Ctrl + flecha", "Alt + flecha", "Shift + Tab", "Ctrl + Inicio"], correctOption: 0 },
+		{ prompt: "En el ejemplo de la ficha de cliente, ¿qué contiene la celda B1?", options: ["El nombre del cliente", "La palabra 'Nombre'", "El teléfono", "Un total"], correctOption: 0 },
+		{ prompt: "¿Por qué es importante ubicar cada dato en su propia columna?", options: ["Para poder ordenar, filtrar y buscar la información fácilmente", "Para que el archivo pese más", "Para cambiar el idioma de Excel", "Para ocultar la hoja automáticamente"], correctOption: 0 },
+		{ prompt: "¿Qué tipo de valor representa 'verdadero' o 'falso' en Excel?", options: ["Valor lógico", "Valor de texto", "Valor de fecha", "Valor de moneda"], correctOption: 0 },
+		{ prompt: "¿Qué deberías revisar después de escribir datos en una hoja nueva?", options: ["Que cada dato quedó en el tipo correcto (texto, número, fecha)", "Que el archivo tenga muchos colores", "Que el nombre del archivo sea largo", "Que la hoja esté oculta"], correctOption: 0 },
+	],
+};
+
+const excelFormulasBasicasContent: LessonContent = {
+	introduction: "Las fórmulas son el corazón de Excel: te permiten transformar datos en información útil sin calcular manualmente. En esta clase aprenderás las funciones más usadas (SUMA, PROMEDIO, CONTAR), cómo funcionan las referencias relativas al copiar una fórmula, y el orden en que Excel resuelve las operaciones matemáticas.",
+	keyConcepts: [
+		"Toda fórmula comienza con el signo =; sin él, Excel interpreta el contenido como texto.",
+		"SUMA(rango) suma valores, PROMEDIO(rango) calcula la media, CONTAR(rango) cuenta celdas con números.",
+		"Una referencia relativa (como A2) cambia automáticamente al copiar la fórmula a otra celda.",
+		"El orden de operaciones en Excel sigue la misma prioridad que en matemáticas: paréntesis, exponentes, multiplicación/división, luego suma/resta.",
+		"Los errores comunes como #DIV/0! o #VALOR! indican que la fórmula recibió un dato incorrecto o una división entre cero.",
+	],
+	realExample: {
+		title: "Calcular el total de ventas de la semana",
+		description: "Si en las celdas B2:B8 tienes las ventas diarias, la fórmula =SUMA(B2:B8) te da el total automáticamente. Si agregas un nuevo día en B9, solo necesitas ajustar el rango para incluirlo.",
+	},
+	practicalCase: {
+		title: "Promedio de calificaciones de un curso",
+		description: "Un profesor tiene las notas de 30 estudiantes en la columna C. Con =PROMEDIO(C2:C31) obtiene el promedio general del grupo en segundos, y con =CONTAR(C2:C31) verifica cuántos estudiantes rindieron el examen.",
+	},
+	guidedActivity: {
+		title: "Construye tu primera hoja de cálculo con fórmulas",
+		instructions: "1) Crea una lista de 8 gastos personales con su monto. 2) En una celda usa =SUMA() para el total. 3) En otra celda usa =PROMEDIO() para el gasto promedio. 4) En otra usa =CONTAR() para saber cuántos gastos registraste. 5) Copia la fórmula de suma a una columna adicional y observa cómo cambia la referencia.",
+	},
+	reflectionQuestion: "¿Qué diferencia práctica existe entre usar una fórmula y escribir el resultado manualmente, especialmente si los datos cambian con frecuencia?",
+	imageUrl: "/images/tools/excel.svg",
+	imageAlt: "Ícono de Microsoft Excel",
+	quiz: [
+		{ prompt: "¿Con qué símbolo debe iniciar toda fórmula en Excel?", options: ["=", "+", "#", "@"], correctOption: 0 },
+		{ prompt: "¿Qué función suma un rango de celdas?", options: ["SUMA", "PROMEDIO", "CONTAR", "BUSCARV"], correctOption: 0 },
+		{ prompt: "¿Qué función calcula el promedio de un rango?", options: ["PROMEDIO", "SUMA", "SI", "CONTAR.SI"], correctOption: 0 },
+		{ prompt: "¿Qué hace la función CONTAR?", options: ["Cuenta cuántas celdas de un rango contienen números", "Suma los valores de un rango", "Busca un valor en una tabla", "Cambia el formato de una celda"], correctOption: 0 },
+		{ prompt: "¿Qué sucede con una referencia relativa al copiar una fórmula a otra celda?", options: ["Cambia automáticamente según la nueva posición", "Se mantiene siempre igual", "Se convierte en texto", "Genera un error"], correctOption: 0 },
+		{ prompt: "Según el orden de operaciones, ¿qué se resuelve primero?", options: ["Lo que está entre paréntesis", "Las sumas", "Las restas", "Las divisiones"], correctOption: 0 },
+		{ prompt: "¿Qué error aparece si divides un número entre cero?", options: ["#DIV/0!", "#VALOR!", "#NOMBRE?", "#N/A"], correctOption: 0 },
+		{ prompt: "En el ejemplo de ventas semanales, ¿qué fórmula usarías para el total?", options: ["=SUMA(B2:B8)", "=PROMEDIO(B2:B8)", "=CONTAR(B2:B8)", "=SI(B2:B8)"], correctOption: 0 },
+		{ prompt: "¿Qué indica el error #VALOR!?", options: ["Que la fórmula recibió un tipo de dato incorrecto", "Que falta guardar el archivo", "Que la hoja está protegida", "Que el rango es muy grande"], correctOption: 0 },
+		{ prompt: "¿Por qué es útil usar fórmulas en lugar de calcular manualmente?", options: ["Porque se recalculan automáticamente si los datos cambian", "Porque ocupan menos espacio en pantalla", "Porque cambian el color de la celda", "Porque no requieren revisar los datos"], correctOption: 0 },
+	],
+};
+
+const excelFuncionesEsencialesContent: LessonContent = {
+	introduction: "Con las funciones esenciales de Excel puedes tomar decisiones automáticas dentro de tu hoja de cálculo. En esta clase aprenderás a usar SI para evaluar condiciones, CONTAR.SI para contar datos que cumplen un criterio, y BUSCARV para encontrar información relacionada entre distintas columnas o tablas.",
+	keyConcepts: [
+		"La función SI evalúa una condición y devuelve un resultado si es verdadera y otro si es falsa: =SI(condición, valor_si_verdadero, valor_si_falso).",
+		"CONTAR.SI cuenta celdas que cumplen un criterio específico, por ejemplo cuántas ventas superan una meta.",
+		"BUSCARV busca un valor en la primera columna de una tabla y devuelve un dato relacionado de otra columna.",
+		"El último argumento de BUSCARV (FALSO) asegura una coincidencia exacta y evita resultados incorrectos.",
+		"Combinar estas funciones te permite automatizar reportes sin revisar los datos manualmente.",
+	],
+	realExample: {
+		title: "Aprobado o desaprobado según la nota",
+		description: "Con la fórmula =SI(B2>=70,\"Aprobado\",\"Desaprobado\") Excel evalúa automáticamente cada nota y muestra el resultado correspondiente en la columna de estado.",
+	},
+	practicalCase: {
+		title: "Contar clientes de una ciudad específica",
+		description: "Un vendedor tiene una lista de clientes con la columna Ciudad. Usando =CONTAR.SI(C2:C200,\"Lima\") obtiene al instante cuántos clientes son de Lima, sin revisar fila por fila.",
+	},
+	guidedActivity: {
+		title: "Automatiza una tabla con SI, CONTAR.SI y BUSCARV",
+		instructions: "1) Crea una tabla de estudiantes con nombre y nota. 2) Usa SI para mostrar 'Aprobado' o 'Desaprobado' según si la nota es mayor o igual a 70. 3) Usa CONTAR.SI para contar cuántos estudiantes aprobaron. 4) Crea una segunda tabla pequeña con el nombre del curso y su código, y usa BUSCARV para traer el código del curso a la tabla principal según el nombre del estudiante.",
+	},
+	reflectionQuestion: "¿En qué situaciones de tu vida diaria o trabajo podrías usar una función como SI para tomar decisiones automáticas con datos?",
+	imageUrl: "/images/tools/excel.svg",
+	imageAlt: "Ícono de Microsoft Excel",
+	quiz: [
+		{ prompt: "¿Qué hace la función SI?", options: ["Evalúa una condición y devuelve un resultado distinto según si es verdadera o falsa", "Suma un rango de celdas", "Cuenta el número de hojas del libro", "Cambia el color de una celda"], correctOption: 0 },
+		{ prompt: "¿Qué estructura tiene la función SI?", options: ["=SI(condición, valor_si_verdadero, valor_si_falso)", "=SI(rango)", "=SI(texto)", "=SI(columna, fila)"], correctOption: 0 },
+		{ prompt: "¿Para qué sirve CONTAR.SI?", options: ["Para contar celdas que cumplen un criterio específico", "Para sumar todos los valores de una hoja", "Para ordenar una tabla alfabéticamente", "Para proteger una hoja con contraseña"], correctOption: 0 },
+		{ prompt: "¿Qué hace BUSCARV?", options: ["Busca un valor en una columna y devuelve un dato relacionado de otra columna", "Cuenta cuántas veces se repite un valor", "Suma solo los valores positivos", "Cambia el formato numérico de una celda"], correctOption: 0 },
+		{ prompt: "¿Qué argumento de BUSCARV asegura una coincidencia exacta?", options: ["FALSO", "VERDADERO", "CERO", "NULO"], correctOption: 0 },
+		{ prompt: "En el ejemplo de aprobados, ¿qué condición se evaluó?", options: ["Si la nota es mayor o igual a 70", "Si el nombre empieza con A", "Si la celda está vacía", "Si el número es par"], correctOption: 0 },
+		{ prompt: "¿Qué fórmula usarías para contar clientes de Lima en el rango C2:C200?", options: ["=CONTAR.SI(C2:C200,\"Lima\")", "=SUMA(C2:C200)", "=SI(C2:C200,\"Lima\")", "=BUSCARV(\"Lima\",C2:C200,1,FALSO)"], correctOption: 0 },
+		{ prompt: "¿Qué ventaja tiene combinar SI, CONTAR.SI y BUSCARV?", options: ["Automatizar reportes sin revisar los datos manualmente", "Reducir el tamaño del archivo", "Cambiar el idioma de Excel", "Evitar guardar el archivo"], correctOption: 0 },
+		{ prompt: "¿Qué devuelve BUSCARV si no encuentra el valor buscado?", options: ["Un error como #N/A", "El valor 0", "Un texto vacío", "La primera fila de la tabla"], correctOption: 0 },
+		{ prompt: "¿Qué debes verificar antes de usar BUSCARV?", options: ["Que el valor buscado esté en la primera columna del rango de búsqueda", "Que la hoja tenga colores", "Que el archivo sea .pdf", "Que la tabla esté oculta"], correctOption: 0 },
+	],
+};
+
 const baseCourses: Course[] = [
 	// Excel
-	common("excel-basico", "B1", "Excel Básico", "Básico", "4 semanas", "Primeros pasos para organizar y calcular información en Excel.", images.excel, "Aprenderás la interfaz, fórmulas esenciales y el orden de datos para empezar a trabajar con hojas de cálculo con confianza.", "Te permitirá llevar registros simples, calcular totales y presentar información ordenada en cualquier trabajo.", [module("Primeros pasos en Excel", [lesson("Interfaz y navegación", ["Celdas, filas y columnas", "Tipos de datos", "Guardar y compartir archivos"]), lesson("Fórmulas básicas", ["Suma, promedio y conteo", "Referencias relativas", "Orden de operaciones"])]), module("Organizar y presentar datos", [lesson("Tablas y formato", ["Formato como tabla", "Filtros simples", "Formato condicional básico"]), lesson("Funciones esenciales", ["Función SI", "CONTAR.SI", "BUSCARV básico"])])]),
+	common("excel-basico", "B1", "Excel Básico", "Básico", "4 semanas", "Primeros pasos para organizar y calcular información en Excel.", images.excel, "Aprenderás la interfaz, fórmulas esenciales y el orden de datos para empezar a trabajar con hojas de cálculo con confianza.", "Te permitirá llevar registros simples, calcular totales y presentar información ordenada en cualquier trabajo.", [module("Primeros pasos en Excel", [lesson("Interfaz y navegación", ["Celdas, filas y columnas", "Tipos de datos", "Guardar y compartir archivos"], excelInterfazContent), lesson("Fórmulas básicas", ["Suma, promedio y conteo", "Referencias relativas", "Orden de operaciones"], excelFormulasBasicasContent)]), module("Organizar y presentar datos", [lesson("Tablas y formato", ["Formato como tabla", "Filtros simples", "Formato condicional básico"], excelTablasYFormatoContent), lesson("Funciones esenciales", ["Función SI", "CONTAR.SI", "BUSCARV básico"], excelFuncionesEsencialesContent)])]),
 	common("excel-intermedio", "B2", "Excel Intermedio", "Intermedio", "6 semanas", "Tablas dinámicas, fórmulas avanzadas y automatización.", images.excel, "Aprenderás a organizar, analizar y automatizar información en Excel mediante fórmulas avanzadas, tablas dinámicas y reportes claros.", "Te ayudará a crear reportes, controlar presupuestos, analizar ventas y presentar información para tomar decisiones.", [module("Fundamentos para trabajar con datos", [lesson("Estructura de una base de datos", ["Tablas y registros", "Tipos de datos", "Orden y filtros"]), lesson("Fórmulas esenciales", ["Referencias absolutas y relativas", "Funciones lógicas", "Funciones de texto y fecha"])]), module("Análisis y visualización", [lesson("Tablas dinámicas", ["Campos y segmentaciones", "Agrupación de información", "Indicadores de resumen"]), lesson("Dashboards en Excel", ["Gráficos adecuados", "Diseño de reportes", "Presentación de hallazgos"])]), module("Automatización aplicada", [lesson("Procesos eficientes", ["Validación de datos", "Plantillas reutilizables", "Introducción a macros"])])]),
 	common("excel-avanzado", "B3", "Excel Avanzado", "Avanzado", "6 semanas", "Automatiza y modela datos combinando Power Query, Power Pivot y macros.", images.excel, "Dominarás fórmulas avanzadas, Power Query, Power Pivot y macros básicas para construir soluciones robustas de análisis en Excel.", "Te permitirá automatizar procesos repetitivos, consolidar múltiples fuentes y construir modelos de datos confiables para decisiones complejas.", [module("Conectar y transformar datos", [lesson("Importación organizada", ["Excel y CSV", "Tipos de origen", "Actualización de consultas"]), lesson("Preparar datos con Power Query", ["Valores nulos", "Dividir y combinar columnas", "Unir consultas"])]), module("Fórmulas y modelado avanzado", [lesson("Fórmulas de nivel avanzado", ["BUSCARX e INDICE/COINCIDIR", "Fórmulas matriciales", "Funciones anidadas"]), lesson("Power Pivot y modelo de datos", ["Tablas relacionadas", "Medidas con DAX básico", "Modelo de datos en Excel"])]), module("Automatización con macros", [lesson("Macros y VBA básico", ["Grabadora de macros", "Editor de VBA", "Protección y seguridad de archivos"])])]),
 	// Power BI

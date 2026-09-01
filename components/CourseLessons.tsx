@@ -2,11 +2,89 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BookOpen, Check, ChevronDown, Download, FileSpreadsheet, FileText, Target } from "lucide-react";
+import { BookOpen, Check, CheckCircle2, ChevronDown, Download, FileSpreadsheet, FileText, Lightbulb, Target, XCircle } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
-import type { Course } from "@/lib/courses";
+import type { Course, LessonQuizQuestion } from "@/lib/courses";
 import type { LessonMaterials, MaterialType } from "@/lib/materialTypes";
 import { lessonMaterialsKey } from "@/lib/materialTypes";
+
+const QUIZ_POINTS_PER_QUESTION = 10;
+const QUIZ_PASSING_SCORE = 70;
+
+function LessonQuiz({ quiz }: { quiz: LessonQuizQuestion[] }) {
+  const [answers, setAnswers] = useState<number[]>([]);
+  const [reviewAnswers, setReviewAnswers] = useState<number[] | null>(null);
+
+  const score = reviewAnswers ? reviewAnswers.reduce((total, answer, index) => total + Number(answer === quiz[index].correctOption), 0) * QUIZ_POINTS_PER_QUESTION : null;
+  const isPassed = score !== null && score >= QUIZ_PASSING_SCORE;
+
+  function submitQuiz() {
+    if (answers.length !== quiz.length || answers.some((answer) => answer === undefined)) return;
+    setReviewAnswers([...answers]);
+  }
+
+  function retryQuiz() {
+    setAnswers([]);
+    setReviewAnswers(null);
+  }
+
+  if (reviewAnswers) {
+    return (
+      <div className="space-y-4">
+        <div className={`flex items-center gap-2 border-l-4 p-4 text-sm font-medium ${isPassed ? "border-green-600 bg-green-50 text-green-800" : "border-red-500 bg-red-50 text-red-800"}`}>
+          {isPassed ? <CheckCircle2 className="h-5 w-5 shrink-0" /> : <XCircle className="h-5 w-5 shrink-0" />}
+          <span>{isPassed ? `Aprobaste la autoevaluación con ${score}/100.` : `Obtuviste ${score}/100. Necesitas ${QUIZ_PASSING_SCORE}/100 para aprobar este tema. Revisa el contenido de reforzamiento abajo.`}</span>
+        </div>
+        <div className="space-y-3">
+          {quiz.map((question, questionIndex) => {
+            const userAnswer = reviewAnswers[questionIndex];
+            const isCorrect = userAnswer === question.correctOption;
+            return (
+              <fieldset key={question.prompt} className={`border-l-4 p-3 ${isCorrect ? "border-green-500 bg-green-50" : "border-red-500 bg-red-50"}`}>
+                <legend className="flex items-center gap-2 text-sm font-medium text-ink">{isCorrect ? <CheckCircle2 className="h-4 w-4 text-green-600" /> : <XCircle className="h-4 w-4 text-red-600" />}{questionIndex + 1}. {question.prompt}</legend>
+                <div className="mt-2 grid gap-1.5">
+                  {question.options.map((option, optionIndex) => {
+                    const isUserChoice = userAnswer === optionIndex;
+                    const isCorrectOption = question.correctOption === optionIndex;
+                    return (
+                      <div key={option} className={`rounded-cell border px-3 py-2 text-xs ${isCorrectOption ? "border-green-500 bg-green-100 font-medium text-green-900" : isUserChoice ? "border-red-500 bg-red-100 text-red-900" : "border-line bg-white text-ink"}`}>{option}</div>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            );
+          })}
+        </div>
+        {!isPassed && (
+          <div className="border-l-4 border-amber-500 bg-amber-50 p-4">
+            <p className="font-display text-sm font-bold text-amber-900">Contenido de reforzamiento</p>
+            <p className="mt-1 text-sm text-amber-800">Vuelve a revisar la introducción, los conceptos clave y el ejemplo real de este tema, luego repite la actividad guiada antes de reintentar.</p>
+            <button type="button" onClick={retryQuiz} className="mt-3 rounded-cell bg-accent px-4 py-2 text-sm font-bold text-white hover:bg-ink">Volver a intentar</button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {quiz.map((question, questionIndex) => (
+        <fieldset key={question.prompt}>
+          <legend className="text-sm font-medium text-ink">{questionIndex + 1}. {question.prompt} <span className="text-xs font-normal text-muted">({QUIZ_POINTS_PER_QUESTION} pts)</span></legend>
+          <div className="mt-2 grid gap-1.5">
+            {question.options.map((option, optionIndex) => (
+              <label key={option} className="flex cursor-pointer items-center gap-2 rounded-cell border border-line bg-white px-3 py-2 text-xs text-ink hover:border-accent">
+                <input type="radio" name={`quiz-${question.prompt}`} checked={answers[questionIndex] === optionIndex} onChange={() => setAnswers((current) => { const next = [...current]; next[questionIndex] = optionIndex; return next; })} />
+                {option}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      ))}
+      <button type="button" onClick={submitQuiz} className="rounded-cell bg-accent px-4 py-2 text-sm font-bold text-white hover:bg-ink">Enviar autoevaluación</button>
+    </div>
+  );
+}
 
 const MATERIAL_STYLES: Record<MaterialType, { badge: string; icon: string; Icon: typeof FileText; title: (lessonTitle: string) => string; description: string }> = {
   plantilla: {
@@ -224,6 +302,39 @@ export default function CourseLessons({ course, materials }: { course: Course; m
                                   <div className="flex items-center gap-2"><Target className="h-4 w-4 text-accent" /><p className="data-cell-header">Paso 1 · Aprende</p></div>
                                   <p className="mt-2 text-base font-medium leading-6 text-ink">Al terminar podrás aplicar: {lesson.topics.join(", ")}.</p>
                                 </div>
+                                {lesson.content && (
+                                  <div className="mt-4 space-y-4">
+                                    <div className="data-cell p-4">
+                                      <p className="data-cell-header">Introducción</p>
+                                      <p className="mt-2 text-sm leading-6 text-muted">{lesson.content.introduction}</p>
+                                    </div>
+                                    <img src={lesson.content.imageUrl} alt={lesson.content.imageAlt} className="h-32 w-32 rounded-cell border border-line bg-white object-contain p-3" />
+                                    <div className="data-cell p-4">
+                                      <p className="data-cell-header">Conceptos clave</p>
+                                      <ul className="mt-2 space-y-1.5">{lesson.content.keyConcepts.map((concept) => <li key={concept} className="border-l-2 border-accent pl-3 text-sm leading-6 text-muted">{concept}</li>)}</ul>
+                                    </div>
+                                    <div className="data-cell p-4">
+                                      <p className="data-cell-header">Ejemplo real · {lesson.content.realExample.title}</p>
+                                      <p className="mt-2 text-sm leading-6 text-muted">{lesson.content.realExample.description}</p>
+                                    </div>
+                                    <div className="data-cell p-4">
+                                      <p className="data-cell-header">Caso práctico · {lesson.content.practicalCase.title}</p>
+                                      <p className="mt-2 text-sm leading-6 text-muted">{lesson.content.practicalCase.description}</p>
+                                    </div>
+                                    <div className="data-cell p-4">
+                                      <p className="data-cell-header">Actividad guiada · {lesson.content.guidedActivity.title}</p>
+                                      <p className="mt-2 text-sm leading-6 text-muted">{lesson.content.guidedActivity.instructions}</p>
+                                    </div>
+                                    <div className="flex items-start gap-2 border-l-4 border-amber-400 bg-amber-50 p-4">
+                                      <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                                      <p className="text-sm leading-6 text-amber-900"><span className="font-bold">Pregunta de reflexión:</span> {lesson.content.reflectionQuestion}</p>
+                                    </div>
+                                    <div className="data-cell p-4">
+                                      <p className="data-cell-header">Autoevaluación · {lesson.content.quiz.length} preguntas · {QUIZ_PASSING_SCORE}/100 para aprobar</p>
+                                      <div className="mt-3"><LessonQuiz quiz={lesson.content.quiz} /></div>
+                                    </div>
+                                  </div>
+                                )}
                               </div>
                               <aside className="data-cell h-fit p-4 sm:p-5 lg:sticky lg:top-24">
                                 <div className="flex items-center justify-between gap-2">

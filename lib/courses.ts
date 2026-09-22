@@ -64,11 +64,33 @@ const courseMetadata: Record<string, Pick<Course, "category" | "demandRegion" | 
 	"ingles-basico": { category: "idiomas", demandRegion: "Nacional" }, "ingles-intermedio": { category: "idiomas", demandRegion: "Nacional" }, "ingles-avanzado": { category: "idiomas", demandRegion: "Remoto" },
 	"programacion-desarrollo-web": { category: "programacion", demandRegion: "Remoto" }, "introduccion-a-la-ia": { category: "ia", demandRegion: "Remoto" },
 	"investigacion-aplicada": { category: "investigacion", demandRegion: "Nacional" }, "finanzas-para-emprendedores": { category: "finanzas", demandRegion: "Nacional" },
+	"estadistica-basica": { category: "datos", demandRegion: "Nacional" },
 };
 
 const common = (slug: string, code: string, title: string, level: string, duration: string, description: string, image: string, summary: string, professionalUse: string, modules: CourseModule[]): Course => ({
 	slug, code, title, level, duration, description, image, summary, professionalUse, modules, ...courseMetadata[slug],
 });
+
+function interactiveLessonContent(courseTitle: string, lessonTitle: string, topics: string[], imageUrl: string): LessonContent {
+	const firstTopic = topics[0] ?? lessonTitle;
+	const secondTopic = topics[1] ?? "aplicación práctica";
+	const quizTopics = [...topics, lessonTitle, "un caso real", "una buena práctica", "la actividad guiada", "la toma de decisiones", "la revisión de resultados", "la mejora continua", "la documentación", "el aprendizaje aplicado"];
+	return {
+		introduction: `En esta lección de ${courseTitle}, aprenderás ${lessonTitle} mediante una lectura guiada, un ejemplo cercano y una actividad breve. El objetivo es que puedas comprender el concepto, practicarlo y aplicarlo en una situación real, no solo memorizar una definición.`,
+		keyConcepts: topics.map((topic) => `${topic}: comprende su propósito, identifica cuándo usarlo y relaciónalo con una tarea concreta de ${courseTitle}.`),
+		realExample: { title: `${lessonTitle} en una situación real`, description: `Una persona que trabaja o emprende utiliza ${firstTopic} para resolver una necesidad concreta. Después combina este conocimiento con ${secondTopic}, revisa el resultado y comunica una decisión clara.` },
+		practicalCase: { title: `Caso aplicado: ${lessonTitle}`, description: `Una pequeña organización necesita mejorar un proceso relacionado con ${firstTopic}. El estudiante analiza la información disponible, propone una solución usando ${secondTopic} y justifica por qué su propuesta es útil.` },
+		guidedActivity: { title: `Practica ${lessonTitle}`, instructions: `1) Define con tus palabras qué significa ${firstTopic}. 2) Escribe un ejemplo de uso en tu comunidad, estudio o trabajo. 3) Aplica ${secondTopic} en un ejercicio pequeño. 4) Revisa el resultado, anota un error o mejora y explica qué aprendiste.` },
+		reflectionQuestion: `¿Cómo aplicarías ${lessonTitle} para resolver un problema real de tu comunidad, estudio o trabajo?`,
+		imageUrl,
+		imageAlt: `Recurso visual relacionado con ${courseTitle} y ${lessonTitle}`,
+		quiz: quizTopics.slice(0, 10).map((topic, index) => ({
+			prompt: `¿Qué afirmación describe mejor ${topic}?`,
+			options: [`Es un elemento que debe comprenderse y aplicarse en contexto.`, "Es una tarea que nunca requiere revisión.", "Es un concepto sin relación con el curso.", "Es una acción que sustituye todo el aprendizaje."],
+			correctOption: 0,
+		})),
+	};
+}
 
 // ===== EXCEL BÁSICO =====
 const excelB1T1: LessonContent = {
@@ -1200,6 +1222,7 @@ const baseCourses: Course[] = [
 	common("investigacion-aplicada", "B18", "Investigación Aplicada", "Principiante", "6 semanas", "Diseña investigaciones claras con datos, fuentes confiables y resultados útiles.", images.research, "Aprenderás a transformar una idea en una investigación ordenada, formulando problemas, objetivos y preguntas.", "Te ayudará a elaborar proyectos, diagnósticos, informes y propuestas con evidencia.", [module("Bases de la investigación", [lesson("Del problema a la pregunta", ["Identificación del problema", "Justificación", "Preguntas de investigación"]), lesson("Objetivos y variables", ["Objetivo general y específicos", "Variables e indicadores", "Alcance del estudio"])]), module("Fuentes y metodología", [lesson("Buscar información confiable", ["Fuentes académicas", "Antecedentes", "Citas y referencias"]), lesson("Diseño metodológico", ["Enfoques de investigación", "Población y muestra", "Instrumentos"])]), module("Análisis y presentación", [lesson("Resultados y conclusiones", ["Organización de datos", "Interpretación", "Informe final"])])]),
 	// Finanzas para Emprendedores (curso único, sin niveles)
 	common("finanzas-para-emprendedores", "B19", "Finanzas para Emprendedores", "Principiante", "5 semanas", "Organiza tus finanzas y toma mejores decisiones para tu negocio.", images.finance, "Aprenderás a ordenar ingresos y gastos, elaborar presupuestos, calcular costos y leer indicadores financieros.", "Te ayudará a controlar el flujo de caja, definir precios y evaluar inversiones.", [module("Orden financiero", [lesson("Ingresos y gastos", ["Clasificación", "Registro financiero", "Separar finanzas personales"]), lesson("Presupuesto", ["Metas", "Presupuesto mensual", "Escenarios"])]), module("Costos y precios", [lesson("Conocer los costos", ["Costos fijos y variables", "Punto de equilibrio", "Margen"]), lesson("Definir precios", ["Costos", "Valor para el cliente", "Competencia"])]), module("Decisiones y crecimiento", [lesson("Flujo de caja", ["Entradas y salidas", "Liquidez", "Proyección"]), lesson("Indicadores básicos", ["Rentabilidad", "Endeudamiento", "Plan financiero"])])]),
+	common("estadistica-basica", "B20", "Estadística Básica", "Básico", "5 semanas", "Comprende datos, identifica patrones y comunica conclusiones con fundamentos estadísticos.", images.research, "Aprenderás a organizar datos, interpretar medidas descriptivas, visualizar información y tomar decisiones con evidencia.", "Te permitirá analizar encuestas, ventas, indicadores y situaciones reales sin depender de intuiciones.", [module("Fundamentos de estadística", [lesson("Datos y variables", ["Población y muestra", "Variables cualitativas y cuantitativas", "Escalas de medición"]), lesson("Organizar datos", ["Tablas de frecuencia", "Datos agrupados", "Calidad de datos"])]), module("Medidas descriptivas", [lesson("Tendencia central", ["Media", "Mediana", "Moda"]), lesson("Variabilidad", ["Rango", "Varianza", "Desviación estándar"])]), module("Visualización y decisiones", [lesson("Gráficos estadísticos", ["Barras", "Histograma", "Dispersión"]), lesson("Interpretar resultados", ["Patrones", "Comparaciones", "Conclusiones con evidencia"])])]),
 ];
 
 const currentTopics: Record<string, string[]> = {
@@ -1222,6 +1245,7 @@ const currentTopics: Record<string, string[]> = {
 	"introduccion-a-la-ia": ["Automatización de tareas", "IA generativa en el trabajo"],
 	"investigacion-aplicada": ["Alfabetización informacional", "Presentación de evidencia"],
 	"finanzas-para-emprendedores": ["Flujo de caja proyectado", "Decisiones basadas en datos"],
+	"estadistica-basica": ["Lectura de indicadores", "Comunicación de evidencia"],
 };
 
 const essentialTopics: Record<string, string[][]> = {
@@ -1244,6 +1268,7 @@ const essentialTopics: Record<string, string[][]> = {
 	"introduccion-a-la-ia": [["Tipos de IA", "Datos de entrenamiento"], ["Casos de uso", "Automatización de tareas"], ["Prompt con contexto", "Formato de respuesta"], ["Verificación de resultados", "Fuentes"], ["Privacidad y ética", "Sesgos"], ["Prototipo de solución", "Plan de implementación"]],
 	"investigacion-aplicada": [["Delimitación del problema", "Justificación"], ["Preguntas de investigación", "Objetivos medibles"], ["Búsqueda académica", "Citas y referencias"], ["Enfoque metodológico", "Población y muestra"], ["Diseño de instrumentos", "Matriz de variables"], ["Análisis de resultados", "Conclusiones y recomendaciones"]],
 	"finanzas-para-emprendedores": [["Ingresos y gastos", "Registro financiero"], ["Metas financieras", "Presupuesto mensual"], ["Costos fijos y variables", "Punto de equilibrio"], ["Estrategia de precios", "Margen"], ["Flujo de caja", "Liquidez"], ["Proyecciones", "Decisiones basadas en datos"]],
+	"estadistica-basica": [["Población y muestra", "Variables"], ["Frecuencias", "Calidad de datos"], ["Media y mediana", "Moda"], ["Rango", "Desviación estándar"], ["Histogramas", "Dispersión"], ["Conclusiones", "Decisiones con evidencia"]],
 };
 
 const bloomLevels: BloomLevel[] = ["recordar", "comprender", "aplicar", "analizar", "evaluar", "crear"];
@@ -1268,6 +1293,7 @@ const graduateProfiles: Record<string, string> = {
 	"introduccion-a-la-ia": "Al finalizar, el estudiante identifica oportunidades de uso responsable de IA y propone soluciones verificables para tareas reales.",
 	"investigacion-aplicada": "Al finalizar, el estudiante diseña y comunica una investigación aplicada con problema, metodología, evidencia y conclusiones claras.",
 	"finanzas-para-emprendedores": "Al finalizar, el estudiante elabora herramientas financieras para controlar, proyectar y decidir sobre un emprendimiento.",
+	"estadistica-basica": "Al finalizar, el estudiante organiza, analiza e interpreta datos estadísticos básicos para comunicar conclusiones fundamentadas.",
 };
 
 function learningOutcomes(courseTitle: string): LearningOutcome[] {
@@ -1295,6 +1321,9 @@ export const courses: Course[] = baseCourses.map((course) => ({
 			...lesson,
 			durationMinutes: lesson.durationMinutes ?? 6,
 			transcript: lesson.transcript ?? lesson.content?.introduction ?? `Lectura guiada sobre ${lesson.title}: ${lesson.topics.join(", ")}.`,
+			content: lesson.content ?? (["finanzas-para-emprendedores", "programacion-desarrollo-web", "estadistica-basica", "introduccion-a-la-ia"].includes(course.slug)
+				? interactiveLessonContent(course.title, lesson.title, lesson.topics, course.image)
+				: undefined),
 			topics: moduleIndex === course.modules.length - 1 && lessonIndex === courseModule.lessons.length - 1
 				? [...lesson.topics, ...(essentialTopics[course.slug]?.slice(-2).flat() ?? []), ...(currentTopics[course.slug] ?? [])]
 				: [...lesson.topics, ...(essentialTopics[course.slug]?.[moduleIndex * 2 + lessonIndex] ?? [])],

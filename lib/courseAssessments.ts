@@ -252,6 +252,16 @@ const assessments: Record<string, CourseAssessment> = {
       ...sharedQuestions,
     ],
   },
+  "estadistica-basica": {
+    projectTitle: "Análisis descriptivo de un caso real",
+    projectInstructions: "Organiza una pequeña base de datos, calcula media, mediana, moda y desviación estándar, crea dos gráficos y redacta tres conclusiones basadas en evidencia.",
+    acceptedFormats: "Comparte un enlace de Google Drive, GitHub o un archivo .xlsx/.pdf con tu análisis.",
+    questions: [
+      { prompt: "¿Qué representa una muestra?", options: ["Un subconjunto de una población usado para analizarla", "Todos los datos posibles sin excepción", "Solo una variable cualitativa", "Un gráfico estadístico"], correctOption: 0 },
+      { prompt: "¿Qué medida representa el valor central promedio de un conjunto?", options: ["Media", "Rango", "Moda", "Varianza"], correctOption: 0 },
+      ...sharedQuestions,
+    ],
+  },
   "python-basico": {
     projectTitle: "Programa básico en Python",
     projectInstructions: "Escribe un programa que use variables, condicionales, un ciclo y al menos una función propia para resolver un problema simple.",

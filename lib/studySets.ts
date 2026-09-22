@@ -85,7 +85,9 @@ export function createInitialProgress(): CardProgress {
 }
 
 export function reviewCard(progress: CardProgress, result: StudyResult, reviewedAt = new Date()): CardProgress {
-  const nextBox = result === "know" ? Math.min(5, progress.box + 1) : Math.max(1, progress.box - 1) as CardProgress["box"];
+  const nextBox: CardProgress["box"] = result === "know"
+    ? Math.min(5, progress.box + 1) as CardProgress["box"]
+    : Math.max(1, progress.box - 1) as CardProgress["box"];
   const nextReview = new Date(reviewedAt);
   nextReview.setDate(nextReview.getDate() + BOX_INTERVALS_DAYS[nextBox]);
   return {

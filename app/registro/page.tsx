@@ -14,6 +14,20 @@ export default function RegistroPage() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  async function handleGoogleRegistration() {
+    setError("");
+    setIsGoogleLoading(true);
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}/dashboard` },
+    });
+    if (oauthError) {
+      setError(oauthError.message);
+      setIsGoogleLoading(false);
+    }
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -60,6 +74,10 @@ export default function RegistroPage() {
         </h1>
 
         <form onSubmit={handleSubmit} className="data-cell mt-6 flex flex-col gap-4 p-6">
+          <button type="button" onClick={() => void handleGoogleRegistration()} disabled={isGoogleLoading || isLoading} className="rounded-cell border border-line bg-white py-2.5 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-60">
+            {isGoogleLoading ? "Conectando con Google..." : "Registrarme con Google"}
+          </button>
+          <div className="flex items-center gap-3 text-xs text-muted"><span className="h-px flex-1 bg-line" />o crea tu cuenta con correo<span className="h-px flex-1 bg-line" /></div>
           <label className="flex flex-col gap-1 text-sm">
             Nombre completo
             <input

@@ -1,8 +1,6 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CourseCard from "@/components/CourseCard";
-import LearningMissionCard from "@/components/LearningMissionCard";
-import { learningMissions } from "@/lib/learningMissions";
 import { Facebook, Linkedin, MessageCircle, Instagram, Mail, Code2, Database, BarChart3, FileSpreadsheet } from "lucide-react";
 
 const featuredCourses = [
@@ -69,9 +67,6 @@ export default function Home() {
             Tu navegador no puede reproducir este video.
           </video>
           <p className="px-5 py-3 text-center text-xs text-blue-100">Conoce DataM y comienza tu camino de aprendizaje tecnológico.</p>
-        </div>
-        <div className="mx-auto mb-12 max-w-4xl">
-          <LearningMissionCard mission={learningMissions[0]} />
         </div>
         <div className="mx-auto max-w-3xl text-center">
           <span className="data-cell-header">DataM · Educación tecnológica desde Perú</span>

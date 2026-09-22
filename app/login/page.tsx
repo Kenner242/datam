@@ -14,6 +14,20 @@ export default function LoginPage() {
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isRecovering, setIsRecovering] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+
+  async function handleGoogleLogin() {
+    setError("");
+    setIsGoogleLoading(true);
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}/dashboard` },
+    });
+    if (oauthError) {
+      setError(oauthError.message);
+      setIsGoogleLoading(false);
+    }
+  }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -69,6 +83,10 @@ export default function LoginPage() {
         </h1>
 
         <form onSubmit={handleSubmit} className="data-cell mt-6 flex flex-col gap-4 p-6">
+          <button type="button" onClick={() => void handleGoogleLogin()} disabled={isGoogleLoading || isLoading} className="rounded-cell border border-line bg-white py-2.5 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-60">
+            {isGoogleLoading ? "Conectando con Google..." : "Continuar con Google"}
+          </button>
+          <div className="flex items-center gap-3 text-xs text-muted"><span className="h-px flex-1 bg-line" />o usa tu correo<span className="h-px flex-1 bg-line" /></div>
           <label className="flex flex-col gap-1 text-sm">
             Correo electrónico
             <input

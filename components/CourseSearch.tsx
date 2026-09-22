@@ -3,6 +3,8 @@
 import { useState, useMemo } from "react";
 import { Search } from "lucide-react";
 import { courses, GROUPED_TRACKS, getTrack } from "@/lib/courses";
+import type { CourseCategory, LaborRegion } from "@/lib/courses";
+import { courseCategoryLabels } from "@/lib/text";
 import CourseCard from "./CourseCard";
 import CourseModuleGroup from "./CourseModuleGroup";
 
@@ -23,19 +25,22 @@ const LEVEL_ORDER: Record<string, number> = { Básico: 0, Intermedio: 1, Avanzad
 
 export default function CourseSearch() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [category, setCategory] = useState<CourseCategory | "all">("all");
+  const [level, setLevel] = useState<string>("all");
+  const [duration, setDuration] = useState<string>("all");
+  const [region, setRegion] = useState<LaborRegion | "all">("all");
 
   const filteredCourses = useMemo(() => {
-    if (!searchTerm.trim()) return courses;
-
     const lowerSearch = searchTerm.toLowerCase();
     return courses.filter(
       (course) =>
-        course.title.toLowerCase().includes(lowerSearch) ||
-        course.description.toLowerCase().includes(lowerSearch) ||
-        course.summary.toLowerCase().includes(lowerSearch) ||
-        course.professionalUse.toLowerCase().includes(lowerSearch)
+        (category === "all" || course.category === category) &&
+        (level === "all" || course.level === level) &&
+        (duration === "all" || course.duration === duration) &&
+        (region === "all" || course.demandRegion === region) &&
+        (!lowerSearch || course.title.toLowerCase().includes(lowerSearch) || course.description.toLowerCase().includes(lowerSearch) || course.summary.toLowerCase().includes(lowerSearch) || course.professionalUse.toLowerCase().includes(lowerSearch))
     );
-  }, [searchTerm]);
+  }, [category, duration, level, region, searchTerm]);
 
   const { groups, singleCourses } = useMemo(() => {
     const groupMap = new Map<string, typeof courses>();
@@ -72,6 +77,10 @@ export default function CourseSearch() {
 
   const handleClear = () => {
     setSearchTerm("");
+    setCategory("all");
+    setLevel("all");
+    setDuration("all");
+    setRegion("all");
   };
 
   return (
@@ -106,6 +115,25 @@ export default function CourseSearch() {
               </button>
             )}
           </div>
+        </div>
+
+        <div className="mb-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4" aria-label="Filtros del catálogo">
+          <select value={category} onChange={(event) => setCategory(event.target.value as CourseCategory | "all")} className="rounded-cell border border-line bg-white px-3 py-3 text-sm text-ink focus:border-accent focus:outline-none">
+            <option value="all">Todas las categorías</option>
+            {Object.entries(courseCategoryLabels).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+          </select>
+          <select value={level} onChange={(event) => setLevel(event.target.value)} className="rounded-cell border border-line bg-white px-3 py-3 text-sm text-ink focus:border-accent focus:outline-none">
+            <option value="all">Todos los niveles</option>
+            <option>Básico</option><option>Intermedio</option><option>Avanzado</option><option>Principiante</option>
+          </select>
+          <select value={duration} onChange={(event) => setDuration(event.target.value)} className="rounded-cell border border-line bg-white px-3 py-3 text-sm text-ink focus:border-accent focus:outline-none">
+            <option value="all">Todas las duraciones</option>
+            {Array.from(new Set(courses.map((course) => course.duration))).map((value) => <option key={value}>{value}</option>)}
+          </select>
+          <select value={region} onChange={(event) => setRegion(event.target.value as LaborRegion | "all")} className="rounded-cell border border-line bg-white px-3 py-3 text-sm text-ink focus:border-accent focus:outline-none">
+            <option value="all">Toda demanda laboral</option>
+            {Array.from(new Set(courses.map((course) => course.demandRegion))).map((value) => <option key={value}>{value}</option>)}
+          </select>
         </div>
 
         {/* Tendencias */}

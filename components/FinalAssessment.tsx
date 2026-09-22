@@ -74,6 +74,14 @@ export default function FinalAssessment({ course }: { course: Course }) {
     setScore(nextScore);
     setIsPassed(passed);
     setReviewAnswers([...answers]);
+    if (passed) {
+      void supabase.from("badges").upsert({
+        user_id: auth.user.id,
+        course_slug: course.slug,
+        puntaje: nextScore,
+        habilidades: course.learningOutcomes?.map((outcome) => outcome.outcome) ?? [],
+      }, { onConflict: "user_id,course_slug" });
+    }
   }
 
   function retryExam() {

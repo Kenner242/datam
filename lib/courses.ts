@@ -1,4 +1,13 @@
-export type Lesson = { title: string; topics: string[]; content?: LessonContent };
+export type CourseCategory = "ofimatica" | "programacion" | "datos" | "idiomas" | "ia" | "investigacion" | "finanzas";
+export type LaborRegion = "Lima" | "Nacional" | "Norte" | "Centro" | "Sur" | "Remoto";
+export type Lesson = {
+	title: string;
+	topics: string[];
+	durationMinutes?: number;
+	transcript?: string;
+	audioUrl?: string;
+	content?: LessonContent;
+};
 export type BloomLevel = "recordar" | "comprender" | "aplicar" | "analizar" | "evaluar" | "crear";
 export type LearningOutcome = { bloomLevel: BloomLevel; outcome: string };
 export type CourseModule = { title: string; lessons: Lesson[]; bloomLevel?: BloomLevel; learningOutcome?: string };
@@ -24,6 +33,9 @@ export type Course = {
 	image: string;
 	summary: string;
 	professionalUse: string;
+	category: CourseCategory;
+	demandRegion: LaborRegion;
+	sponsor?: string;
 	graduateProfile?: string;
 	learningOutcomes?: LearningOutcome[];
 	modules: CourseModule[];
@@ -43,7 +55,20 @@ const images = {
 
 const lesson = (title: string, topics: string[], content?: LessonContent): Lesson => ({ title, topics, content });
 const module = (title: string, lessons: Lesson[]): CourseModule => ({ title, lessons });
-const common = (slug: string, code: string, title: string, level: string, duration: string, description: string, image: string, summary: string, professionalUse: string, modules: CourseModule[]): Course => ({ slug, code, title, level, duration, description, image, summary, professionalUse, modules });
+
+const courseMetadata: Record<string, Pick<Course, "category" | "demandRegion" | "sponsor">> = {
+	"excel-basico": { category: "ofimatica", demandRegion: "Nacional" }, "excel-intermedio": { category: "ofimatica", demandRegion: "Nacional" }, "excel-avanzado": { category: "ofimatica", demandRegion: "Lima" },
+	"power-bi-basico": { category: "datos", demandRegion: "Lima" }, "power-bi-intermedio": { category: "datos", demandRegion: "Lima" }, "power-bi-avanzado": { category: "datos", demandRegion: "Remoto" },
+	"sql-basico": { category: "datos", demandRegion: "Nacional" }, "sql-intermedio": { category: "datos", demandRegion: "Lima" }, "sql-avanzado": { category: "datos", demandRegion: "Remoto" },
+	"python-basico": { category: "programacion", demandRegion: "Nacional" }, "python-intermedio": { category: "programacion", demandRegion: "Remoto" }, "python-avanzado": { category: "programacion", demandRegion: "Remoto" },
+	"ingles-basico": { category: "idiomas", demandRegion: "Nacional" }, "ingles-intermedio": { category: "idiomas", demandRegion: "Nacional" }, "ingles-avanzado": { category: "idiomas", demandRegion: "Remoto" },
+	"programacion-desarrollo-web": { category: "programacion", demandRegion: "Remoto" }, "introduccion-a-la-ia": { category: "ia", demandRegion: "Remoto" },
+	"investigacion-aplicada": { category: "investigacion", demandRegion: "Nacional" }, "finanzas-para-emprendedores": { category: "finanzas", demandRegion: "Nacional" },
+};
+
+const common = (slug: string, code: string, title: string, level: string, duration: string, description: string, image: string, summary: string, professionalUse: string, modules: CourseModule[]): Course => ({
+	slug, code, title, level, duration, description, image, summary, professionalUse, modules, ...courseMetadata[slug],
+});
 
 // ===== EXCEL BÁSICO =====
 const excelB1T1: LessonContent = {
@@ -1258,6 +1283,8 @@ function learningOutcomes(courseTitle: string): LearningOutcome[] {
 
 export const courses: Course[] = baseCourses.map((course) => ({
 	...course,
+	category: course.category ?? courseMetadata[course.slug].category,
+	demandRegion: course.demandRegion ?? courseMetadata[course.slug].demandRegion,
 	graduateProfile: graduateProfiles[course.slug],
 	learningOutcomes: learningOutcomes(course.title),
 	modules: course.modules.map((courseModule, moduleIndex) => ({
@@ -1266,6 +1293,8 @@ export const courses: Course[] = baseCourses.map((course) => ({
 		learningOutcome: learningOutcomes(course.title)[Math.min(moduleIndex * 2, bloomLevels.length - 1)].outcome,
 		lessons: courseModule.lessons.map((lesson, lessonIndex) => ({
 			...lesson,
+			durationMinutes: lesson.durationMinutes ?? 6,
+			transcript: lesson.transcript ?? lesson.content?.introduction ?? `Lectura guiada sobre ${lesson.title}: ${lesson.topics.join(", ")}.`,
 			topics: moduleIndex === course.modules.length - 1 && lessonIndex === courseModule.lessons.length - 1
 				? [...lesson.topics, ...(essentialTopics[course.slug]?.slice(-2).flat() ?? []), ...(currentTopics[course.slug] ?? [])]
 				: [...lesson.topics, ...(essentialTopics[course.slug]?.[moduleIndex * 2 + lessonIndex] ?? [])],

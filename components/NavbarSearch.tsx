@@ -4,6 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { Search, X } from "lucide-react";
 import Link from "next/link";
 import { courses } from "@/lib/courses";
+import { courseCategoryLabels } from "@/lib/text";
 
 type SearchResult = {
   type: "course" | "module";
@@ -67,6 +68,17 @@ export default function NavbarSearch() {
     courses.forEach((course) => {
       // Buscar en nombre del curso
       if (course.title.toLowerCase().includes(lowerSearch)) {
+        filtered.push({
+          type: "course",
+          courseSlug: course.slug,
+          courseName: course.title,
+          courseImage: course.image,
+          toolImage: toolImages[course.slug] ?? course.image,
+          courseCode: course.code,
+        });
+      }
+
+      if (courseCategoryLabels[course.category].toLowerCase().includes(lowerSearch) || course.demandRegion.toLowerCase().includes(lowerSearch)) {
         filtered.push({
           type: "course",
           courseSlug: course.slug,

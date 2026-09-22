@@ -1,6 +1,8 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import CourseCard from "@/components/CourseCard";
+import LearningMissionCard from "@/components/LearningMissionCard";
+import { learningMissions } from "@/lib/learningMissions";
 import { Facebook, Linkedin, MessageCircle, Instagram, Mail, Code2, Database, BarChart3, FileSpreadsheet } from "lucide-react";
 
 const featuredCourses = [
@@ -54,11 +56,8 @@ export default function Home() {
             Una nueva plataforma peruana para aprender y crecer gratis.
           </p>
         </div>
-        <div className="mx-auto mb-12 max-w-4xl overflow-hidden rounded-cell border border-blue-200 bg-blue-950 shadow-xl">
+        <div className="mx-auto mb-8 max-w-4xl overflow-hidden rounded-cell border border-blue-200 bg-blue-950 shadow-xl">
           <video
-            autoPlay
-            muted
-            loop
             playsInline
             controls
             preload="auto"
@@ -69,9 +68,10 @@ export default function Home() {
             <source src="/videos/presentacion-datam/AQOBWwt4qxAdVReF2jAJAMIJiKqNM6FUJSmYtu9eIztFcJczSAx7v0zKoRWBuczr-aGYnp_JcwGtFlEBKjmdm6IupS8IuW2nH1ODJptIerWaxw.mp4" type="video/mp4" />
             Tu navegador no puede reproducir este video.
           </video>
-          <p className="px-5 py-3 text-center text-xs text-blue-100">
-            Conoce DataM y comienza tu camino de aprendizaje tecnológico.
-          </p>
+          <p className="px-5 py-3 text-center text-xs text-blue-100">Conoce DataM y comienza tu camino de aprendizaje tecnológico.</p>
+        </div>
+        <div className="mx-auto mb-12 max-w-4xl">
+          <LearningMissionCard mission={learningMissions[0]} />
         </div>
         <div className="mx-auto max-w-3xl text-center">
           <span className="data-cell-header">DataM · Educación tecnológica desde Perú</span>

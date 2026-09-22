@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase/client";
 import type { Course, LessonQuizQuestion } from "@/lib/courses";
 import type { LessonMaterials, MaterialType } from "@/lib/materialTypes";
 import { lessonMaterialsKey } from "@/lib/materialTypes";
+import { learningLabels } from "@/lib/text";
 
 const QUIZ_POINTS_PER_QUESTION = 10;
 const QUIZ_PASSING_SCORE = 70;
@@ -123,6 +124,7 @@ export default function CourseLessons({ course, materials }: { course: Course; m
     [course.modules],
   );
   const storageKey = `datam-progress:${userId ?? "guest"}:${course.slug}`;
+  const pendingSyncKey = `datam-pending-progress:${course.slug}`;
   const enrollmentKey = `datam-enrollment:${userId ?? "guest"}:${course.slug}`;
   const completedLessons = watched.filter((id) => lessonIds.includes(id)).length;
   const courseProgress = lessonIds.length ? Math.round((completedLessons / lessonIds.length) * 100) : 0;
@@ -164,6 +166,19 @@ export default function CourseLessons({ course, materials }: { course: Course; m
   }, [isReady, storageKey]);
 
   useEffect(() => {
+    if (!userId) return;
+    async function syncPendingProgress() {
+      const pending = JSON.parse(window.localStorage.getItem(pendingSyncKey) ?? "[]") as string[];
+      if (pending.length === 0) return;
+      await Promise.all(pending.map((lessonId) => supabase.from("progress").upsert({ user_id: userId, course_slug: course.slug, lesson_id: lessonId, sincronizado_offline: true }, { onConflict: "user_id,course_slug,lesson_id" })));
+      window.localStorage.removeItem(pendingSyncKey);
+    }
+    void syncPendingProgress();
+    window.addEventListener("online", syncPendingProgress);
+    return () => window.removeEventListener("online", syncPendingProgress);
+  }, [course.slug, pendingSyncKey, userId]);
+
+  useEffect(() => {
     function handleEnrollment(event: Event) {
       const requestedCourse = (event as CustomEvent<{ courseSlug: string }>).detail.courseSlug;
       if (requestedCourse === course.slug) void enroll();
@@ -201,10 +216,13 @@ export default function CourseLessons({ course, materials }: { course: Course; m
     const nextProgress = [...watched, lessonId];
     setWatched(nextProgress);
     window.localStorage.setItem(storageKey, JSON.stringify(nextProgress));
-    if (!userId) return;
-    await supabase
-      .from("progress")
-      .upsert({ user_id: userId, course_slug: course.slug, lesson_id: lessonId }, { onConflict: "user_id,course_slug,lesson_id" });
+    if (!userId || !navigator.onLine) {
+      const pending = JSON.parse(window.localStorage.getItem(pendingSyncKey) ?? "[]") as string[];
+      window.localStorage.setItem(pendingSyncKey, JSON.stringify(Array.from(new Set([...pending, lessonId]))));
+      return;
+    }
+    await supabase.from("progress").upsert({ user_id: userId, course_slug: course.slug, lesson_id: lessonId, sincronizado_offline: true }, { onConflict: "user_id,course_slug,lesson_id" });
+    await supabase.from("learning_activity").upsert({ user_id: userId, course_slug: course.slug, activity_date: new Date().toISOString().slice(0, 10), lessons_completed: nextProgress.length }, { onConflict: "user_id,activity_date" });
   }
 
   if (!isReady) return <p className="mt-8 text-sm text-muted">Preparando el curso...</p>;
@@ -299,7 +317,7 @@ export default function CourseLessons({ course, materials }: { course: Course; m
                             <div className="grid gap-4 lg:grid-cols-[1.25fr_0.75fr]">
                               <div>
                                 <div className="border-l-4 border-accent bg-blue-50 p-4">
-                                  <div className="flex items-center gap-2"><Target className="h-4 w-4 text-accent" /><p className="data-cell-header">Paso 1 · Aprende</p></div>
+                                  <div className="flex flex-wrap items-center justify-between gap-2"><div className="flex items-center gap-2"><Target className="h-4 w-4 text-accent" /><p className="data-cell-header">Paso 1 · Aprende</p></div><span className="rounded-cell bg-white px-2 py-1 text-xs font-medium text-muted">{lesson.durationMinutes ?? 6} min · {learningLabels.lowData}</span></div>
                                   <p className="mt-2 text-base font-medium leading-6 text-ink">Al terminar podrás aplicar: {lesson.topics.join(", ")}.</p>
                                 </div>
                                 {lesson.content && (
@@ -309,6 +327,11 @@ export default function CourseLessons({ course, materials }: { course: Course; m
                                       <p className="mt-2 text-sm leading-6 text-muted">{lesson.content.introduction}</p>
                                     </div>
                                     <img src={lesson.content.imageUrl} alt={lesson.content.imageAlt} className="h-32 w-32 rounded-cell border border-line bg-white object-contain p-3" />
+                                    <details className="data-cell p-4" open>
+                                      <summary className="cursor-pointer text-sm font-bold text-accent">{learningLabels.transcript}</summary>
+                                      <p className="mt-3 text-sm leading-6 text-muted">{lesson.transcript}</p>
+                                      {lesson.audioUrl && <audio controls preload="none" src={lesson.audioUrl} className="mt-4 w-full" aria-label={`Audio de ${lesson.title}`} />}
+                                    </details>
                                     <div className="data-cell p-4">
                                       <p className="data-cell-header">Conceptos clave</p>
                                       <ul className="mt-2 space-y-1.5">{lesson.content.keyConcepts.map((concept) => <li key={concept} className="border-l-2 border-accent pl-3 text-sm leading-6 text-muted">{concept}</li>)}</ul>
@@ -371,7 +394,7 @@ export default function CourseLessons({ course, materials }: { course: Course; m
                               </aside>
                             </div>
                             <div className="mt-5 flex flex-col gap-4 border-t-4 border-blue-500 bg-blue-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:border-l-4 sm:border-t-0 sm:gap-3 sm:p-5">
-                              <div><p className="font-display text-base font-bold text-ink">Paso 3 · Confirma tu avance</p><p className="mt-1 text-base leading-6 text-muted sm:text-sm sm:leading-normal">{isFinalLesson ? "Termina esta clase para pasar a la evaluación final." : "Marca la clase como completada cuando hayas revisado el video y la práctica."}</p></div>
+                              <div><p className="font-display text-base font-bold text-ink">Paso 3 · Confirma tu avance</p><p className="mt-1 text-base leading-6 text-muted sm:text-sm sm:leading-normal">{isFinalLesson ? "Termina esta clase para pasar a la evaluación final." : "Lee el contenido, realiza la actividad y marca la clase como completada."}</p></div>
                               <button disabled={!isEnrolled || isDone || isCompletionLocked} onClick={() => markCompleted(lessonId)} className="min-h-11 w-full shrink-0 rounded-cell bg-accent px-4 py-3 text-base font-bold text-white transition-colors hover:bg-ink disabled:cursor-not-allowed disabled:bg-line disabled:text-muted sm:w-auto sm:py-2 sm:text-sm">{isDone ? "Clase completada" : "Completar clase"}</button>
                             </div>
                             {isCompletionLocked && <p className="mt-2 text-xs text-muted">Puedes ver esta clase, pero debes completar la clase anterior antes de marcarla como terminada.</p>}

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ShieldCheck, Trophy } from "lucide-react";
+import { ArrowRight, BookOpen, ShieldCheck, Trophy } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { courses } from "@/lib/courses";
 import ProgressBar from "@/components/ProgressBar";
@@ -81,6 +81,15 @@ export default function StudentDashboard() {
   const daysSinceActivity = lastActivity ? Math.floor((Date.now() - new Date(`${lastActivity.activity_date}T00:00:00`).getTime()) / 86400000) : null;
   const nextMission = getRecommendedMission(courses, progressRows.length);
   const studentLevel = calculateStudentLevel(totalXp);
+  const nextLevel = ["principiante", "intermedio", "avanzado", "experto"].indexOf(studentLevel.id) < 3
+    ? ["principiante", "intermedio", "avanzado", "experto"][(["principiante", "intermedio", "avanzado", "experto"].indexOf(studentLevel.id) + 1)]
+    : "experto";
+  const nextLevelXp = studentLevel.id === "principiante" ? 100 : studentLevel.id === "intermedio" ? 300 : studentLevel.id === "avanzado" ? 700 : totalXp;
+  const previousLevelXp = studentLevel.minXp;
+  const levelProgress = nextLevelXp > previousLevelXp ? Math.min(100, Math.round(((totalXp - previousLevelXp) / (nextLevelXp - previousLevelXp)) * 100)) : 100;
+  const activeCourse = enrolledCourses.find((course) => progressRows.filter((row) => row.course_slug === course.slug).length < course.modules.reduce((sum, module) => sum + module.lessons.length, 0)) ?? enrolledCourses[0];
+  const activeCourseDone = activeCourse ? progressRows.filter((row) => row.course_slug === activeCourse.slug).length : 0;
+  const activeCourseTotal = activeCourse?.modules.reduce((sum, module) => sum + module.lessons.length, 0) ?? 0;
 
   async function togglePrivacy(optIn: boolean) {
     if (!userId) return;
@@ -94,11 +103,42 @@ export default function StudentDashboard() {
     await supabase.from("profiles").update({ leaderboard_display_name: displayName || null }).eq("id", userId);
   }
 
-  return <>
+  return <div className="dashboard-space">
     {error && <p role="alert" className="mt-6 border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</p>}
-    <div className="flex flex-wrap items-center gap-3">
-      <h1 className="font-display text-2xl font-bold text-ink">Hola, {name}</h1>
-      <span className="flex items-center gap-1.5 rounded-cell border border-accent bg-blue-50 px-3 py-1 text-xs font-bold text-accent"><ShieldCheck className="h-4 w-4" /> Nivel {studentLevel.label} · {totalXp} XP</span>
+    <div className="dashboard-hero">
+      <div className="flex flex-wrap items-start justify-between gap-5">
+        <div>
+          <p className="data-cell-header dashboard-hero-kicker">Experiencia del estudiante</p>
+          <h1 className="mt-2 font-display text-2xl font-bold text-white sm:text-3xl">Hola, {name}</h1>
+          <p className="mt-2 max-w-xl text-sm leading-6 text-blue-100">Continúa donde lo dejaste. Tu ruta combina contenido estructurado, práctica guiada y evidencia profesional.</p>
+        </div>
+        <span className="flex items-center gap-1.5 rounded-cell border border-blue-300/40 bg-white/10 px-3 py-2 text-xs font-bold text-white"><ShieldCheck className="h-4 w-4" /> Nivel {studentLevel.label}</span>
+      </div>
+      <div className="mt-7 grid gap-5 lg:grid-cols-[1.4fr_0.8fr]">
+        <div>
+          <div className="flex items-end justify-between gap-3"><span className="font-display text-4xl font-bold text-white">{totalXp.toLocaleString("es-PE")} <small className="text-sm font-medium text-blue-200">XP</small></span><span className="text-xs text-blue-200">{studentLevel.id === "experto" ? "Nivel máximo" : `${nextLevelXp - totalXp} XP para ${nextLevel}`}</span></div>
+          <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/15"><div className="h-full rounded-full bg-accent2 transition-all" style={{ width: `${levelProgress}%` }} /></div>
+          <div className="mt-2 flex justify-between text-xs text-blue-200"><span>Progreso de nivel</span><span>{levelProgress}%</span></div>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          <div className="dashboard-stat"><b>{streak.current_streak}</b><span>Racha</span></div>
+          <div className="dashboard-stat"><b>{completedCourses}</b><span>Cursos</span></div>
+          <div className="dashboard-stat"><b>{progressRows.length}</b><span>Temas</span></div>
+        </div>
+      </div>
+    </div>
+    <div className="mt-6 grid gap-5 lg:grid-cols-[1.35fr_0.65fr]">
+      <div className="data-cell p-5 sm:p-6">
+        <p className="data-cell-header">Próxima acción</p>
+        <div className="mt-3 flex items-start gap-3"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-cell bg-blue-50 text-accent"><BookOpen className="h-5 w-5" /></span><div className="min-w-0"><h2 className="font-display text-lg font-bold text-ink">{activeCourse ? activeCourse.title : "Explora tu primera ruta"}</h2><p className="mt-1 text-sm text-muted">{activeCourse ? `${activeCourseDone} de ${activeCourseTotal} temas completados` : "Elige un curso para comenzar tu desarrollo profesional."}</p></div></div>
+        {activeCourse && <ProgressBar label="Avance del curso activo" percent={activeCourseTotal ? Math.round((activeCourseDone / activeCourseTotal) * 100) : 0} />}
+        <button type="button" onClick={() => router.push(activeCourse ? `/cursos/${activeCourse.slug}` : "/cursos")} className="mt-4 inline-flex items-center gap-2 rounded-cell bg-accent px-4 py-2.5 text-sm font-bold text-white hover:bg-ink">{activeCourse ? "Continuar curso" : "Explorar cursos"}<ArrowRight className="h-4 w-4" /></button>
+      </div>
+      <div className="data-cell p-5 sm:p-6"><p className="data-cell-header">Prioridad de aprendizaje</p><dl className="mt-3 space-y-3 text-sm"><div><dt className="font-bold text-ink">Qué estás aprendiendo</dt><dd className="text-muted">{activeCourse?.title ?? "Aún no hay un curso activo"}</dd></div><div><dt className="font-bold text-ink">Qué debes hacer ahora</dt><dd className="text-muted">{nextMission.title}</dd></div></dl></div>
+    </div>
+    <div className="mt-8 flex flex-wrap items-center gap-3">
+      <span className="data-cell-header">Resumen de tu ruta</span>
+      <span className="text-xs text-muted">La motivación acompaña tu progreso; la evaluación final decide el certificado.</span>
     </div>
     <div className="mt-8 grid gap-5 md:grid-cols-3">
       <div className="data-cell p-5"><p className="data-cell-header">Cursos inscritos</p><p className="mt-2 font-display text-2xl font-bold text-ink">{enrolledCourses.length}</p></div>
@@ -124,5 +164,5 @@ export default function StudentDashboard() {
       </div>
       <Leaderboard />
     </div>
-  </>;
+  </div>;
 }

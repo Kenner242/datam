@@ -71,20 +71,44 @@ const common = (slug: string, code: string, title: string, level: string, durati
 	slug, code, title, level, duration, description, image, summary, professionalUse, modules, ...courseMetadata[slug],
 });
 
-function interactiveLessonContent(courseTitle: string, lessonTitle: string, topics: string[], imageUrl: string): LessonContent {
+const coursePracticeContexts: Record<string, { role: string; deliverable: string; workplace: string }> = {
+	"excel-basico": { role: "asistente administrativo", deliverable: "un registro ordenado y un resumen de indicadores", workplace: "control de ventas, gastos o inventario" },
+	"excel-intermedio": { role: "analista de operaciones", deliverable: "un reporte automatizado con indicadores", workplace: "seguimiento de metas y resultados comerciales" },
+	"excel-avanzado": { role: "analista de datos", deliverable: "un modelo reutilizable y documentado", workplace: "consolidación de información de varias fuentes" },
+	"power-bi-basico": { role: "analista de negocio", deliverable: "un dashboard ejecutivo", workplace: "seguimiento de ventas, clientes o cumplimiento" },
+	"power-bi-intermedio": { role: "analista BI", deliverable: "un modelo semántico con medidas confiables", workplace: "comparación de periodos y segmentos" },
+	"power-bi-avanzado": { role: "especialista BI", deliverable: "un modelo gobernado y optimizado", workplace: "publicación segura de indicadores para distintas áreas" },
+	"sql-basico": { role: "analista junior", deliverable: "una consulta documentada con indicadores", workplace: "responder preguntas de negocio desde tablas relacionadas" },
+	"sql-intermedio": { role: "analista de datos", deliverable: "un conjunto de consultas reutilizables", workplace: "comparar clientes, productos y periodos" },
+	"sql-avanzado": { role: "ingeniero de datos", deliverable: "una solución SQL segura y eficiente", workplace: "operaciones de producción y grandes volúmenes" },
+	"python-basico": { role: "asistente de automatización", deliverable: "un script pequeño y legible", workplace: "reducir tareas repetitivas de oficina" },
+	"python-intermedio": { role: "analista de datos", deliverable: "un reporte reproducible", workplace: "limpieza, análisis y visualización de archivos" },
+	"python-avanzado": { role: "desarrollador Python", deliverable: "un módulo probado e integrable", workplace: "automatización de procesos y consumo de APIs" },
+	"ingles-basico": { role: "colaborador en formación", deliverable: "un intercambio claro y breve", workplace: "presentarse, pedir información y seguir instrucciones" },
+	"ingles-intermedio": { role: "profesional de equipo", deliverable: "un correo o participación en reunión", workplace: "coordinar tareas con colegas y clientes" },
+	"ingles-avanzado": { role: "profesional internacional", deliverable: "una presentación o negociación", workplace: "defender propuestas y explicar decisiones" },
+	"programacion-desarrollo-web": { role: "desarrollador frontend junior", deliverable: "una interfaz web accesible y responsive", workplace: "publicar una experiencia digital funcional" },
+	"introduccion-a-la-ia": { role: "profesional que adopta tecnología", deliverable: "un flujo de trabajo con IA verificado", workplace: "automatizar tareas sin exponer datos sensibles" },
+	"investigacion-aplicada": { role: "asistente de investigación", deliverable: "un informe con evidencia y conclusiones", workplace: "tomar decisiones basadas en datos confiables" },
+	"finanzas-para-emprendedores": { role: "emprendedor o administrador", deliverable: "un control financiero accionable", workplace: "proteger la liquidez y decidir inversiones" },
+	"estadistica-basica": { role: "analista en formación", deliverable: "un análisis estadístico explicado", workplace: "comunicar patrones y riesgos sin exagerar conclusiones" },
+};
+
+function interactiveLessonContent(courseSlug: string, courseTitle: string, lessonTitle: string, topics: string[], imageUrl: string): LessonContent {
 	const firstTopic = topics[0] ?? lessonTitle;
 	const secondTopic = topics[1] ?? "aplicación práctica";
+	const context = coursePracticeContexts[courseSlug] ?? { role: "profesional en formación", deliverable: "una evidencia práctica", workplace: "resolver una necesidad real" };
 	const quizTopics = [...topics, lessonTitle, "un caso real", "una buena práctica", "la actividad guiada", "la toma de decisiones", "la revisión de resultados", "la mejora continua", "la documentación", "el aprendizaje aplicado"];
 	return {
-		introduction: `En esta lección de ${courseTitle}, aprenderás ${lessonTitle} mediante una lectura guiada, un ejemplo cercano y una actividad breve. El objetivo es que puedas comprender el concepto, practicarlo y aplicarlo en una situación real, no solo memorizar una definición.`,
-		keyConcepts: topics.map((topic) => `${topic}: comprende su propósito, identifica cuándo usarlo y relaciónalo con una tarea concreta de ${courseTitle}.`),
-		realExample: { title: `${lessonTitle} en una situación real`, description: `Una persona que trabaja o emprende utiliza ${firstTopic} para resolver una necesidad concreta. Después combina este conocimiento con ${secondTopic}, revisa el resultado y comunica una decisión clara.` },
-		practicalCase: { title: `Caso aplicado: ${lessonTitle}`, description: `Una pequeña organización necesita mejorar un proceso relacionado con ${firstTopic}. El estudiante analiza la información disponible, propone una solución usando ${secondTopic} y justifica por qué su propuesta es útil.` },
-		guidedActivity: { title: `Practica ${lessonTitle}`, instructions: `1) Define con tus palabras qué significa ${firstTopic}. 2) Escribe un ejemplo de uso en tu comunidad, estudio o trabajo. 3) Aplica ${secondTopic} en un ejercicio pequeño. 4) Revisa el resultado, anota un error o mejora y explica qué aprendiste.` },
-		reflectionQuestion: `¿Cómo aplicarías ${lessonTitle} para resolver un problema real de tu comunidad, estudio o trabajo?`,
+		introduction: `En esta lección de ${courseTitle}, aprenderás ${lessonTitle} dentro del trabajo de un ${context.role}. Primero comprenderás el concepto, luego lo practicarás y finalmente producirás una parte de ${context.deliverable}.`,
+		keyConcepts: topics.map((topic) => `${topic}: identifica su propósito, cuándo usarlo, qué resultado produce y cómo se relaciona con ${context.workplace}.`),
+		realExample: { title: `${lessonTitle} aplicado a ${context.workplace}`, description: `Un ${context.role} necesita resolver una situación de ${context.workplace}. Utiliza ${firstTopic}, combina el procedimiento con ${secondTopic}, valida el resultado y comunica una decisión que otra persona pueda revisar.` },
+		practicalCase: { title: `Caso profesional: ${lessonTitle}`, description: `Una organización solicita ${context.deliverable}. El estudiante analiza el contexto, selecciona ${firstTopic}, aplica ${secondTopic}, documenta un supuesto y justifica cómo su resultado ayuda a resolver ${context.workplace}.` },
+		guidedActivity: { title: `Construye una evidencia de ${lessonTitle}`, instructions: `1) Describe el problema profesional y el resultado esperado. 2) Define ${firstTopic} con tus palabras e identifica los datos o recursos necesarios. 3) Aplica ${secondTopic} en un ejercicio pequeño. 4) Revisa el resultado con un criterio verificable. 5) Guarda una evidencia breve y explica qué mejorarías.` },
+		reflectionQuestion: `¿Cómo demostrarías en una entrevista que puedes usar ${lessonTitle} para resolver una necesidad de ${context.workplace}?`,
 		imageUrl,
 		imageAlt: `Recurso visual relacionado con ${courseTitle} y ${lessonTitle}`,
-		quiz: quizTopics.slice(0, 10).map((topic, index) => ({
+		quiz: quizTopics.slice(0, 5).map((topic) => ({
 			prompt: `¿Qué afirmación describe mejor ${topic}?`,
 			options: [`Es un elemento que debe comprenderse y aplicarse en contexto.`, "Es una tarea que nunca requiere revisión.", "Es un concepto sin relación con el curso.", "Es una acción que sustituye todo el aprendizaje."],
 			correctOption: 0,
@@ -1321,9 +1345,7 @@ export const courses: Course[] = baseCourses.map((course) => ({
 			...lesson,
 			durationMinutes: lesson.durationMinutes ?? 6,
 			transcript: lesson.transcript ?? lesson.content?.introduction ?? `Lectura guiada sobre ${lesson.title}: ${lesson.topics.join(", ")}.`,
-			content: lesson.content ?? (["finanzas-para-emprendedores", "programacion-desarrollo-web", "estadistica-basica", "introduccion-a-la-ia"].includes(course.slug)
-				? interactiveLessonContent(course.title, lesson.title, lesson.topics, course.image)
-				: undefined),
+			content: lesson.content ?? interactiveLessonContent(course.slug, course.title, lesson.title, lesson.topics, course.image),
 			topics: moduleIndex === course.modules.length - 1 && lessonIndex === courseModule.lessons.length - 1
 				? [...lesson.topics, ...(essentialTopics[course.slug]?.slice(-2).flat() ?? []), ...(currentTopics[course.slug] ?? [])]
 				: [...lesson.topics, ...(essentialTopics[course.slug]?.[moduleIndex * 2 + lessonIndex] ?? [])],

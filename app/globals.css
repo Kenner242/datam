@@ -80,6 +80,20 @@ body {
   color: #eef4ff;
 }
 
+.course-hero {
+  background:
+    radial-gradient(760px 300px at 8% 0%, rgb(59 130 246 / 0.24), transparent 66%),
+    linear-gradient(145deg, #0d1c34, #060a14);
+}
+
+.course-hero-image {
+  overflow: hidden;
+  border: 1px solid #2d4162;
+  border-radius: 14px;
+  background: rgb(17 28 48 / 0.8);
+  box-shadow: 0 22px 44px -25px rgb(2 6 23 / 0.9);
+}
+
 .course-theme .course-program {
   background: transparent;
 }

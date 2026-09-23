@@ -4,13 +4,16 @@ import { PointerEvent, ReactNode, useEffect, useId, useRef, useState } from "rea
 import { GripHorizontal, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 
-export type TopicTabId = "lectura" | "flashcards" | "actividad" | "quiz";
+export type TopicTabId = "lectura" | "conceptos" | "ejemplo" | "flashcards" | "actividad" | "quiz" | "reflexion";
 
 const TAB_LABELS: Record<TopicTabId, string> = {
   lectura: "Lectura",
+  conceptos: "Conceptos",
+  ejemplo: "Ejemplo real",
   flashcards: "Flashcards",
   actividad: "Actividad práctica",
   quiz: "Quiz",
+  reflexion: "Reflexión profesional",
 };
 
 type TopicWindowProps = {
@@ -22,7 +25,7 @@ type TopicWindowProps = {
 };
 
 // Reutiliza el patrón de ventana flotante arrastrable de DaxAssistant, pero como modal centrado y con foco atrapado.
-export default function TopicWindow({ topicSlug, title, onClose, tabs = ["lectura", "flashcards", "actividad", "quiz"], renderTab }: TopicWindowProps) {
+export default function TopicWindow({ topicSlug, title, onClose, tabs = ["lectura", "conceptos", "ejemplo", "flashcards", "actividad", "quiz", "reflexion"], renderTab }: TopicWindowProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const headingId = useId();

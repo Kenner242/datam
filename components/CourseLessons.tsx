@@ -387,6 +387,12 @@ export default function CourseLessons({ course, materials }: { course: Course; m
                                 if (tab === "flashcards") {
                                   return <TopicFlashcardsTab courseSlug={course.slug} moduleIndex={moduleIndex} lessonIndex={lessonIndex} />;
                                 }
+                                if (tab === "conceptos") {
+                                  return lesson.content ? <div className="space-y-3"><h3 className="font-display text-lg font-bold text-white">Conceptos técnicos</h3><ul className="space-y-2">{lesson.content.keyConcepts.map((concept) => <li key={concept} className="border-l-2 border-accent pl-3 text-sm leading-6 text-blue-100">{concept}</li>)}</ul></div> : <p className="text-sm text-muted">Esta clase aún no tiene conceptos técnicos.</p>;
+                                }
+                                if (tab === "ejemplo") {
+                                  return lesson.content ? <div className="space-y-4"><div><h3 className="font-display text-lg font-bold text-white">{lesson.content.realExample.title}</h3><p className="mt-2 text-sm leading-6 text-blue-100">{lesson.content.realExample.description}</p></div><div className="border-l-4 border-green-500 bg-slate-900/60 p-4"><p className="data-cell-header">Caso práctico</p><p className="mt-2 text-sm leading-6 text-blue-100">{lesson.content.practicalCase.description}</p></div></div> : <p className="text-sm text-muted">Esta clase aún no tiene ejemplo real.</p>;
+                                }
                                 if (tab === "actividad") {
                                   return (
                                     <div className="space-y-4">
@@ -429,6 +435,9 @@ export default function CourseLessons({ course, materials }: { course: Course; m
                                       {completionFooter}
                                     </div>
                                   );
+                                }
+                                if (tab === "reflexion") {
+                                  return lesson.content ? <div className="space-y-4"><div className="border-l-4 border-purple-400 bg-purple-950/30 p-4"><p className="data-cell-header">Reflexión profesional</p><p className="mt-2 text-sm leading-6 text-blue-100">{lesson.content.reflectionQuestion}</p></div>{completionFooter}</div> : <p className="text-sm text-muted">Esta clase aún no tiene reflexión profesional.</p>;
                                 }
                                 return lesson.content ? (
                                   <div className="data-cell p-4">

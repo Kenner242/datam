@@ -15,6 +15,7 @@ export default function LoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [isRecovering, setIsRecovering] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isMagicLinkLoading, setIsMagicLinkLoading] = useState(false);
 
   async function handleGoogleLogin() {
     setError("");
@@ -27,6 +28,23 @@ export default function LoginPage() {
       setError(oauthError.message);
       setIsGoogleLoading(false);
     }
+  }
+
+  async function handleMagicLink() {
+    if (!email) {
+      setError("Escribe tu correo para enviarte el enlace de acceso.");
+      return;
+    }
+    setError("");
+    setMessage("");
+    setIsMagicLinkLoading(true);
+    const { error: magicLinkError } = await supabase.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: `${window.location.origin}/dashboard` },
+    });
+    if (magicLinkError) setError(magicLinkError.message);
+    else setMessage("Te enviamos un enlace a tu correo. Ábrelo desde este mismo dispositivo para iniciar sesión.");
+    setIsMagicLinkLoading(false);
   }
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -120,6 +138,9 @@ export default function LoginPage() {
             className="mt-2 rounded-cell bg-ink py-2.5 text-sm font-medium text-white transition-colors hover:bg-accent"
           >
             {isLoading ? "Entrando..." : "Entrar"}
+          </button>
+          <button type="button" onClick={() => void handleMagicLink()} disabled={isMagicLinkLoading} className="rounded-cell border border-line bg-white py-2.5 text-sm font-medium text-ink transition-colors hover:border-accent hover:text-accent disabled:cursor-not-allowed disabled:opacity-60">
+            {isMagicLinkLoading ? "Enviando enlace..." : "Entrar sin contraseña (enlace por correo)"}
           </button>
           {error && <p role="alert" className="text-sm text-red-600">{error}</p>}
           {message && <p role="status" className="text-sm text-green-700">{message}</p>}

@@ -305,6 +305,40 @@ body {
   text-align: center;
 }
 
+.detective-space { --detective-surface: #111c30; --detective-surface-2: #17253d; --detective-line: #22334f; --detective-line-2: #2d4162; }
+.detective-hero, .detective-panel, .detective-nav { border: 1px solid var(--detective-line); border-radius: 14px; background: linear-gradient(145deg, var(--detective-surface-2), #060a14); box-shadow: 0 18px 42px -24px rgb(2 6 23 / .8); }
+.detective-hero { overflow: hidden; padding: 28px; background: radial-gradient(680px 280px at 8% 0%, rgb(99 102 241 / .22), transparent 66%), linear-gradient(145deg, var(--detective-surface-2), #060a14); }
+.detective-hero em, .detective-content em { color: #a5b4fc; font-style: normal; }
+.detective-kicker { color: #fbbf24; }
+.detective-dropzone { display: block; cursor: pointer; border: 2px dashed var(--detective-line-2); border-radius: 14px; padding: 38px 24px; text-align: center; background: rgb(7 13 24 / .75); transition: border-color 180ms ease, background 180ms ease, transform 180ms ease; }
+.detective-dropzone:hover, .detective-dropzone.active { border-color: #6366f1; background: rgb(99 102 241 / .12); transform: translateY(-2px); }
+.detective-nav { padding: 16px; align-self: start; }
+.detective-nav-item { display: flex; width: 100%; align-items: center; gap: 10px; border-radius: 8px; padding: 10px; text-align: left; color: #c2d0e8; }
+.detective-nav-item:hover, .detective-nav-item.active { background: #1d2d47; color: #fff; }
+.detective-nav-item span { min-width: 0; }
+.detective-nav-item b, .detective-nav-item small { display: block; }
+.detective-nav-item small { margin-top: 2px; color: #7f93b3; font-size: .68rem; }
+.detective-file { display: flex; width: 100%; align-items: center; gap: 7px; border-radius: 7px; padding: 7px 8px; color: #7f93b3; font-size: .75rem; text-align: left; }
+.detective-file:hover, .detective-file.active { background: #17253d; color: #fff; }
+.detective-panel { min-width: 0; padding: 22px; }
+.detective-content { min-height: 390px; color: #c2d0e8; }
+.detective-content h3 { margin-top: 6px; color: #eef4ff; font-family: var(--font-display); font-size: 1.35rem; font-weight: 700; }
+.detective-content > p:not(.data-cell-header) { margin-top: 8px; max-width: 720px; font-size: .9rem; line-height: 1.6; }
+.detective-method-grid, .skill-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-top: 24px; }
+.detective-method-grid > div, .skill-card, .detective-card { display: flex; flex-direction: column; gap: 7px; border: 1px solid var(--detective-line-2); border-radius: 10px; background: #070d18; padding: 16px; color: #eef4ff; }
+.detective-method-grid span, .skill-card span, .detective-card p { color: #9fb2cf; font-size: .82rem; line-height: 1.5; }
+.detective-textarea { display: block; width: 100%; min-height: 130px; margin-top: 18px; resize: vertical; border: 1px solid var(--detective-line-2); border-radius: 10px; background: #070d18; padding: 14px; color: #eef4ff; outline: none; }
+.detective-textarea:focus { border-color: #6366f1; }
+.detective-quote { margin: 22px 0; border-left: 3px solid #ef4444; border-radius: 0 8px 8px 0; background: #070d18; padding: 18px; color: #c2d0e8; line-height: 1.6; }
+.concept-map { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 14px; margin-top: 24px; padding: 24px; border: 1px solid var(--detective-line); border-radius: 12px; background: radial-gradient(circle, rgb(99 102 241 / .12), #040810 70%); }
+.concept-node { display: flex; min-height: 76px; min-width: 100px; flex-direction: column; align-items: center; justify-content: center; border: 2px solid #818cf8; border-radius: 50%; background: #162338; padding: 13px; text-align: center; color: #fff; box-shadow: 0 0 22px rgb(99 102 241 / .2); }
+.concept-node small { color: #a5b4fc; font-size: .68rem; }
+.concept-node.ring-1 { border-color: #06b6d4; }
+.concept-node.ring-2 { border-color: #10b981; }
+.skill-card b { color: #a5b4fc; font-size: 1.4rem; }
+.detective-empty { display: grid; min-height: 390px; place-content: center; text-align: center; }
+@media (max-width: 700px) { .detective-method-grid, .skill-grid { grid-template-columns: 1fr; } .detective-hero, .detective-panel, .detective-nav { padding: 18px; } }
+
 @media (max-width: 640px) {
   .library-hero,
   .library-list,

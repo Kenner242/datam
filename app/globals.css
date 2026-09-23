@@ -72,6 +72,102 @@ body {
   color: #bfdbfe;
 }
 
+.course-theme {
+  min-height: 100vh;
+  background:
+    radial-gradient(900px 420px at 8% 12%, rgb(59 130 246 / 0.09), transparent 62%),
+    #060a14;
+  color: #eef4ff;
+}
+
+.course-theme .course-program {
+  background: transparent;
+}
+
+.course-theme .data-cell {
+  border-color: #22334f;
+  background: linear-gradient(180deg, #111c30, #0a1120);
+  color: #eef4ff;
+}
+
+.course-theme .text-ink {
+  color: #eef4ff;
+}
+
+.course-theme .text-muted {
+  color: #a9bad4;
+}
+
+.course-theme .bg-blue-50 {
+  background: #17253d;
+}
+
+.course-theme .bg-blue-100 {
+  background: #22334f;
+}
+
+.course-theme .border-line,
+.course-theme .border-blue-200 {
+  border-color: #2d4162;
+}
+
+.course-theme .text-blue-700 {
+  color: #93c5fd;
+}
+
+.course-theme .text-blue-800 {
+  color: #bfdbfe;
+}
+
+.course-theme .text-green-700 {
+  color: #86efac;
+}
+
+.course-theme .course-professional {
+  border-left: 3px solid #3b82f6;
+  border-top: 1px solid #22334f;
+  border-right: 1px solid #22334f;
+  border-bottom: 1px solid #22334f;
+  border-radius: 14px;
+  background: linear-gradient(180deg, #17253d, #0a1120);
+}
+
+.course-theme .course-professional .border-slate-700,
+.course-theme details > div {
+  border-color: #2d4162;
+}
+
+.course-theme .course-professional li {
+  color: #c2d0e8;
+}
+
+.course-theme article > button:hover {
+  background: #17253d;
+}
+
+.course-theme [role="dialog"] {
+  border-color: #2d4162;
+  background: linear-gradient(180deg, #141f34, #0a1120);
+  color: #eef4ff;
+}
+
+.course-theme [role="dialog"] .bg-base {
+  background: #070d18;
+}
+
+.course-theme [role="dialog"] .bg-white {
+  background: #111c30;
+  color: #eef4ff;
+}
+
+.course-theme [role="dialog"] .text-ink {
+  color: #eef4ff;
+}
+
+.course-theme [role="dialog"] .text-muted {
+  color: #a9bad4;
+}
+
 @media (max-width: 640px) {
   .dashboard-hero {
     padding: 18px;

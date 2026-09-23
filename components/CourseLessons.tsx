@@ -11,6 +11,8 @@ import { learningLabels } from "@/lib/text";
 import GeneratedLessonMaterials from "@/components/GeneratedLessonMaterials";
 import TopicWindow from "@/components/TopicWindow";
 import TopicFlashcardsTab from "@/components/TopicFlashcardsTab";
+import CourseRoadmap from "@/components/CourseRoadmap";
+import { awardXp, registerModuleAchievement } from "@/lib/gamification";
 
 const QUIZ_POINTS_PER_QUESTION = 10;
 const QUIZ_PASSING_SCORE = 70;
@@ -226,6 +228,14 @@ export default function CourseLessons({ course, materials }: { course: Course; m
     }
     await supabase.from("progress").upsert({ user_id: userId, course_slug: course.slug, lesson_id: lessonId, sincronizado_offline: true }, { onConflict: "user_id,course_slug,lesson_id" });
     await supabase.from("learning_activity").upsert({ user_id: userId, course_slug: course.slug, activity_date: new Date().toISOString().slice(0, 10), lessons_completed: nextProgress.length }, { onConflict: "user_id,activity_date" });
+
+    const moduleIndex = course.modules.findIndex((module) => module.lessons.some((lesson) => `${module.title}:${lesson.title}` === lessonId));
+    const module = course.modules[moduleIndex];
+    void awardXp(userId, course.slug, lessonId, module?.bloomLevel);
+    if (module) {
+      const moduleLessonIds = module.lessons.map((lesson) => `${module.title}:${lesson.title}`);
+      if (moduleLessonIds.every((id) => nextProgress.includes(id))) void registerModuleAchievement(userId, course.slug, moduleIndex);
+    }
   }
 
   if (!isReady) return <p className="mt-8 text-sm text-muted">Preparando el curso...</p>;
@@ -252,6 +262,8 @@ export default function CourseLessons({ course, materials }: { course: Course; m
           {message && <p role="status" className="mt-3 text-sm text-blue-800">{message}</p>}
         </div>
       </section>
+
+      <CourseRoadmap course={course} watchedLessonIds={watched} onSelectTopic={(moduleIndex, lessonIndex) => setOpenLessonId(`${moduleIndex}-${lessonIndex}`)} />
 
       <div className="relative space-y-5 sm:before:absolute sm:before:bottom-8 sm:before:left-7 sm:before:top-8 sm:before:w-px sm:before:bg-blue-200">
         {course.modules.map((module, moduleIndex) => {

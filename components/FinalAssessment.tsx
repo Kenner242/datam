@@ -6,6 +6,7 @@ import { CheckCircle2, ClipboardCheck, LockKeyhole, XCircle } from "lucide-react
 import { supabase } from "@/lib/supabase/client";
 import type { Course } from "@/lib/courses";
 import { getCourseAssessment } from "@/lib/courseAssessments";
+import { registerCourseTrophy } from "@/lib/gamification";
 
 const PASSING_SCORE = 70;
 
@@ -81,6 +82,8 @@ export default function FinalAssessment({ course }: { course: Course }) {
         puntaje: nextScore,
         habilidades: course.learningOutcomes?.map((outcome) => outcome.outcome) ?? [],
       }, { onConflict: "user_id,course_slug" });
+      // El trofeo es motivacional; el certificado (badges) sigue siendo el único logro verificable.
+      void registerCourseTrophy(auth.user.id, course.slug);
     }
   }
 

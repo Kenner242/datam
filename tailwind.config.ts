@@ -15,6 +15,14 @@ const config: Config = {
         accent: "#5B5FEF",
         accent2: "#FFB454",
         muted: "#6B7080",
+        bloom: {
+          recordar: "#93C5FD",
+          comprender: "#60A5FA",
+          aplicar: "#34D399",
+          analizar: "#10B981",
+          evaluar: "#A78BFA",
+          crear: "#7C3AED",
+        },
       },
       fontFamily: {
         display: ["var(--font-display)", "sans-serif"],

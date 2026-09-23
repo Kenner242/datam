@@ -8,6 +8,7 @@ import type { Course, LessonQuizQuestion } from "@/lib/courses";
 import type { LessonMaterials, MaterialType } from "@/lib/materialTypes";
 import { lessonMaterialsKey } from "@/lib/materialTypes";
 import { learningLabels } from "@/lib/text";
+import GeneratedLessonMaterials from "@/components/GeneratedLessonMaterials";
 
 const QUIZ_POINTS_PER_QUESTION = 10;
 const QUIZ_PASSING_SCORE = 70;
@@ -356,6 +357,7 @@ export default function CourseLessons({ course, materials }: { course: Course; m
                                       <p className="data-cell-header">Autoevaluación · {lesson.content.quiz.length} preguntas · {QUIZ_PASSING_SCORE}/100 para aprobar</p>
                                       <div className="mt-3"><LessonQuiz quiz={lesson.content.quiz} /></div>
                                     </div>
+                                    <GeneratedLessonMaterials courseSlug={course.slug} moduleIndex={moduleIndex} lessonIndex={lessonIndex} />
                                   </div>
                                 )}
                               </div>

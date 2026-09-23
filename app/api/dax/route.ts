@@ -7,9 +7,10 @@ type DaxRequest = {
   messages?: ChatMessage[];
   language?: "es-PE" | "qu-PE";
   courseSlug?: string;
+  generatedContext?: string;
 };
 
-function buildSystemPrompt(language: "es-PE" | "qu-PE", courseSlug?: string) {
+function buildSystemPrompt(language: "es-PE" | "qu-PE", courseSlug?: string, generatedContext?: string) {
   const course = courses.find((item) => item.slug === courseSlug);
   const catalog = courses.map((item) => `- ${item.title}: ${item.description}`).join("\n");
   const courseContext = course ? `Curso actual: ${course.title}. Perfil de egreso: ${course.graduateProfile ?? "No definido"}.` : "El estudiante no indicó un curso específico.";
@@ -17,8 +18,10 @@ function buildSystemPrompt(language: "es-PE" | "qu-PE", courseSlug?: string) {
     ? "Responde en quechua peruano cuando puedas hacerlo con precisión. Si un término técnico no tiene una traducción clara, conserva el término original y explícalo brevemente en español."
     : "Responde en español claro, con ejemplos cercanos al contexto peruano cuando ayuden.";
 
+  const materialContext = generatedContext?.trim() ? `\nMaterial revisado de la lección actual (úsalo solo como apoyo):\n${generatedContext.slice(0, 8_000)}` : "";
   return `Eres Dax, el tutor virtual de DataM, una plataforma peruana de educación tecnológica. ${languageInstruction}
 ${courseContext}
+${materialContext}
 
 Catálogo disponible:
 ${catalog}
@@ -60,7 +63,7 @@ export async function POST(request: NextRequest) {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        systemInstruction: { role: "system", parts: [{ text: buildSystemPrompt(body.language ?? "es-PE", body.courseSlug) }] },
+        systemInstruction: { role: "system", parts: [{ text: buildSystemPrompt(body.language ?? "es-PE", body.courseSlug, body.generatedContext) }] },
         contents: messages.map(({ role, content }) => ({ role: role === "assistant" ? "model" : "user", parts: [{ text: content }] })),
         generationConfig: { temperature: 0.6, maxOutputTokens: 700 },
       }),
@@ -74,7 +77,7 @@ export async function POST(request: NextRequest) {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            systemInstruction: { role: "system", parts: [{ text: buildSystemPrompt(body.language ?? "es-PE", body.courseSlug) }] },
+            systemInstruction: { role: "system", parts: [{ text: buildSystemPrompt(body.language ?? "es-PE", body.courseSlug, body.generatedContext) }] },
             contents: messages.map(({ role, content }) => ({ role: role === "assistant" ? "model" : "user", parts: [{ text: content }] })),
             generationConfig: { temperature: 0.6, maxOutputTokens: 700 },
           }),

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { BookOpen, Check, CheckCircle2, ChevronDown, Download, FileSpreadsheet, FileText, Lightbulb, Target, XCircle } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
@@ -9,6 +9,8 @@ import type { LessonMaterials, MaterialType } from "@/lib/materialTypes";
 import { lessonMaterialsKey } from "@/lib/materialTypes";
 import { learningLabels } from "@/lib/text";
 import GeneratedLessonMaterials from "@/components/GeneratedLessonMaterials";
+import TopicWindow from "@/components/TopicWindow";
+import TopicFlashcardsTab from "@/components/TopicFlashcardsTab";
 
 const QUIZ_POINTS_PER_QUESTION = 10;
 const QUIZ_PASSING_SCORE = 70;
@@ -284,20 +286,30 @@ export default function CourseLessons({ course, materials }: { course: Course; m
                   {module.lessons.map((lesson, lessonIndex) => {
                     const lessonId = `${module.title}:${lesson.title}`;
                     const isDone = watched.includes(lessonId);
-                    const isOpen = openLessonId === lessonId;
+                    const topicSlug = `${moduleIndex}-${lessonIndex}`;
+                    const isOpen = openLessonId === topicSlug;
                     const isFinalLesson = moduleIndex === course.modules.length - 1 && lessonIndex === module.lessons.length - 1;
                     const lessonPosition = lessonIds.indexOf(lessonId);
                     const previousLessonId = lessonPosition > 0 ? lessonIds[lessonPosition - 1] : null;
                     const isCompletionLocked = Boolean(previousLessonId && !watched.includes(previousLessonId));
+                    const materialsKey = lessonMaterialsKey(moduleIndex, lessonIndex);
+                    const lessonMaterials = materials[materialsKey] ?? {};
+                    const materialTypes = (Object.keys(lessonMaterials) as (keyof typeof lessonMaterials)[]);
+
+                    const completionFooter = (
+                      <div className="mt-5 flex flex-col gap-4 border-t-4 border-blue-500 bg-blue-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
+                        <div><p className="font-display text-base font-bold text-ink">Confirma tu avance</p><p className="mt-1 text-sm leading-6 text-muted">{isFinalLesson ? "Termina esta clase para pasar a la evaluación final." : "Lee el contenido, realiza la actividad y marca la clase como completada."}</p></div>
+                        <button disabled={!isEnrolled || isDone || isCompletionLocked} onClick={() => markCompleted(lessonId)} className="min-h-11 w-full shrink-0 rounded-cell bg-accent px-4 py-3 text-base font-bold text-white transition-colors hover:bg-ink disabled:cursor-not-allowed disabled:bg-line disabled:text-muted sm:w-auto sm:py-2 sm:text-sm">{isDone ? "Clase completada" : "Completar clase"}</button>
+                      </div>
+                    );
 
                     return (
                       <article key={lesson.title}>
                         <button
                           type="button"
-                          onClick={() => setOpenLessonId(isOpen ? "" : lessonId)}
-                          aria-expanded={isOpen}
-                          aria-controls={`lesson-content-${course.slug}-${moduleIndex}-${lessonIndex}`}
-                            className="flex w-full items-start gap-3 px-4 py-4 text-left transition-colors hover:bg-blue-50 sm:items-center sm:gap-4 sm:px-5"
+                          onClick={() => setOpenLessonId(topicSlug)}
+                          aria-haspopup="dialog"
+                          className="flex w-full items-start gap-3 px-4 py-4 text-left transition-colors hover:bg-blue-50 sm:items-center sm:gap-4 sm:px-5"
                         >
                           <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full border text-sm font-bold ${isDone ? "border-green-600 bg-green-600 text-white" : "border-blue-200 bg-white text-blue-700"}`}>
                             {isDone ? <Check className="h-4 w-4" /> : lessonIndex + 1}
@@ -306,104 +318,116 @@ export default function CourseLessons({ course, materials }: { course: Course; m
                             <span className="block break-words font-display text-base font-bold leading-5 text-ink sm:text-sm">{lesson.title}</span>
                             <span className="mt-1 block text-sm leading-5 text-muted sm:truncate sm:text-xs">{lesson.topics.join(" - ")}</span>
                           </span>
-                          <ChevronDown className={`mt-1 h-5 w-5 shrink-0 text-blue-700 transition-transform sm:mt-0 ${isOpen ? "rotate-180" : ""}`} />
+                          <ChevronDown className="mt-1 h-5 w-5 shrink-0 -rotate-90 text-blue-700 sm:mt-0" />
                         </button>
 
-                        {isOpen && (() => {
-                          const materialsKey = lessonMaterialsKey(moduleIndex, lessonIndex);
-                          const lessonMaterials = materials[materialsKey] ?? {};
-                          const materialTypes = (Object.keys(lessonMaterials) as (keyof typeof lessonMaterials)[]);
-                          return (
-                          <div id={`lesson-content-${course.slug}-${moduleIndex}-${lessonIndex}`} className="border-t border-line bg-base px-3 py-5 sm:px-5">
-                            <div className="grid gap-4 lg:grid-cols-[1.25fr_0.75fr]">
-                              <div>
-                                <div className="border-l-4 border-accent bg-blue-50 p-4">
-                                  <div className="flex flex-wrap items-center justify-between gap-2"><div className="flex items-center gap-2"><Target className="h-4 w-4 text-accent" /><p className="data-cell-header">Paso 1 · Aprende</p></div><span className="rounded-cell bg-white px-2 py-1 text-xs font-medium text-muted">{lesson.durationMinutes ?? 6} min · {learningLabels.lowData}</span></div>
-                                  <p className="mt-2 text-base font-medium leading-6 text-ink">Al terminar podrás aplicar: {lesson.topics.join(", ")}.</p>
-                                </div>
-                                {lesson.content && (
-                                  <div className="mt-4 space-y-4">
-                                    <div className="data-cell p-4">
-                                      <p className="data-cell-header">Introducción</p>
-                                      <p className="mt-2 text-sm leading-6 text-muted">{lesson.content.introduction}</p>
-                                    </div>
-                                    <img src={lesson.content.imageUrl} alt={lesson.content.imageAlt} className="h-32 w-32 rounded-cell border border-line bg-white object-contain p-3" />
-                                    <details className="data-cell p-4" open>
-                                      <summary className="cursor-pointer text-sm font-bold text-accent">{learningLabels.transcript}</summary>
-                                      <p className="mt-3 text-sm leading-6 text-muted">{lesson.transcript}</p>
-                                      {lesson.audioUrl && <audio controls preload="none" src={lesson.audioUrl} className="mt-4 w-full" aria-label={`Audio de ${lesson.title}`} />}
-                                    </details>
-                                    <div className="data-cell p-4">
-                                      <p className="data-cell-header">Conceptos clave</p>
-                                      <ul className="mt-2 space-y-1.5">{lesson.content.keyConcepts.map((concept) => <li key={concept} className="border-l-2 border-accent pl-3 text-sm leading-6 text-muted">{concept}</li>)}</ul>
-                                    </div>
-                                    <div className="data-cell p-4">
-                                      <p className="data-cell-header">Ejemplo real · {lesson.content.realExample.title}</p>
-                                      <p className="mt-2 text-sm leading-6 text-muted">{lesson.content.realExample.description}</p>
-                                    </div>
-                                    <div className="data-cell p-4">
-                                      <p className="data-cell-header">Caso práctico · {lesson.content.practicalCase.title}</p>
-                                      <p className="mt-2 text-sm leading-6 text-muted">{lesson.content.practicalCase.description}</p>
-                                    </div>
-                                    <div className="data-cell p-4">
-                                      <p className="data-cell-header">Actividad guiada · {lesson.content.guidedActivity.title}</p>
-                                      <p className="mt-2 text-sm leading-6 text-muted">{lesson.content.guidedActivity.instructions}</p>
-                                    </div>
-                                    <div className="flex items-start gap-2 border-l-4 border-amber-400 bg-amber-50 p-4">
-                                      <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
-                                      <p className="text-sm leading-6 text-amber-900"><span className="font-bold">Pregunta de reflexión:</span> {lesson.content.reflectionQuestion}</p>
-                                    </div>
-                                    <div className="data-cell p-4">
-                                      <p className="data-cell-header">Autoevaluación · {lesson.content.quiz.length} preguntas · {QUIZ_PASSING_SCORE}/100 para aprobar</p>
-                                      <div className="mt-3"><LessonQuiz quiz={lesson.content.quiz} /></div>
-                                    </div>
-                                    <GeneratedLessonMaterials courseSlug={course.slug} moduleIndex={moduleIndex} lessonIndex={lessonIndex} />
-                                  </div>
-                                )}
-                              </div>
-                              <aside className="data-cell h-fit p-4 sm:p-5 lg:sticky lg:top-24">
-                                <div className="flex items-center justify-between gap-2">
-                                  <div className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-blue-700" /><p className="data-cell-header">Paso 2 · Materiales</p></div>
-                                  {materialTypes.length > 0 && <span className="rounded-cell bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700">{materialTypes.length} archivo{materialTypes.length === 1 ? "" : "s"}</span>}
-                                </div>
-                                {materialTypes.length > 0 ? (
-                                  <div className="mt-3 flex flex-col gap-3">
-                                    {materialTypes.map((type) => {
-                                      const material = lessonMaterials[type];
-                                      if (!material) return null;
-                                      const style = MATERIAL_STYLES[type];
-                                      return (
-                                        <div key={type} className="data-cell p-3">
-                                          <div className="flex items-center justify-between gap-2">
-                                            <span className={`rounded-cell px-2 py-1 text-xs font-bold uppercase ${style.badge}`}>{material.label}</span>
-                                            <span className="text-xs text-muted">{material.sizeKB} KB</span>
+                        {isOpen && (
+                          <Suspense fallback={null}>
+                            <TopicWindow
+                              topicSlug={topicSlug}
+                              title={lesson.title}
+                              onClose={() => setOpenLessonId("")}
+                              renderTab={(tab) => {
+                                if (tab === "lectura") {
+                                  return (
+                                    <div>
+                                      <div className="border-l-4 border-accent bg-blue-50 p-4">
+                                        <div className="flex flex-wrap items-center justify-between gap-2"><div className="flex items-center gap-2"><Target className="h-4 w-4 text-accent" /><p className="data-cell-header">Aprende</p></div><span className="rounded-cell bg-white px-2 py-1 text-xs font-medium text-muted">{lesson.durationMinutes ?? 6} min · {learningLabels.lowData}</span></div>
+                                        <p className="mt-2 text-base font-medium leading-6 text-ink">Al terminar podrás aplicar: {lesson.topics.join(", ")}.</p>
+                                      </div>
+                                      {lesson.content && (
+                                        <div className="mt-4 space-y-4">
+                                          <div className="data-cell p-4">
+                                            <p className="data-cell-header">Introducción</p>
+                                            <p className="mt-2 text-sm leading-6 text-muted">{lesson.content.introduction}</p>
                                           </div>
-                                          <div className="mt-3 flex items-start gap-3">
-                                            <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-cell ${style.icon}`}><style.Icon className="h-4 w-4" /></span>
-                                            <div className="min-w-0">
-                                              <p className="break-words text-sm font-bold text-ink">{style.title(lesson.title)}</p>
-                                              <p className="mt-1 text-xs text-muted">{style.description}</p>
-                                            </div>
+                                          <img src={lesson.content.imageUrl} alt={lesson.content.imageAlt} className="h-32 w-32 rounded-cell border border-line bg-white object-contain p-3" />
+                                          <details className="data-cell p-4" open>
+                                            <summary className="cursor-pointer text-sm font-bold text-accent">{learningLabels.transcript}</summary>
+                                            <p className="mt-3 text-sm leading-6 text-muted">{lesson.transcript}</p>
+                                            {lesson.audioUrl && <audio controls preload="none" src={lesson.audioUrl} className="mt-4 w-full" aria-label={`Audio de ${lesson.title}`} />}
+                                          </details>
+                                          <div className="data-cell p-4">
+                                            <p className="data-cell-header">Conceptos clave</p>
+                                            <ul className="mt-2 space-y-1.5">{lesson.content.keyConcepts.map((concept) => <li key={concept} className="border-l-2 border-accent pl-3 text-sm leading-6 text-muted">{concept}</li>)}</ul>
                                           </div>
-                                          <a href={material.href} download aria-label={`Descargar ${style.title(lesson.title)}`} className="mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-cell border border-blue-300 bg-white px-3 py-3 text-base font-medium text-blue-700 transition-colors hover:bg-blue-50 sm:py-2 sm:text-sm"><Download className="h-4 w-4" /> Descargar ({material.ext})</a>
+                                          <div className="data-cell p-4">
+                                            <p className="data-cell-header">Ejemplo real · {lesson.content.realExample.title}</p>
+                                            <p className="mt-2 text-sm leading-6 text-muted">{lesson.content.realExample.description}</p>
+                                          </div>
+                                          <div className="data-cell p-4">
+                                            <p className="data-cell-header">Caso práctico · {lesson.content.practicalCase.title}</p>
+                                            <p className="mt-2 text-sm leading-6 text-muted">{lesson.content.practicalCase.description}</p>
+                                          </div>
+                                          <div className="flex items-start gap-2 border-l-4 border-amber-400 bg-amber-50 p-4">
+                                            <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+                                            <p className="text-sm leading-6 text-amber-900"><span className="font-bold">Pregunta de reflexión:</span> {lesson.content.reflectionQuestion}</p>
+                                          </div>
+                                          <GeneratedLessonMaterials courseSlug={course.slug} moduleIndex={moduleIndex} lessonIndex={lessonIndex} />
                                         </div>
-                                      );
-                                    })}
+                                      )}
+                                      {completionFooter}
+                                      {isCompletionLocked && <p className="mt-2 text-xs text-muted">Puedes ver esta clase, pero debes completar la clase anterior antes de marcarla como terminada.</p>}
+                                      {!isEnrolled && <p className="mt-2 text-xs text-muted">Inscríbete en el curso para registrar tus clases completadas.</p>}
+                                    </div>
+                                  );
+                                }
+                                if (tab === "flashcards") {
+                                  return <TopicFlashcardsTab courseSlug={course.slug} moduleIndex={moduleIndex} lessonIndex={lessonIndex} />;
+                                }
+                                if (tab === "actividad") {
+                                  return (
+                                    <div className="space-y-4">
+                                      {lesson.content && (
+                                        <div className="data-cell p-4">
+                                          <p className="data-cell-header">Actividad guiada · {lesson.content.guidedActivity.title}</p>
+                                          <p className="mt-2 text-sm leading-6 text-muted">{lesson.content.guidedActivity.instructions}</p>
+                                        </div>
+                                      )}
+                                      <div>
+                                        <div className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-blue-700" /><p className="data-cell-header">Materiales descargables</p></div>
+                                        {materialTypes.length > 0 ? (
+                                          <div className="mt-3 flex flex-col gap-3">
+                                            {materialTypes.map((type) => {
+                                              const material = lessonMaterials[type];
+                                              if (!material) return null;
+                                              const style = MATERIAL_STYLES[type];
+                                              return (
+                                                <div key={type} className="data-cell p-3">
+                                                  <div className="flex items-center justify-between gap-2">
+                                                    <span className={`rounded-cell px-2 py-1 text-xs font-bold uppercase ${style.badge}`}>{material.label}</span>
+                                                    <span className="text-xs text-muted">{material.sizeKB} KB</span>
+                                                  </div>
+                                                  <div className="mt-3 flex items-start gap-3">
+                                                    <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-cell ${style.icon}`}><style.Icon className="h-4 w-4" /></span>
+                                                    <div className="min-w-0">
+                                                      <p className="break-words text-sm font-bold text-ink">{style.title(lesson.title)}</p>
+                                                      <p className="mt-1 text-xs text-muted">{style.description}</p>
+                                                    </div>
+                                                  </div>
+                                                  <a href={material.href} download aria-label={`Descargar ${style.title(lesson.title)}`} className="mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-cell border border-blue-300 bg-white px-3 py-3 text-base font-medium text-blue-700 transition-colors hover:bg-blue-50 sm:py-2 sm:text-sm"><Download className="h-4 w-4" /> Descargar ({material.ext})</a>
+                                                </div>
+                                              );
+                                            })}
+                                          </div>
+                                        ) : (
+                                          <p className="mt-2 text-sm leading-6 text-muted">Los materiales de esta clase estarán disponibles próximamente.</p>
+                                        )}
+                                      </div>
+                                      {completionFooter}
+                                    </div>
+                                  );
+                                }
+                                return lesson.content ? (
+                                  <div className="data-cell p-4">
+                                    <p className="data-cell-header">Autoevaluación · {lesson.content.quiz.length} preguntas · {QUIZ_PASSING_SCORE}/100 para aprobar</p>
+                                    <div className="mt-3"><LessonQuiz quiz={lesson.content.quiz} /></div>
                                   </div>
-                                ) : (
-                                  <p className="mt-2 text-base leading-6 text-muted sm:text-sm sm:leading-normal">Los materiales de esta clase estarán disponibles próximamente.</p>
-                                )}
-                              </aside>
-                            </div>
-                            <div className="mt-5 flex flex-col gap-4 border-t-4 border-blue-500 bg-blue-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:border-l-4 sm:border-t-0 sm:gap-3 sm:p-5">
-                              <div><p className="font-display text-base font-bold text-ink">Paso 3 · Confirma tu avance</p><p className="mt-1 text-base leading-6 text-muted sm:text-sm sm:leading-normal">{isFinalLesson ? "Termina esta clase para pasar a la evaluación final." : "Lee el contenido, realiza la actividad y marca la clase como completada."}</p></div>
-                              <button disabled={!isEnrolled || isDone || isCompletionLocked} onClick={() => markCompleted(lessonId)} className="min-h-11 w-full shrink-0 rounded-cell bg-accent px-4 py-3 text-base font-bold text-white transition-colors hover:bg-ink disabled:cursor-not-allowed disabled:bg-line disabled:text-muted sm:w-auto sm:py-2 sm:text-sm">{isDone ? "Clase completada" : "Completar clase"}</button>
-                            </div>
-                            {isCompletionLocked && <p className="mt-2 text-xs text-muted">Puedes ver esta clase, pero debes completar la clase anterior antes de marcarla como terminada.</p>}
-                            {!isEnrolled && <p className="mt-2 text-xs text-muted">Inscríbete en el curso para registrar tus clases completadas.</p>}
-                          </div>
-                          );
-                        })()}
+                                ) : <p className="text-sm text-muted">Esta clase aún no tiene autoevaluación.</p>;
+                              }}
+                            />
+                          </Suspense>
+                        )}
                       </article>
                     );
                   })}

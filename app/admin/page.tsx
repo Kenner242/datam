@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import VideoFolderUploader from "@/components/VideoFolderUploader";
 import AdminContentManager from "@/components/AdminContentManager";
+import FlashcardSetForm from "@/components/FlashcardSetForm";
 import { supabase } from "@/lib/supabase/client";
 import { courses } from "@/lib/courses";
 
@@ -33,5 +34,5 @@ export default function AdminPage() {
     void load();
   }, [router]);
 
-  return <><Navbar /><main className="mx-auto max-w-6xl px-6 py-16"><span className="data-cell-header">Administración</span><h1 className="mt-2 font-display text-3xl font-bold text-ink">Estudiantes y cursos</h1><p className="mt-2 text-sm text-muted">Matrículas reales por curso.</p>{isLoading ? <p className="mt-8 text-sm text-muted">Cargando información...</p> : error ? <p role="alert" className="mt-8 text-sm text-red-700">{error}</p> : <><div className="mt-8 grid gap-4 md:grid-cols-3">{courses.map((course) => <article key={course.slug} className="data-cell p-5"><p className="data-cell-header">{course.code}</p><h2 className="mt-2 font-display font-bold text-ink">{course.title}</h2><p className="mt-4 font-display text-3xl font-bold text-blue-700">{counts[course.slug] ?? 0}</p><p className="text-sm text-muted">estudiantes inscritos</p></article>)}</div><AdminContentManager /><section className="mt-12"><VideoFolderUploader /></section></>}</main></>;
+  return <><Navbar /><main className="mx-auto max-w-6xl px-6 py-16"><span className="data-cell-header">Administración</span><h1 className="mt-2 font-display text-3xl font-bold text-ink">Estudiantes y cursos</h1><p className="mt-2 text-sm text-muted">Matrículas reales por curso.</p>{isLoading ? <p className="mt-8 text-sm text-muted">Cargando información...</p> : error ? <p role="alert" className="mt-8 text-sm text-red-700">{error}</p> : <><div className="mt-8 grid gap-4 md:grid-cols-3">{courses.map((course) => <article key={course.slug} className="data-cell p-5"><p className="data-cell-header">{course.code}</p><h2 className="mt-2 font-display font-bold text-ink">{course.title}</h2><p className="mt-4 font-display text-3xl font-bold text-blue-700">{counts[course.slug] ?? 0}</p><p className="text-sm text-muted">estudiantes inscritos</p></article>)}</div><AdminContentManager /><FlashcardSetForm /><section className="mt-12"><VideoFolderUploader /></section></>}</main></>;
 }

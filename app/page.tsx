@@ -56,6 +56,8 @@ export default function Home() {
         </div>
         <div className="mx-auto mb-8 max-w-4xl overflow-hidden rounded-cell border border-blue-200 bg-blue-950 shadow-xl">
           <video
+            autoPlay
+            muted
             playsInline
             controls
             preload="auto"

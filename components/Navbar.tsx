@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Menu, X, LogOut, LayoutDashboard } from "lucide-react";
+import { Menu, X, LogOut, LayoutDashboard, Library } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import NavbarSearch from "./NavbarSearch";
@@ -85,6 +85,9 @@ export default function Navbar() {
               <Link href="/dashboard" className="flex items-center gap-2 text-sm font-medium text-ink/80 transition-colors hover:text-accent">
                 <LayoutDashboard className="h-4 w-4" aria-hidden="true" /> Dashboard
               </Link>
+              <Link href="/biblioteca" className="flex items-center gap-2 text-sm font-medium text-ink/80 transition-colors hover:text-accent">
+                <Library className="h-4 w-4" aria-hidden="true" /> Biblioteca
+              </Link>
               <button onClick={handleSignOut} className="flex items-center gap-2 rounded-cell bg-ink px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-accent">
                 <LogOut className="h-4 w-4" aria-hidden="true" /> Cerrar sesión
               </button>
@@ -118,6 +121,7 @@ export default function Navbar() {
             {isAuthenticated ? (
               <>
                 <Link href="/dashboard" onClick={closeMenu}>Dashboard del estudiante</Link>
+                <Link href="/biblioteca" onClick={closeMenu}>Mi biblioteca</Link>
                 <button onClick={handleSignOut} className="flex items-center gap-2 text-left text-red-700"><LogOut className="h-4 w-4" /> Cerrar sesión</button>
               </>
             ) : (

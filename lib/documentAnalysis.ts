@@ -1,6 +1,9 @@
 export type DocumentSection = { title: string; text: string; page?: number };
 export type ConceptNode = { id: string; label: string; frequency: number; evidence: string[]; children: ConceptNode[] };
 export type ConceptMap = { documentTitle: string; wordCount: number; sections: DocumentSection[]; concepts: ConceptNode[]; warnings: string[] };
+type PdfJsApi = { GlobalWorkerOptions: { workerSrc: string }; getDocument: (options: { data: ArrayBuffer; disableWorker: boolean }) => { promise: Promise<{ numPages: number; getPage: (page: number) => Promise<{ getTextContent: () => Promise<{ items: Array<{ str?: string; transform?: number[] }> }> }> }> } };
+type MammothApi = { extractRawText: (options: { arrayBuffer: ArrayBuffer }) => Promise<{ value: string }> };
+type XlsxApi = { read: (data: ArrayBuffer, options: { type: string }) => { SheetNames: string[]; Sheets: Record<string, unknown> }; utils: { sheet_to_csv: (sheet: unknown) => string } };
 type ZipTextEntry = { dir: boolean; async: (type: "string") => Promise<string> };
 type ZipArchive = { files: Record<string, ZipTextEntry>; file: (path: string) => ZipTextEntry | null };
 type ZipApi = { loadAsync: (data: ArrayBuffer) => Promise<ZipArchive> };
@@ -50,7 +53,7 @@ export function buildConceptMap(documentTitle: string, text: string): ConceptMap
     const localWords = section.text.toLowerCase().match(/[\p{L}]{4,}/gu) ?? [];
     const frequencies: Record<string, number> = {};
     for (const word of localWords) if (!STOPWORDS.has(word)) frequencies[word] = (frequencies[word] ?? 0) + 1;
-    const sectionTitleWords = section.title.toLowerCase().match(/[\p{L}]{4,}/gu) ?? [];
+    const sectionTitleWords: string[] = section.title.toLowerCase().match(/[\p{L}]{4,}/gu) ?? [];
     const ranked = Object.entries(frequencies).map(([term, frequency]) => ({ term, frequency: frequency + (sectionTitleWords.includes(term) ? 3 : 0) })).sort((a, b) => b.frequency - a.frequency);
     const selected = ranked.filter((concept) => concept.frequency >= 2).slice(0, 5);
     const fallback = ranked.slice(0, Math.min(3, ranked.length));
@@ -96,8 +99,9 @@ export async function extractDocumentText(file: File): Promise<{ text: string; w
   const warnings: string[] = [];
   if (extension === "pdf" || file.type === "application/pdf") {
     const source = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
-    await loadScript(source, () => Boolean((window as Window & { pdfjsLib?: unknown }).pdfjsLib));
-    const pdfjs = (window as Window & { pdfjsLib: { GlobalWorkerOptions: { workerSrc: string }; getDocument: (options: { data: ArrayBuffer; disableWorker: boolean }) => { promise: Promise<{ numPages: number; getPage: (page: number) => Promise<{ getTextContent: () => Promise<{ items: Array<{ str?: string }> }> }> }> } } }).pdfjsLib;
+    await loadScript(source, () => Boolean((window as unknown as { pdfjsLib?: PdfJsApi }).pdfjsLib));
+    const pdfjs = (window as unknown as { pdfjsLib?: PdfJsApi }).pdfjsLib;
+    if (!pdfjs) throw new Error("PDF.js no está disponible después de cargarlo.");
     pdfjs.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
     const pdf = await pdfjs.getDocument({ data: await file.arrayBuffer(), disableWorker: true }).promise;
     const pages: string[] = [];
@@ -108,15 +112,17 @@ export async function extractDocumentText(file: File): Promise<{ text: string; w
   }
   if (extension === "docx" || file.type.includes("wordprocessingml")) {
     const source = "https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js";
-    await loadScript(source, () => Boolean((window as Window & { mammoth?: unknown }).mammoth));
-    const mammoth = (window as Window & { mammoth: { extractRawText: (options: { arrayBuffer: ArrayBuffer }) => Promise<{ value: string }> } }).mammoth;
+    await loadScript(source, () => Boolean((window as unknown as { mammoth?: MammothApi }).mammoth));
+    const mammoth = (window as unknown as { mammoth?: MammothApi }).mammoth;
+    if (!mammoth) throw new Error("El extractor DOCX no está disponible después de cargarlo.");
     const result = await mammoth.extractRawText({ arrayBuffer: await file.arrayBuffer() });
     return { text: result.value, warnings };
   }
   if (["xlsx", "xls"].includes(extension)) {
     const source = "https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js";
-    await loadScript(source, () => Boolean((window as Window & { XLSX?: unknown }).XLSX));
-    const xlsx = (window as Window & { XLSX: { read: (data: ArrayBuffer, options: { type: string }) => { SheetNames: string[]; Sheets: Record<string, unknown> }; utils: { sheet_to_csv: (sheet: unknown) => string } } }).XLSX;
+    await loadScript(source, () => Boolean((window as unknown as { XLSX?: XlsxApi }).XLSX));
+    const xlsx = (window as unknown as { XLSX?: XlsxApi }).XLSX;
+    if (!xlsx) throw new Error("El extractor Excel no está disponible después de cargarlo.");
     const workbook = xlsx.read(await file.arrayBuffer(), { type: "array" });
     return { text: workbook.SheetNames.map((name) => `\n## ${name}\n${xlsx.utils.sheet_to_csv(workbook.Sheets[name])}`).join("\n"), warnings };
   }

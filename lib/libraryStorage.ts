@@ -9,6 +9,7 @@ export type StoredLibraryFile = {
   concepts: string[];
   missions: string[];
   flashcards: { term: string; definition: string }[];
+  analysisWarnings?: string[];
   createdAt: string;
   blob: Blob;
 };

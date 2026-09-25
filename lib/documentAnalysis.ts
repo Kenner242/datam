@@ -1,6 +1,9 @@
 export type DocumentSection = { title: string; text: string; page?: number };
 export type ConceptNode = { id: string; label: string; frequency: number; evidence: string[]; children: ConceptNode[] };
 export type ConceptMap = { documentTitle: string; wordCount: number; sections: DocumentSection[]; concepts: ConceptNode[]; warnings: string[] };
+type ZipTextEntry = { dir: boolean; async: (type: "string") => Promise<string> };
+type ZipArchive = { files: Record<string, ZipTextEntry>; file: (path: string) => ZipTextEntry | null };
+type ZipApi = { loadAsync: (data: ArrayBuffer) => Promise<ZipArchive> };
 
 const STOPWORDS = new Set("de la el en y a los las un una que por con para es del se al como su sus más pero o este esta entre sin sobre también hasta desde nos les ni lo le ya muy todo todos toda ser son fue fueron está están hay había eran sea sido tiene tienen hacer hace puede pueden debe deben solo según tras durante mediante así donde cuando porque aunque cual cuales quien quienes esto aquello algo alguien nadie nada siempre nunca tampoco además entonces luego después antes mientras".split(" "));
 
@@ -120,8 +123,9 @@ export async function extractDocumentText(file: File): Promise<{ text: string; w
   if (["epub", "pptx"].includes(extension)) {
     const source = "https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js";
     await loadScript(source, () => Boolean((window as Window & { JSZip?: unknown }).JSZip));
-    const JSZip = (window as Window & { JSZip: { loadAsync: (data: ArrayBuffer) => Promise<{ files: Record<string, { dir: boolean; async: (type: "string") => Promise<string> }>; file: (path: string) => { async: (type: "string") => Promise<string> } | null }> } }).JSZip;
-    const archive = await JSZip.loadAsync(await file.arrayBuffer());
+    const zipApi = (window as unknown as { JSZip?: ZipApi }).JSZip;
+    if (!zipApi) throw new Error("El extractor ZIP no se cargó correctamente.");
+    const archive = await zipApi.loadAsync(await file.arrayBuffer());
     const parser = new DOMParser();
     if (extension === "pptx") {
       const slidePaths = Object.keys(archive.files).filter((path) => /^ppt\/slides\/slide\d+\.xml$/.test(path)).sort((a, b) => Number(a.match(/slide(\d+)/)?.[1]) - Number(b.match(/slide(\d+)/)?.[1]));

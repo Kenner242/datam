@@ -403,7 +403,8 @@ body {
 .concept-map-tree { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
 .map-section { position: relative; min-width: 0; border: 1px solid #2d4162; border-radius: 10px; background: linear-gradient(180deg, #111c30, #070d18); padding: 14px; }
 .map-section::before { position: absolute; top: -15px; left: 50%; width: 1px; height: 15px; background: #6366f1; content: ""; }
-.map-section-title { display: grid; width: 100%; gap: 5px; border-bottom: 1px solid #22334f; padding: 0 0 11px; text-align: left; }
+.map-section-title { display: grid; width: 100%; gap: 5px; border-bottom: 1px solid #22334f; padding: 0 0 11px; text-align: left; list-style: none; cursor: pointer; }
+.map-section-title::-webkit-details-marker { display: none; }
 .map-section-title b { color: #eef4ff; font-size: .9rem; line-height: 1.4; overflow-wrap: anywhere; }
 .map-section-title small { color: #a5b4fc; font-size: .68rem; }
 .map-level-label { color: #7f93b3; font-size: .62rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }

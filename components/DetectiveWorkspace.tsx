@@ -169,12 +169,12 @@ function ConceptMapPanel({ conceptMap, selectedConcept, mapView, onMapView, onSe
           {mapView === "tree" ? (
             <div className="concept-map-tree">
               {conceptMap.concepts.map((section, index) => (
-                <article key={section.id} className={`map-section map-section-${index % 3}`}>
-                  <button type="button" className="map-section-title" onClick={() => { const first = section.children[0]; if (first) onSelectConcept(first.id); }}>
+                <details key={section.id} className={`map-section map-section-${index % 3}`} open={index < 3}>
+                  <summary className="map-section-title">
                     <span className="map-level-label">Sección {index + 1}</span>
                     <b>{section.label}</b>
                     <small>{section.children.length} conceptos</small>
-                  </button>
+                  </summary>
                   <div className="map-concept-list">
                     {section.children.map((node) => (
                       <button type="button" key={node.id} onClick={() => onSelectConcept(node.id)} className={`map-concept-node ${selectedConcept?.id === node.id ? "selected" : ""}`}>
@@ -184,7 +184,7 @@ function ConceptMapPanel({ conceptMap, selectedConcept, mapView, onMapView, onSe
                     ))}
                   </div>
                   {section.evidence[0] && <p className="map-section-evidence"><span>Evidencia de sección</span>{section.evidence[0]}</p>}
-                </article>
+                </details>
               ))}
             </div>
           ) : (

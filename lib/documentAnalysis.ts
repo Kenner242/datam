@@ -11,7 +11,58 @@ type ZipApi = { loadAsync: (data: ArrayBuffer) => Promise<ZipArchive> };
 const STOPWORDS = new Set("de la el en y a los las un una que por con para es del se al como su sus más pero o este esta entre sin sobre también hasta desde nos les ni lo le ya muy todo todos toda ser son fue fueron está están hay había eran sea sido tiene tienen hacer hace puede pueden debe deben solo según tras durante mediante así donde cuando porque aunque cual cuales quien quienes esto aquello algo alguien nadie nada siempre nunca tampoco además entonces luego después antes mientras".split(" "));
 
 function countWords(text: string) { return text.match(/[\p{L}\p{N}][\p{L}\p{N}_-]*/gu)?.length ?? 0; }
-function splitParagraphs(text: string) { return text.split(/\n\s*\n|(?<=\n)(?=\s*(?:[-*•]|\d+[.)]|[A-ZÁÉÍÓÚÑ][^\n]{3,70}:)\s)/).map((part) => part.trim()).filter((part) => part.length > 30); }
+function splitParagraphs(text: string) { return text.split(/\n\s*\n/).map((part) => part.replace(/\s+/g, " ").trim()).filter((part) => part.length > 30); }
+
+function detectExplicitSections(text: string): DocumentSection[] {
+  const sections: DocumentSection[] = [];
+  let title = "Introducción";
+  let content: string[] = [];
+  const headingPattern = /^(?:#{1,6}\s+(.{2,100})|(?:cap[ií]tulo|chapter|unidad|secci[oó]n|tema)\s+([\dIVX.-]+)\s*[:.-]?\s*(.{2,90})?|((?:\d+\.){1,4}\d*\s+.{3,90}))$/i;
+  const lines = text.split("\n");
+  for (const rawLine of lines) {
+    const line = rawLine.trim();
+    if (!line) { content.push(""); continue; }
+    const isPageMarker = /^#{1,6}\s*(?:p[aá]gina|page)\s+\d+$/i.test(line);
+    if (isPageMarker) { content.push(""); continue; }
+    const heading = line.match(headingPattern);
+    if (heading) {
+      const sectionText = content.join(" ").replace(/\s+/g, " ").trim();
+      if (countWords(sectionText) >= 8) sections.push({ title, text: sectionText });
+      const headingTitle = heading[1] || (heading[2] ? [heading[2], heading[3]].filter(Boolean).join(" ") : heading[4]) || line;
+      title = headingTitle.replace(/[*_`]/g, "").trim();
+      content = [];
+    } else content.push(line);
+  }
+  const finalText = content.join(" ").replace(/\s+/g, " ").trim();
+  if (countWords(finalText) >= 8) sections.push({ title, text: finalText });
+  return sections;
+}
+
+function chunkDocument(paragraphs: string[], text: string): DocumentSection[] {
+  const source = paragraphs.length ? paragraphs : text.split(/(?<=[.!?])\s+/).map((sentence) => sentence.trim()).filter((sentence) => countWords(sentence) > 5);
+  if (!source.length) return text.trim() ? [{ title: "Contenido del documento", text: text.trim() }] : [];
+  const maxSections = Math.min(6, Math.max(1, Math.ceil(source.length / 3)));
+  const chunkSize = Math.ceil(source.length / maxSections);
+  return Array.from({ length: Math.ceil(source.length / chunkSize) }, (_, index) => ({ title: `Sección ${String(index + 1).padStart(2, "0")}`, text: source.slice(index * chunkSize, (index + 1) * chunkSize).join(" ") }));
+}
+
+function rankSectionConcepts(section: DocumentSection) {
+  const tokens = section.text.toLowerCase().match(/[\p{L}\p{N}]{3,}/gu) ?? [];
+  const frequencies = new Map<string, number>();
+  const increment = (term: string) => frequencies.set(term, (frequencies.get(term) ?? 0) + 1);
+  for (const token of tokens) if (!STOPWORDS.has(token) && token.length >= 4) increment(token);
+  for (let index = 0; index < tokens.length - 1; index += 1) {
+    const first = tokens[index];
+    const second = tokens[index + 1];
+    if (STOPWORDS.has(first) || STOPWORDS.has(second) || first.length < 4 || second.length < 4) continue;
+    increment(`${first} ${second}`);
+  }
+  const titleTokens: string[] = section.title.toLowerCase().match(/[\p{L}]{4,}/gu) ?? [];
+  return Array.from(frequencies, ([term, frequency]) => ({ term, frequency: frequency + (term.split(" ").some((word) => titleTokens.includes(word)) ? 2 : 0) }))
+    .filter((item) => item.term.includes(" ") ? item.frequency >= 2 : item.frequency >= 3)
+    .sort((left, right) => Number(right.term.includes(" ")) - Number(left.term.includes(" ")) || right.frequency - left.frequency)
+    .slice(0, 5);
+}
 
 export function buildConceptMap(documentTitle: string, text: string): ConceptMap {
   const normalized = text.replace(/\r/g, "").replace(/[ \t]+/g, " ").trim();
@@ -19,45 +70,11 @@ export function buildConceptMap(documentTitle: string, text: string): ConceptMap
   if (countWords(normalized) < 25) warnings.push("Se extrajo poco texto. El archivo puede estar escaneado, protegido o parcialmente compatible; el mapa no inventa contenido que no se pudo leer.");
 
   const paragraphs = splitParagraphs(normalized);
-  const explicitSections: DocumentSection[] = [];
-  let currentTitle = "Introducción / contenido sin título";
-  let currentText: string[] = [];
-  for (const line of normalized.split("\n")) {
-    const value = line.trim();
-    if (!value) continue;
-    const heading = value.match(/^(#{1,6}\s+|(?:cap[ií]tulo|chapter|unidad|secci[oó]n|tema)\s+[\dIVX.-]+\s*[:.-]?\s*|\d+(?:\.\d+)*\s+)(.{3,100})$/i);
-    const shortTitle = value.length <= 78 && !/[.!?]$/.test(value) && /^[A-ZÁÉÍÓÚÑ\d][\wÁÉÍÓÚÑáéíóúñ ()/,–-]+$/.test(value) && countWords(value) <= 10;
-    if (heading || shortTitle) {
-      if (currentText.length) explicitSections.push({ title: currentTitle, text: currentText.join(" ") });
-      currentTitle = (heading?.[2] ?? value.replace(/^#{1,6}\s+/, "")).replace(/[*_`]/g, "").trim();
-      currentText = [];
-    } else currentText.push(value);
-  }
-  if (currentText.length) explicitSections.push({ title: currentTitle, text: currentText.join(" ") });
-
-  let sections = explicitSections.filter((section) => countWords(section.text) >= 10);
-  if (sections.length < 2 && paragraphs.length > 1) {
-    const chunks: string[][] = [];
-    const targetChunkSize = Math.max(2, Math.ceil(paragraphs.length / 6));
-    for (let index = 0; index < paragraphs.length; index += targetChunkSize) chunks.push(paragraphs.slice(index, index + targetChunkSize));
-    sections = chunks.map((chunk, index) => ({ title: `Sección ${index + 1}`, text: chunk.join(" ") }));
-  }
-  if (!sections.length && normalized) sections = [{ title: "Contenido del documento", text: normalized }];
-  if (sections.length === 1 && countWords(normalized) > 900) {
-    const sentences = normalized.split(/(?<=[.!?])\s+/).filter((sentence) => countWords(sentence) > 5);
-    const chunkSize = Math.ceil(sentences.length / 5);
-    sections = Array.from({ length: Math.ceil(sentences.length / chunkSize) }, (_, index) => ({ title: `Parte ${index + 1}`, text: sentences.slice(index * chunkSize, (index + 1) * chunkSize).join(" ") }));
-  }
+  const parsedSections = detectExplicitSections(normalized).filter((section) => countWords(section.text) >= 10);
+  const sections = parsedSections.length >= 2 ? parsedSections : chunkDocument(paragraphs, normalized);
 
   const concepts: ConceptNode[] = sections.map((section, sectionIndex) => {
-    const localWords = section.text.toLowerCase().match(/[\p{L}]{4,}/gu) ?? [];
-    const frequencies: Record<string, number> = {};
-    for (const word of localWords) if (!STOPWORDS.has(word)) frequencies[word] = (frequencies[word] ?? 0) + 1;
-    const sectionTitleWords: string[] = section.title.toLowerCase().match(/[\p{L}]{4,}/gu) ?? [];
-    const ranked = Object.entries(frequencies).map(([term, frequency]) => ({ term, frequency: frequency + (sectionTitleWords.includes(term) ? 3 : 0) })).sort((a, b) => b.frequency - a.frequency);
-    const selected = ranked.filter((concept) => concept.frequency >= 2).slice(0, 5);
-    const fallback = ranked.slice(0, Math.min(3, ranked.length));
-    const chosen = selected.length ? selected : fallback;
+    const chosen = rankSectionConcepts(section);
     return {
       id: `section-${sectionIndex}`,
       label: section.title,

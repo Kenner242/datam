@@ -1,6 +1,6 @@
-export type DocumentSection = { title: string; text: string; page?: number };
-export type ConceptNode = { id: string; label: string; frequency: number; evidence: string[]; children: ConceptNode[] };
-export type ConceptMap = { documentTitle: string; wordCount: number; sections: DocumentSection[]; concepts: ConceptNode[]; warnings: string[] };
+export type DocumentSection = { title: string; text: string; page?: number; sourceLocation?: string };
+export type ConceptNode = { id: string; label: string; frequency: number; evidence: string[]; sourceLocation?: string; children: ConceptNode[] };
+export type ConceptMap = { documentTitle: string; centralTheme: string | null; wordCount: number; sections: DocumentSection[]; concepts: ConceptNode[]; warnings: string[] };
 type PdfJsApi = { GlobalWorkerOptions: { workerSrc: string }; getDocument: (options: { data: ArrayBuffer; disableWorker: boolean }) => { promise: Promise<{ numPages: number; getPage: (page: number) => Promise<{ getTextContent: () => Promise<{ items: Array<{ str?: string; transform?: number[] }> }> }> }> } };
 type MammothApi = { extractRawText: (options: { arrayBuffer: ArrayBuffer }) => Promise<{ value: string }> };
 type XlsxApi = { read: (data: ArrayBuffer, options: { type: string }) => { SheetNames: string[]; Sheets: Record<string, unknown> }; utils: { sheet_to_csv: (sheet: unknown) => string } };
@@ -17,24 +17,48 @@ function detectExplicitSections(text: string): DocumentSection[] {
   const sections: DocumentSection[] = [];
   let title = "Introducción";
   let content: string[] = [];
+  let currentPage: number | null = null;
+  let sectionStartPage: number | null = null;
+  function saveSection() {
+    const sectionText = content.join(" ").replace(/\s+/g, " ").trim();
+    if (countWords(sectionText) >= 8) {
+      const pageEnd = currentPage;
+      const sourceLocation = sectionStartPage !== null ? `Página${pageEnd && pageEnd !== sectionStartPage ? "s" : ""} ${sectionStartPage}${pageEnd && pageEnd !== sectionStartPage ? `–${pageEnd}` : ""}` : undefined;
+      sections.push({ title, text: sectionText, page: sectionStartPage ?? undefined, sourceLocation });
+    }
+  }
   const headingPattern = /^(?:#{1,6}\s+(.{2,100})|(?:cap[ií]tulo|chapter|unidad|secci[oó]n|tema)\s+([\dIVX.-]+)\s*[:.-]?\s*(.{2,90})?|((?:\d+\.){1,4}\d*\s+.{3,90}))$/i;
   const lines = text.split("\n");
   for (const rawLine of lines) {
     const line = rawLine.trim();
     if (!line) { content.push(""); continue; }
-    const isPageMarker = /^#{1,6}\s*(?:p[aá]gina|page)\s+\d+$/i.test(line);
-    if (isPageMarker) { content.push(""); continue; }
+    const pageMarker = line.match(/^#{1,6}\s*(?:p[aá]gina|page)\s+(\d+)$/i);
+    if (pageMarker) {
+      const nextPage = Number(pageMarker[1]);
+      if (title.startsWith("Página ") && content.some((part) => part.trim())) {
+        saveSection();
+        title = `Página ${nextPage}`;
+        content = [];
+        sectionStartPage = nextPage;
+      } else if (sectionStartPage === null) {
+        currentPage = nextPage;
+        sectionStartPage = nextPage;
+        if (title === "Introducción") title = `Página ${nextPage}`;
+      }
+      currentPage = nextPage;
+      content.push("");
+      continue;
+    }
     const heading = line.match(headingPattern);
     if (heading) {
-      const sectionText = content.join(" ").replace(/\s+/g, " ").trim();
-      if (countWords(sectionText) >= 8) sections.push({ title, text: sectionText });
+      saveSection();
       const headingTitle = heading[1] || (heading[2] ? [heading[2], heading[3]].filter(Boolean).join(" ") : heading[4]) || line;
       title = headingTitle.replace(/[*_`]/g, "").trim();
       content = [];
+      sectionStartPage = currentPage;
     } else content.push(line);
   }
-  const finalText = content.join(" ").replace(/\s+/g, " ").trim();
-  if (countWords(finalText) >= 8) sections.push({ title, text: finalText });
+  saveSection();
   return sections;
 }
 
@@ -44,6 +68,20 @@ function chunkDocument(paragraphs: string[], text: string): DocumentSection[] {
   const maxSections = Math.min(6, Math.max(1, Math.ceil(source.length / 3)));
   const chunkSize = Math.ceil(source.length / maxSections);
   return Array.from({ length: Math.ceil(source.length / chunkSize) }, (_, index) => ({ title: `Sección ${String(index + 1).padStart(2, "0")}`, text: source.slice(index * chunkSize, (index + 1) * chunkSize).join(" ") }));
+}
+
+function subdivideLongSections(sections: DocumentSection[]): DocumentSection[] {
+  return sections.flatMap((section) => {
+    if (countWords(section.text) < 700) return [section];
+    const paragraphs = splitParagraphs(section.text);
+    const units = paragraphs.length > 1 ? paragraphs : section.text.split(/(?<=[.!?])\s+/).filter((sentence) => countWords(sentence) > 5);
+    const chunkSize = Math.max(1, Math.ceil(units.length / 5));
+    return Array.from({ length: Math.ceil(units.length / chunkSize) }, (_, index) => ({
+      ...section,
+      title: `${section.title} · Parte ${index + 1}`,
+      text: units.slice(index * chunkSize, (index + 1) * chunkSize).join(" "),
+    }));
+  });
 }
 
 function rankSectionConcepts(section: DocumentSection) {
@@ -61,7 +99,7 @@ function rankSectionConcepts(section: DocumentSection) {
   return Array.from(frequencies, ([term, frequency]) => ({ term, frequency: frequency + (term.split(" ").some((word) => titleTokens.includes(word)) ? 2 : 0) }))
     .filter((item) => item.term.includes(" ") ? item.frequency >= 2 : item.frequency >= 3)
     .sort((left, right) => Number(right.term.includes(" ")) - Number(left.term.includes(" ")) || right.frequency - left.frequency)
-    .slice(0, 5);
+    .slice(0, 8);
 }
 
 export function buildConceptMap(documentTitle: string, text: string): ConceptMap {
@@ -71,10 +109,12 @@ export function buildConceptMap(documentTitle: string, text: string): ConceptMap
 
   const paragraphs = splitParagraphs(normalized);
   const parsedSections = detectExplicitSections(normalized).filter((section) => countWords(section.text) >= 10);
-  const sections = parsedSections.length >= 2 ? parsedSections : chunkDocument(paragraphs, normalized);
+  const sections = subdivideLongSections(parsedSections.length >= 1 ? parsedSections : chunkDocument(paragraphs, normalized));
 
   const concepts: ConceptNode[] = sections.map((section, sectionIndex) => {
-    const chosen = rankSectionConcepts(section);
+    const rankedConcepts = rankSectionConcepts(section);
+    const fallbackConcepts = (section.text.toLowerCase().match(/[\p{L}]{5,}/gu) ?? []).filter((term) => !STOPWORDS.has(term)).slice(0, 3).map((term) => ({ term, frequency: 1 }));
+    const chosen = rankedConcepts.length ? rankedConcepts : fallbackConcepts;
     return {
       id: `section-${sectionIndex}`,
       label: section.title,
@@ -82,12 +122,16 @@ export function buildConceptMap(documentTitle: string, text: string): ConceptMap
       evidence: section.text.split(/(?<=[.!?])\s+/).map((sentence) => sentence.trim()).filter((sentence) => countWords(sentence) >= 8).slice(0, 2),
       children: chosen.map((concept, conceptIndex) => {
         const evidence = section.text.split(/(?<=[.!?])\s+/).map((sentence) => sentence.trim()).filter((sentence) => sentence.toLowerCase().includes(concept.term) && countWords(sentence) >= 6).slice(0, 2);
-        return { id: `section-${sectionIndex}-concept-${conceptIndex}`, label: concept.term, frequency: concept.frequency, evidence, children: [] };
+        return { id: `section-${sectionIndex}-concept-${conceptIndex}`, label: concept.term, frequency: concept.frequency, evidence, sourceLocation: section.sourceLocation, children: [] };
       }),
+      sourceLocation: section.sourceLocation,
     };
   });
 
-  return { documentTitle, wordCount: countWords(normalized), sections, concepts, warnings };
+  const conceptFrequency = new Map<string, number>();
+  concepts.flatMap((section) => section.children).forEach((node) => conceptFrequency.set(node.label, (conceptFrequency.get(node.label) ?? 0) + node.frequency));
+  const centralTheme = Array.from(conceptFrequency).sort((left, right) => right[1] - left[1])[0]?.[0] ?? null;
+  return { documentTitle, centralTheme, wordCount: countWords(normalized), sections, concepts, warnings };
 }
 
 function loadScript(src: string, marker: () => boolean): Promise<void> {

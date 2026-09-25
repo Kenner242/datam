@@ -166,6 +166,7 @@ function ConceptMapPanel({ conceptMap, selectedConcept, mapView, onMapView, onSe
             <span>{conceptMap.documentTitle}</span>
             <small>{conceptMap.wordCount.toLocaleString("es-PE")} palabras · {conceptMap.sections.length} secciones</small>
           </div>
+          <div className="concept-map-central"><span>Tema central detectado en el contenido</span><b>{conceptMap.centralTheme ?? "No se detectó un tema dominante"}</b></div>
           {mapView === "tree" ? (
             <div className="concept-map-tree">
               {conceptMap.concepts.map((section, index) => (
@@ -173,7 +174,7 @@ function ConceptMapPanel({ conceptMap, selectedConcept, mapView, onMapView, onSe
                   <summary className="map-section-title">
                     <span className="map-level-label">Sección {index + 1}</span>
                     <b>{section.label}</b>
-                    <small>{section.children.length} conceptos</small>
+                    <small>{section.children.length} conceptos{section.sourceLocation ? ` · ${section.sourceLocation}` : ""}</small>
                   </summary>
                   <div className="map-concept-list">
                     {section.children.map((node) => (
@@ -205,7 +206,7 @@ function ConceptMapPanel({ conceptMap, selectedConcept, mapView, onMapView, onSe
             </div>
           )}
           <aside className="concept-evidence-panel">
-            <div className="concept-evidence-heading"><span>Concepto y respaldo textual</span>{selectedConcept && <b>{selectedConcept.label}</b>}</div>
+            <div className="concept-evidence-heading"><span>Concepto y respaldo textual{selectedConcept?.sourceLocation ? ` · ${selectedConcept.sourceLocation}` : ""}</span>{selectedConcept && <b>{selectedConcept.label}</b>}</div>
             {selectedConcept?.evidence.length ? selectedConcept.evidence.map((evidence, index) => <blockquote key={`${selectedConcept.id}-${index}`}>“{evidence}”</blockquote>) : <p>{selectedConcept ? "No se encontró una oración legible para citar este concepto." : "Selecciona un concepto del mapa para consultar sus citas."}</p>}
           </aside>
         </>

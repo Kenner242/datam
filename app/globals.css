@@ -150,12 +150,18 @@ body {
 }
 
 .course-theme .course-program {
-  width: 100%;
-  grid-template-columns: minmax(0, 2.8fr) minmax(220px, 1fr);
+  width: calc(100% - 64px);
+  max-width: 1440px;
+  grid-template-columns: minmax(0, 1fr) minmax(230px, 270px);
   align-items: start;
-  column-gap: clamp(34px, 4vw, 60px);
-  row-gap: 40px;
+  column-gap: clamp(28px, 3vw, 42px);
+  row-gap: 28px;
   background: transparent;
+}
+
+.course-theme .course-hero > div,
+.course-theme > section:last-of-type {
+  max-width: 1440px;
 }
 
 .course-theme .course-program > div:first-child {
@@ -267,8 +273,8 @@ body {
 }
 
 .course-theme #curso-aprendizaje > div.relative {
-  margin-top: 26px;
-  gap: 26px;
+  margin-top: 20px;
+  gap: 19px;
 }
 
 .course-theme #curso-aprendizaje > div.relative > section {
@@ -280,13 +286,13 @@ body {
 }
 
 .course-theme #curso-aprendizaje > div.relative > section > div.data-cell > header {
-  padding: 22px 24px;
+  padding: 18px 21px;
 }
 
 .course-theme #curso-aprendizaje > div.relative > section > div.data-cell > div.divide-y > article > button {
-  min-height: 68px;
-  padding-top: 15px;
-  padding-bottom: 15px;
+  min-height: 60px;
+  padding-top: 12px;
+  padding-bottom: 12px;
 }
 
 .course-theme #curso-aprendizaje > section[aria-label="Ruta del curso"] {
@@ -303,16 +309,17 @@ body {
 @media (max-width: 1023px) {
   .course-theme .course-program {
     grid-template-columns: minmax(0, 2.4fr) minmax(210px, 1fr);
-    column-gap: 26px;
+    column-gap: 22px;
   }
 }
 
 @media (max-width: 767px) {
   .course-theme .course-program {
+    width: calc(100% - 32px);
     grid-template-columns: minmax(0, 1fr);
-    row-gap: 24px;
-    padding-top: 28px;
-    padding-bottom: 34px;
+    row-gap: 20px;
+    padding-top: 22px;
+    padding-bottom: 28px;
   }
 
   .course-theme .course-professional {
@@ -331,8 +338,8 @@ body {
   }
 
   .course-theme #curso-aprendizaje > div.relative {
-    gap: 22px;
-    margin-top: 22px;
+    gap: 17px;
+    margin-top: 18px;
   }
 
   .course-theme #curso-aprendizaje > div.relative > section {

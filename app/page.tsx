@@ -34,6 +34,16 @@ const featuredCourses = [
     description:
       "Aprende Python desde las variables hasta POO, asincronía, pruebas y empaquetado profesional.",
   },
+  {
+    slug: "sql-basico",
+    code: "B7",
+    title: "SQL: de Cero a Avanzado",
+    level: "Principiante a avanzado",
+    duration: "12 semanas",
+    image: "https://cdn.simpleicons.org/postgresql/4169E1",
+    description:
+      "Aprende consultas relacionales, JOIN, análisis de ventas y diseño de datos con prácticas interactivas.",
+  },
 ];
 
 export default function Home() {
@@ -103,7 +113,7 @@ export default function Home() {
           <h2 className="mt-2 font-display text-2xl font-bold text-ink">
             Cursos destacados
           </h2>
-          <div className="mt-8 grid gap-5 md:grid-cols-3">
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {featuredCourses.map((c) => (
               <CourseCard key={c.code} {...c} />
             ))}

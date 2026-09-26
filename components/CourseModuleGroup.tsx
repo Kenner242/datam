@@ -15,12 +15,13 @@ export default function CourseModuleGroup({ track, title, image, description, pr
   const isPythonTrack = track === "python";
   const isExcelTrack = track === "excel";
   const isPowerBiTrack = track === "power-bi";
-  const isSingleCourse = isPythonTrack || isExcelTrack || isPowerBiTrack;
+  const isSqlTrack = track === "sql";
+  const isSingleCourse = isPythonTrack || isExcelTrack || isPowerBiTrack || isSqlTrack;
   return (
     <Link
-      href={isPythonTrack ? "/cursos/python-basico" : isExcelTrack ? "/cursos/excel-basico" : isPowerBiTrack ? "/cursos/power-bi-basico" : `/cursos/modulo/${track}`}
+      href={isPythonTrack ? "/cursos/python-basico" : isExcelTrack ? "/cursos/excel-basico" : isPowerBiTrack ? "/cursos/power-bi-basico" : isSqlTrack ? "/cursos/sql-basico" : `/cursos/modulo/${track}`}
       className="data-cell group flex h-full min-h-[31rem] cursor-pointer flex-col gap-3 overflow-hidden transition-shadow hover:shadow-md focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
-      aria-label={isPythonTrack ? "Ingresar directamente al curso Python Básico" : isExcelTrack ? "Ingresar directamente al curso Excel Profesional" : isPowerBiTrack ? "Ingresar directamente al curso Power BI Profesional" : `Ingresar al módulo de ${title}`}
+      aria-label={isPythonTrack ? "Ingresar directamente al curso Python Básico" : isExcelTrack ? "Ingresar directamente al curso Excel Profesional" : isPowerBiTrack ? "Ingresar directamente al curso Power BI Profesional" : isSqlTrack ? "Ingresar directamente al curso SQL Profesional" : `Ingresar al módulo de ${title}`}
     >
       <div className="flex aspect-[16/10] items-center justify-center p-5 sm:p-6">
         <img src={image} alt={`Herramienta ${title}`} className="h-24 w-24 object-contain transition-transform duration-300 group-hover:scale-105 sm:h-28 sm:w-28" loading="lazy" />

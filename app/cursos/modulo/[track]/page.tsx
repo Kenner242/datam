@@ -13,6 +13,7 @@ export default async function CourseModulePage({ params }: { params: Promise<{ t
 	if (track === "power-bi") redirect("/cursos/power-bi-basico");
 	if (track === "excel") redirect("/cursos/excel-basico");
 	if (track === "python") redirect("/cursos/python-basico");
+	if (track === "sql") redirect("/cursos/sql-basico");
 	const levels = getModuleLevels(track);
 	if (levels.length === 0) notFound();
 

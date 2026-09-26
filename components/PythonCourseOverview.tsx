@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ArrowRight, CheckCircle2, ChevronRight, Code2, LockKeyhole, PlayCircle, Trophy } from "lucide-react";
 import type { Course } from "@/lib/courses";
 
@@ -16,7 +16,7 @@ const PYTHON_STAGES: PythonStage[] = [
 ];
 
 function stageLessons(course: Course, stageIndex: number) {
-  const allLessons = course.modules.flatMap((module, moduleIndex) => module.lessons.map((lesson, lessonIndex) => ({ lesson, moduleIndex, lessonIndex })));
+  const allLessons = course.modules.flatMap((module) => module.lessons);
   const start = Math.floor((allLessons.length / PYTHON_STAGES.length) * stageIndex);
   const end = Math.max(start + 1, Math.floor((allLessons.length / PYTHON_STAGES.length) * (stageIndex + 1)));
   return allLessons.slice(start, end);
@@ -24,19 +24,9 @@ function stageLessons(course: Course, stageIndex: number) {
 
 export default function PythonCourseOverview({ course }: { course: Course }) {
   const [selectedStage, setSelectedStage] = useState(0);
-  const [watched, setWatched] = useState<string[]>([]);
+  const [completedStages, setCompletedStages] = useState<string[]>([]);
   const selected = PYTHON_STAGES[selectedStage];
   const selectedLessons = useMemo(() => stageLessons(course, selectedStage), [course, selectedStage]);
-  useEffect(() => {
-    const progress: string[] = [];
-    for (let index = 0; index < window.localStorage.length; index += 1) {
-      const key = window.localStorage.key(index);
-      if (!key?.includes(`datam-progress:`) || !key.endsWith(`:${course.slug}`)) continue;
-      try { progress.push(...(JSON.parse(window.localStorage.getItem(key) ?? "[]") as string[])); } catch { /* Ignore invalid local progress. */ }
-    }
-    setWatched(Array.from(new Set(progress)));
-  }, [course.slug]);
-  const completedStages = PYTHON_STAGES.filter((_, index) => stageLessons(course, index).every(({ lesson, moduleIndex }) => watched.includes(`${course.modules[moduleIndex].title}:${lesson.title}`))).map((stage) => stage.id);
   const progress = Math.round((completedStages.length / PYTHON_STAGES.length) * 100);
 
   return <section className="python-overview" aria-label="Ruta profesional de Python Básico">
@@ -51,9 +41,9 @@ export default function PythonCourseOverview({ course }: { course: Course }) {
     <div className="python-stage-detail">
       <div className="python-stage-icon" style={{ backgroundColor: selected.color }}>{selected.icon}</div>
       <div className="min-w-0 flex-1"><p className="python-stage-label">Etapa {selectedStage + 1} · {selected.bloom}</p><h3>{selected.title}</h3><p className="python-stage-goal">{selected.goal}</p><div className="python-topic-list">{selected.topics.map((topic) => <span key={topic}>{topic}</span>)}</div></div>
-      <button type="button" onClick={() => { const firstLesson = selectedLessons[0]; if (firstLesson) window.dispatchEvent(new CustomEvent("datam:open-python-lesson", { detail: { moduleIndex: firstLesson.moduleIndex, lessonIndex: firstLesson.lessonIndex } })); }} className="python-stage-action">{completedStages.includes(selected.id) ? <><CheckCircle2 className="h-4 w-4" /> Repasar etapa</> : <><PlayCircle className="h-4 w-4" /> Empezar etapa</>}</button>
+      <button type="button" onClick={() => { setCompletedStages((current) => current.includes(selected.id) ? current : [...current, selected.id]); document.getElementById("curso-aprendizaje")?.scrollIntoView({ behavior: "smooth" }); }} className="python-stage-action">{completedStages.includes(selected.id) ? <><CheckCircle2 className="h-4 w-4" /> Repasar etapa</> : <><PlayCircle className="h-4 w-4" /> Empezar etapa</>}</button>
     </div>
-    <div className="python-stage-lessons"><div className="flex items-center gap-2"><Code2 className="h-4 w-4 text-blue-600" /><p className="python-section-label">Clases conectadas</p></div>{selectedLessons.map(({ lesson, moduleIndex, lessonIndex }) => { const done = watched.includes(`${course.modules[moduleIndex].title}:${lesson.title}`); return <button type="button" key={lesson.title} onClick={() => window.dispatchEvent(new CustomEvent("datam:open-python-lesson", { detail: { moduleIndex, lessonIndex } }))} className={`python-lesson-row ${done ? "done" : ""}`}><span className="python-lesson-check">{done ? <CheckCircle2 className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}</span><div className="min-w-0 flex-1 text-left"><b>{lesson.title}</b><small>{lesson.topics.join(" · ")}</small></div><span className="python-lesson-link">Abrir tema</span></button>; })}{selectedLessons.length === 0 && <p className="text-sm text-muted">Esta etapa utilizará el contenido del módulo actual.</p>}</div>
+    <div className="python-stage-lessons"><div className="flex items-center gap-2"><Code2 className="h-4 w-4 text-blue-600" /><p className="python-section-label">Clases conectadas</p></div>{selectedLessons.map((lesson) => <div key={lesson.title} className="python-lesson-row"><span className="python-lesson-check"><ChevronRight className="h-4 w-4" /></span><div className="min-w-0 flex-1"><b>{lesson.title}</b><small>{lesson.topics.join(" · ")}</small></div><span className="python-lesson-link">Abrir en la ruta</span></div>)}{selectedLessons.length === 0 && <p className="text-sm text-muted">Esta etapa utilizará el contenido del módulo actual.</p>}</div>
     <div className="python-overview-note"><Trophy className="h-4 w-4 shrink-0 text-amber-600" /><span>La ruta motiva tu práctica; la evaluación final sigue siendo la que determina la aprobación y el certificado.</span></div>
     <div className="python-overview-next"><span><LockKeyhole className="h-4 w-4" /> Próximo paso</span><b>{selectedStage < PYTHON_STAGES.length - 1 ? PYTHON_STAGES[selectedStage + 1].title : "Evaluación final"}</b><ArrowRight className="h-4 w-4" /></div>
   </section>;

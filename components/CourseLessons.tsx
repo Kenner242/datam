@@ -194,16 +194,6 @@ export default function CourseLessons({ course, materials }: { course: Course; m
     return () => window.removeEventListener("datam:enroll-course", handleEnrollment);
   }, [course.slug, userId]);
 
-  useEffect(() => {
-    if (course.slug !== "python-basico") return;
-    function handlePythonLesson(event: Event) {
-      const detail = (event as CustomEvent<{ moduleIndex: number; lessonIndex: number }>).detail;
-      if (detail) setOpenLessonId(`${detail.moduleIndex}-${detail.lessonIndex}`);
-    }
-    window.addEventListener("datam:open-python-lesson", handlePythonLesson);
-    return () => window.removeEventListener("datam:open-python-lesson", handlePythonLesson);
-  }, [course.slug]);
-
   async function enroll() {
     if (!userId) {
       window.localStorage.setItem(enrollmentKey, "true");

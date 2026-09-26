@@ -172,6 +172,16 @@ export default function CourseLessons({ course, materials }: { course: Course; m
   }, [isReady, storageKey]);
 
   useEffect(() => {
+    function handleTopicRequest(event: Event) {
+      const detail = (event as CustomEvent<{ moduleIndex: number; lessonIndex: number }>).detail;
+      if (typeof detail?.moduleIndex !== "number" || typeof detail.lessonIndex !== "number") return;
+      setOpenLessonId(`${detail.moduleIndex}-${detail.lessonIndex}`);
+    }
+    window.addEventListener("datam:open-topic", handleTopicRequest);
+    return () => window.removeEventListener("datam:open-topic", handleTopicRequest);
+  }, []);
+
+  useEffect(() => {
     if (!userId) return;
     async function syncPendingProgress() {
       const pending = JSON.parse(window.localStorage.getItem(pendingSyncKey) ?? "[]") as string[];

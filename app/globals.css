@@ -153,6 +153,35 @@ body {
   background: transparent;
 }
 
+.python-overview { overflow: hidden; border: 1px solid #22334f; border-radius: 18px; background: linear-gradient(145deg, #111c30, #060a14); box-shadow: 0 20px 45px -28px rgb(2 6 23 / .9); }
+.python-overview-hero { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 24px; padding: 28px; background: radial-gradient(680px 260px at 0% 0%, rgb(37 99 235 / .22), transparent 65%), linear-gradient(145deg, #17253d, #0a1120); }
+.python-kicker { color: #93c5fd; }
+.python-progress-card { display: grid; min-width: 170px; gap: 5px; border: 1px solid rgb(147 197 253 / .25); border-radius: 12px; background: rgb(255 255 255 / .08); padding: 14px; text-align: center; color: #bfdbfe; font-size: .72rem; font-weight: 700; }
+.python-progress-track { height: 7px; overflow: hidden; border-radius: 999px; background: rgb(255 255 255 / .14); }
+.python-progress-track i { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #22c55e, #84cc16); transition: width .6s ease; }
+.python-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1px; border-top: 1px solid #22334f; border-bottom: 1px solid #22334f; background: #22334f; }
+.python-stats > div { display: grid; min-height: 94px; place-content: center; gap: 4px; background: #0a1120; text-align: center; }
+.python-stats svg { width: 17px; height: 17px; margin: 0 auto 3px; color: #60a5fa; }
+.python-stats b { color: #eef4ff; font-family: var(--font-display); font-size: 1.2rem; }
+.python-stats span { color: #7f93b3; font-size: .68rem; text-transform: uppercase; letter-spacing: .06em; }
+.python-route { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; padding: 26px; }
+.python-route::before { position: absolute; top: 57px; right: 12%; left: 12%; height: 2px; background: #2d4162; content: ""; }
+.python-stage { position: relative; z-index: 1; }
+.python-stage button { display: flex; width: 100%; min-height: 92px; align-items: center; gap: 10px; border: 1px solid #2d4162; border-radius: 12px; background: #111c30; padding: 12px; text-align: left; transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease; }
+.python-stage button:hover:not(:disabled), .python-stage.current button { transform: translateY(-3px); border-color: #60a5fa; background: #17253d; }
+.python-stage.locked button { cursor: not-allowed; opacity: .48; }
+.python-stage.done button { border-color: #22c55e; }
+.python-stage-number { display: grid; width: 38px; height: 38px; flex: none; place-items: center; border: 2px solid #60a5fa; border-radius: 50%; color: #bfdbfe; font-family: var(--font-mono); font-size: .72rem; font-weight: 800; }
+.python-stage.done .python-stage-number { border-color: #22c55e; color: #86efac; }
+.python-stage-copy { min-width: 0; flex: 1; }
+.python-stage-copy b, .python-stage-copy small { display: block; }
+.python-stage-copy b { color: #eef4ff; font-family: var(--font-display); font-size: .86rem; }
+.python-stage-copy small { margin-top: 4px; color: #9fb2cf; font-size: .68rem; line-height: 1.35; }
+.python-stage-play { flex: none; color: #60a5fa; }
+.python-learning-flow { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 9px; border-top: 1px solid #22334f; background: #070d18; padding: 16px; color: #c2d0e8; font-size: .72rem; font-weight: 700; }
+.python-learning-flow i { color: #60a5fa; font-style: normal; }
+@media (max-width: 700px) { .python-overview-hero { padding: 20px; } .python-stats { grid-template-columns: repeat(2, 1fr); } .python-route { grid-template-columns: 1fr; padding: 20px; } .python-route::before { top: 50px; bottom: 50px; left: 39px; width: 2px; height: auto; } .python-stage button { min-height: 74px; } }
+
 .course-theme .data-cell {
   border-color: #22334f;
   background: linear-gradient(180deg, #111c30, #0a1120);

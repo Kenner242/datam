@@ -1320,6 +1320,15 @@ const graduateProfiles: Record<string, string> = {
 	"estadistica-basica": "Al finalizar, el estudiante organiza, analiza e interpreta datos estadísticos básicos para comunicar conclusiones fundamentadas.",
 };
 
+const pythonBasicModules: CourseModule[] = [
+	module("Introducción a Python", [lesson("¿Qué es Python?", ["Lenguaje de programación", "print()", "Usos profesionales"]), lesson("Variables y tipos de datos", ["str", "int", "float", "bool"]), lesson("Laboratorio: tus primeros datos", ["Variables", "Salida por pantalla", "Verificación de código"]), lesson("Desafío del módulo 1", ["Asignación", "Tipos", "Errores comunes"])]),
+	module("Operadores y decisiones", [lesson("Operadores aritméticos", ["Suma y resta", "División entera", "Módulo y potencia"]), lesson("Comparaciones y lógica", ["Comparadores", "and", "or", "not"]), lesson("Condicionales if, elif y else", ["Decisiones", "Indentación", "Buenas prácticas"]), lesson("Laboratorio: clasificador de edades", ["if", "elif", "else", "Caso real"])]),
+	module("Bucles y automatización", [lesson("El bucle while", ["Condición", "Contador", "Bucle infinito"]), lesson("El bucle for y range()", ["Secuencias", "range", "Acumuladores"]), lesson("Laboratorio: tabla de multiplicar", ["for", "range", "f-strings"]), lesson("Desafío del módulo 3", ["Iteración", "Límites", "Suma acumulada"])]),
+	module("Funciones", [lesson("Definir y llamar funciones", ["def", "Bloques reutilizables", "Llamadas"]), lesson("Parámetros y return", ["Entrada", "Salida", "print vs return"]), lesson("Laboratorio: calculadora de descuentos", ["Parámetros", "Return", "Cálculo profesional"]), lesson("Desafío del módulo 4", ["Funciones", "None", "Reutilización"])]),
+	module("Estructuras de datos", [lesson("Listas", ["Índices", "Recorrido", "len, sum, max y min"]), lesson("Diccionarios", ["Clave y valor", "Acceso", "Recorrido"]), lesson("Laboratorio: promedio de notas", ["Listas", "Métricas", "Reporte"]), lesson("Desafío del módulo 5", ["Listas", "Diccionarios", "Promedios"])]),
+	module("Proyecto aplicado", [lesson("Proyecto: analizador de ventas", ["Listas", "Funciones", "Métricas", "f-strings"]), lesson("Presentar un reporte", ["Resultados", "Interpretación", "Comunicación profesional"])]),
+];
+
 function learningOutcomes(courseTitle: string): LearningOutcome[] {
 	return [
 		{ bloomLevel: "recordar", outcome: `Identifica los conceptos, herramientas y términos fundamentales de ${courseTitle}.` },
@@ -1337,7 +1346,7 @@ export const courses: Course[] = baseCourses.map((course) => ({
 	demandRegion: course.demandRegion ?? courseMetadata[course.slug].demandRegion,
 	graduateProfile: graduateProfiles[course.slug],
 	learningOutcomes: learningOutcomes(course.title),
-	modules: course.modules.map((courseModule, moduleIndex) => ({
+	modules: (course.slug === "python-basico" ? pythonBasicModules : course.modules).map((courseModule, moduleIndex) => ({
 		...courseModule,
 		bloomLevel: bloomLevels[Math.min(moduleIndex * 2, bloomLevels.length - 1)],
 		learningOutcome: learningOutcomes(course.title)[Math.min(moduleIndex * 2, bloomLevels.length - 1)].outcome,

@@ -213,6 +213,7 @@ class Parser {
       if (upper === "TRUE" || upper === "FALSE") return { kind: "literal", value: upper === "TRUE" };
       if (upper === "NULL") return { kind: "literal", value: null };
       if (upper === "CASE") return this.parseCase();
+      if (upper === "CURRENT_DATE" && this.peek()?.value !== "(") return { kind: "call", name: upper, args: [] };
       if (this.matchSymbol("(")) {
         const distinct = upper === "COUNT" && this.matchWord("DISTINCT");
         const args = this.peek()?.value === ")" ? [] : this.parseExpressionList();
@@ -272,7 +273,13 @@ function value(expr: Expr, context: Context): unknown {
   if (expr.kind === "literal") return expr.value;
   if (expr.kind === "column") return resolveColumn(expr.name, expr.table, context.row);
   if (expr.kind === "star") return null;
-  if (expr.kind === "unary") { const inner = value(expr.value, context); return expr.op === "NOT" ? !truthy(inner) : -(Number(inner) || 0); }
+  if (expr.kind === "unary") {
+    const inner = value(expr.value, context);
+    if (expr.op === "NOT") return !truthy(inner);
+    if (expr.op === "IS NULL") return inner === null || inner === undefined;
+    if (expr.op === "IS NOT NULL") return inner !== null && inner !== undefined;
+    return -(Number(inner) || 0);
+  }
   if (expr.kind === "between") return compare(value(expr.value, context), ">=", value(expr.low, context)) && compare(value(expr.value, context), "<=", value(expr.high, context));
   if (expr.kind === "binary") {
     if (expr.op === "AND") return truthy(value(expr.left, context)) && truthy(value(expr.right, context));

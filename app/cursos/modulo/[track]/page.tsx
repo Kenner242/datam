@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { getAllModuleTracks, getModuleLevels } from "@/lib/courses";
@@ -10,6 +10,7 @@ export function generateStaticParams() {
 
 export default async function CourseModulePage({ params }: { params: Promise<{ track: string }> }) {
 	const { track } = await params;
+	if (track === "python") redirect("/cursos/python-basico");
 	const levels = getModuleLevels(track);
 	if (levels.length === 0) notFound();
 

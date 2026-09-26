@@ -161,7 +161,8 @@ body {
 
 .course-theme .course-hero > div,
 .course-theme > section:last-of-type {
-  max-width: 1440px;
+  width: calc(100% - 32px);
+  max-width: 1600px;
 }
 
 .course-theme .course-program > div:first-child {
@@ -308,14 +309,13 @@ body {
 
 @media (max-width: 1023px) {
   .course-theme .course-program {
-    grid-template-columns: minmax(0, 1fr) minmax(200px, 230px);
-    column-gap: 20px;
+    grid-template-columns: minmax(0, 1fr) minmax(190px, 220px);
+    column-gap: 18px;
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 900px) {
   .course-theme .course-program {
-    width: calc(100% - 32px);
     grid-template-columns: minmax(0, 1fr);
     row-gap: 20px;
     padding-top: 22px;
@@ -349,6 +349,19 @@ body {
   .course-theme #curso-aprendizaje > section.data-cell > div:first-child,
   .course-theme #curso-aprendizaje > div.relative > section > div.data-cell > header {
     padding: 18px 16px;
+  }
+}
+
+@media (max-width: 560px) {
+  .course-theme .course-hero > div,
+  .course-theme > section:last-of-type,
+  .course-theme .course-program {
+    width: calc(100% - 24px);
+  }
+
+  .course-theme #curso-aprendizaje > section.data-cell,
+  .course-theme #curso-aprendizaje > section[aria-label="Ruta del curso"] {
+    padding: 15px 12px;
   }
 }
 

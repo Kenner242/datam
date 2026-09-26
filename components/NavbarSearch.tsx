@@ -66,7 +66,7 @@ export default function NavbarSearch() {
     const filtered: SearchResult[] = [];
 
     courses.forEach((course) => {
-      if (course.slug === "python-intermedio" || course.slug === "python-avanzado") return;
+      if (["python-intermedio", "python-avanzado", "excel-intermedio", "excel-avanzado", "power-bi-intermedio", "power-bi-avanzado"].includes(course.slug)) return;
       // Buscar en nombre del curso
       if (course.title.toLowerCase().includes(lowerSearch)) {
         filtered.push({

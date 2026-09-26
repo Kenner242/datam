@@ -5,24 +5,24 @@ import { Facebook, Linkedin, MessageCircle, Instagram, Mail, Code2, Database, Ba
 
 const featuredCourses = [
   {
-    slug: "excel-intermedio",
-    code: "B2",
-    title: "Excel Intermedio para Análisis de Datos",
-    level: "Intermedio",
-    duration: "6 semanas",
+    slug: "excel-basico",
+    code: "B1",
+    title: "Excel: de Cero a Avanzado",
+    level: "Principiante a avanzado",
+    duration: "12 semanas",
     image: "/images/tools/excel.svg",
     description:
-      "Tablas dinámicas, fórmulas avanzadas y automatización básica para el trabajo diario.",
+      "Aprende fórmulas, búsquedas, análisis, dashboards y automatización con una ruta progresiva.",
   },
   {
     slug: "power-bi-basico",
     code: "B4",
-    title: "Power BI Básico desde Cero",
-    level: "Básico",
-    duration: "5 semanas",
+    title: "Power BI: de Cero a Avanzado",
+    level: "Principiante a avanzado",
+    duration: "12 semanas",
     image: "/images/tools/power%20bi.png",
     description:
-      "Construye dashboards reales conectando y modelando datos de distintas fuentes.",
+      "Aprende Power Query, modelado estrella, DAX, RLS, optimización y publicación profesional.",
   },
   {
     slug: "python-basico",

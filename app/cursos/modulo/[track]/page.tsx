@@ -10,6 +10,8 @@ export function generateStaticParams() {
 
 export default async function CourseModulePage({ params }: { params: Promise<{ track: string }> }) {
 	const { track } = await params;
+	if (track === "power-bi") redirect("/cursos/power-bi-basico");
+	if (track === "excel") redirect("/cursos/excel-basico");
 	if (track === "python") redirect("/cursos/python-basico");
 	const levels = getModuleLevels(track);
 	if (levels.length === 0) notFound();

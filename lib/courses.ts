@@ -1,4 +1,6 @@
 import { PYTHON_CURRICULUM } from "@/lib/pythonCurriculum";
+import { EXCEL_CURRICULUM } from "@/lib/excelCurriculum";
+import { POWER_BI_CURRICULUM } from "@/lib/powerBiCurriculum";
 
 export type CourseCategory = "ofimatica" | "programacion" | "datos" | "idiomas" | "ia" | "investigacion" | "finanzas";
 export type LaborRegion = "Lima" | "Nacional" | "Norte" | "Centro" | "Sur" | "Remoto";
@@ -1335,17 +1337,25 @@ function learningOutcomes(courseTitle: string): LearningOutcome[] {
 
 export const courses: Course[] = baseCourses.map((course) => ({
 	...course,
-	title: course.slug === "python-basico" ? "Python: de Cero a Avanzado" : course.title,
-	level: course.slug === "python-basico" ? "Principiante a avanzado" : course.level,
-	duration: course.slug === "python-basico" ? "8 semanas" : course.duration,
-	description: course.slug === "python-basico" ? "Ruta progresiva de programación Python desde fundamentos hasta desarrollo avanzado." : course.description,
-	summary: course.slug === "python-basico" ? "Una ruta completa desde variables y control de flujo hasta asincronía, testing y empaquetado profesional." : course.summary,
-	professionalUse: course.slug === "python-basico" ? "Construirás programas Python legibles, probados y distribuibles para automatizar tareas y resolver problemas reales." : course.professionalUse,
+	title: course.slug === "excel-basico" ? "Excel: de Cero a Avanzado" : course.slug === "python-basico" ? "Python: de Cero a Avanzado" : course.slug === "power-bi-basico" ? "Power BI: de Cero a Avanzado" : course.title,
+	level: ["excel-basico", "python-basico", "power-bi-basico"].includes(course.slug) ? "Principiante a avanzado" : course.level,
+	duration: course.slug === "excel-basico" ? "12 semanas" : course.slug === "python-basico" ? "8 semanas" : course.slug === "power-bi-basico" ? "12 semanas" : course.duration,
+	description: course.slug === "excel-basico" ? "Ruta progresiva desde las primeras fórmulas hasta dashboards, Power Query y automatización." : course.slug === "python-basico" ? "Ruta progresiva de programación Python desde fundamentos hasta desarrollo avanzado." : course.slug === "power-bi-basico" ? "Aprende a conectar, transformar, modelar y comunicar datos con Power BI y DAX." : course.description,
+	summary: course.slug === "excel-basico" ? "Domina fórmulas, búsquedas, análisis, tablas dinámicas, dashboards y automatización aplicada." : course.slug === "python-basico" ? "Una ruta completa desde variables y control de flujo hasta asincronía, testing y empaquetado profesional." : course.slug === "power-bi-basico" ? "Una ruta profesional desde Power Query y esquema estrella hasta DAX, rendimiento, RLS y publicación." : course.summary,
+	professionalUse: course.slug === "excel-basico" ? "Construirás reportes verificables y dashboards profesionales para analizar ventas, operaciones y resultados de negocio." : course.slug === "python-basico" ? "Construirás programas Python legibles, probados y distribuibles para automatizar tareas y resolver problemas reales." : course.slug === "power-bi-basico" ? "Diseñarás modelos semánticos y dashboards gobernados para análisis confiable de ventas y operaciones." : course.professionalUse,
 	category: course.category ?? courseMetadata[course.slug].category,
 	demandRegion: course.demandRegion ?? courseMetadata[course.slug].demandRegion,
-	graduateProfile: course.slug === "python-basico" ? "Al finalizar, el estudiante diseña, implementa, prueba y empaqueta soluciones Python profesionales con estructuras de datos, POO, asincronía y persistencia." : graduateProfiles[course.slug],
-	learningOutcomes: learningOutcomes(course.slug === "python-basico" ? "Python: de Cero a Avanzado" : course.title),
-	modules: ((course.slug === "python-basico" ? PYTHON_CURRICULUM.map((pythonModule) => ({
+	graduateProfile: course.slug === "excel-basico" ? "Al finalizar, el estudiante prepara, calcula, analiza y comunica información de negocio mediante fórmulas, búsquedas, tablas dinámicas y reportes reproducibles." : course.slug === "python-basico" ? "Al finalizar, el estudiante diseña, implementa, prueba y empaqueta soluciones Python profesionales con estructuras de datos, POO, asincronía y persistencia." : course.slug === "power-bi-basico" ? "Al finalizar, el estudiante conecta, transforma y modela datos, crea medidas DAX, optimiza informes, implementa seguridad y publica dashboards gobernados." : graduateProfiles[course.slug],
+	learningOutcomes: learningOutcomes(["excel-basico", "python-basico", "power-bi-basico"].includes(course.slug) ? course.slug === "excel-basico" ? "Excel: de Cero a Avanzado" : course.slug === "python-basico" ? "Python: de Cero a Avanzado" : "Power BI: de Cero a Avanzado" : course.title),
+	modules: ((course.slug === "power-bi-basico" ? POWER_BI_CURRICULUM.map((powerBiModule) => ({
+		title: powerBiModule.title,
+		bloomLevel: powerBiModule.level === "principiante" ? "recordar" as const : powerBiModule.level === "intermedio" ? "aplicar" as const : "crear" as const,
+		lessons: powerBiModule.lessons.map((powerBiLesson) => ({ title: powerBiLesson.title, topics: [powerBiLesson.desc], durationMinutes: powerBiLesson.minutes })),
+	})) : course.slug === "excel-basico" ? EXCEL_CURRICULUM.map((excelModule) => ({
+		title: excelModule.title,
+		bloomLevel: excelModule.level === "principiante" ? "recordar" as const : excelModule.level === "intermedio" ? "aplicar" as const : "crear" as const,
+		lessons: excelModule.lessons.map((excelLesson) => ({ title: excelLesson.title, topics: [excelLesson.desc], durationMinutes: excelLesson.minutes })),
+	})) : course.slug === "python-basico" ? PYTHON_CURRICULUM.map((pythonModule) => ({
 		title: pythonModule.title,
 		bloomLevel: pythonModule.level === "principiante" ? "recordar" as const : pythonModule.level === "intermedio" ? "aplicar" as const : "crear" as const,
 		lessons: pythonModule.lessons.map((pythonLesson) => ({

@@ -1,3 +1,5 @@
+import { PYTHON_CURRICULUM } from "@/lib/pythonCurriculum";
+
 export type CourseCategory = "ofimatica" | "programacion" | "datos" | "idiomas" | "ia" | "investigacion" | "finanzas";
 export type LaborRegion = "Lima" | "Nacional" | "Norte" | "Centro" | "Sur" | "Remoto";
 export type Lesson = {
@@ -1333,11 +1335,25 @@ function learningOutcomes(courseTitle: string): LearningOutcome[] {
 
 export const courses: Course[] = baseCourses.map((course) => ({
 	...course,
+	title: course.slug === "python-basico" ? "Python: de Cero a Avanzado" : course.title,
+	level: course.slug === "python-basico" ? "Principiante a avanzado" : course.level,
+	duration: course.slug === "python-basico" ? "8 semanas" : course.duration,
+	description: course.slug === "python-basico" ? "Ruta progresiva de programación Python desde fundamentos hasta desarrollo avanzado." : course.description,
+	summary: course.slug === "python-basico" ? "Una ruta completa desde variables y control de flujo hasta asincronía, testing y empaquetado profesional." : course.summary,
+	professionalUse: course.slug === "python-basico" ? "Construirás programas Python legibles, probados y distribuibles para automatizar tareas y resolver problemas reales." : course.professionalUse,
 	category: course.category ?? courseMetadata[course.slug].category,
 	demandRegion: course.demandRegion ?? courseMetadata[course.slug].demandRegion,
-	graduateProfile: graduateProfiles[course.slug],
-	learningOutcomes: learningOutcomes(course.title),
-	modules: course.modules.map((courseModule, moduleIndex) => ({
+	graduateProfile: course.slug === "python-basico" ? "Al finalizar, el estudiante diseña, implementa, prueba y empaqueta soluciones Python profesionales con estructuras de datos, POO, asincronía y persistencia." : graduateProfiles[course.slug],
+	learningOutcomes: learningOutcomes(course.slug === "python-basico" ? "Python: de Cero a Avanzado" : course.title),
+	modules: ((course.slug === "python-basico" ? PYTHON_CURRICULUM.map((pythonModule) => ({
+		title: pythonModule.title,
+		bloomLevel: pythonModule.level === "principiante" ? "recordar" as const : pythonModule.level === "intermedio" ? "aplicar" as const : "crear" as const,
+		lessons: pythonModule.lessons.map((pythonLesson) => ({
+			title: pythonLesson.title,
+			topics: [pythonLesson.desc],
+			durationMinutes: pythonLesson.minutes,
+		})),
+	})) : course.modules) as CourseModule[]).map((courseModule, moduleIndex) => ({
 		...courseModule,
 		bloomLevel: bloomLevels[Math.min(moduleIndex * 2, bloomLevels.length - 1)],
 		learningOutcome: learningOutcomes(course.title)[Math.min(moduleIndex * 2, bloomLevels.length - 1)].outcome,

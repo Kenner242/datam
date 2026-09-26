@@ -25,14 +25,14 @@ const featuredCourses = [
       "Construye dashboards reales conectando y modelando datos de distintas fuentes.",
   },
   {
-    slug: "python-intermedio",
-    code: "B11",
-    title: "Python Intermedio para Análisis de Datos",
-    level: "Intermedio",
+    slug: "python-basico",
+    code: "B10",
+    title: "Python: de Cero a Avanzado",
+    level: "Principiante a avanzado",
     duration: "8 semanas",
     image: "https://cdn.simpleicons.org/python/3776AB",
     description:
-      "Pandas, visualización y automatización de reportes con proyectos aplicados.",
+      "Aprende Python desde las variables hasta POO, asincronía, pruebas y empaquetado profesional.",
   },
 ];
 

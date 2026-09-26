@@ -34,8 +34,9 @@ export default function CourseSearch() {
     const lowerSearch = searchTerm.toLowerCase();
     return courses.filter(
       (course) =>
+        !["python-intermedio", "python-avanzado"].includes(course.slug) &&
         (category === "all" || course.category === category) &&
-        (level === "all" || course.level === level) &&
+        (level === "all" || course.level === level || (course.slug === "python-basico" && ["Básico", "Principiante", "Intermedio", "Avanzado"].includes(level))) &&
         (duration === "all" || course.duration === duration) &&
         (region === "all" || course.demandRegion === region) &&
         (!lowerSearch || course.title.toLowerCase().includes(lowerSearch) || course.description.toLowerCase().includes(lowerSearch) || course.summary.toLowerCase().includes(lowerSearch) || course.professionalUse.toLowerCase().includes(lowerSearch))

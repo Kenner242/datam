@@ -735,3 +735,105 @@ body {
     color: #363C49;
   }
 }
+
+.python-course-player { margin-top: 24px; overflow: hidden; border: 1px solid #22334f; border-radius: 16px; background: #070d18; color: #eef4ff; }
+.python-player-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 18px; padding: 22px; background: linear-gradient(125deg, #0f2945, #0a1120 70%); }
+.python-player-header h2 { margin-top: 5px; color: #fff; font-family: var(--font-display); font-size: 1.55rem; font-weight: 750; line-height: 1.2; }
+.python-player-header p:not(.python-kicker) { margin-top: 8px; max-width: 640px; color: #bfdbfe; font-size: .86rem; line-height: 1.55; }
+.python-player-summary { display: grid; min-width: 132px; flex: none; border: 1px solid #315071; border-radius: 9px; background: rgb(255 255 255 / .05); padding: 10px; text-align: center; }
+.python-player-summary b { font-family: var(--font-display); font-size: 1.5rem; }
+.python-player-summary span, .python-player-summary small { color: #bfd3e9; font-size: .68rem; }
+.python-player-progress { height: 4px; background: #203149; }
+.python-player-progress span { display: block; height: 100%; background: #55d6be; transition: width 220ms ease; }
+.python-player-message { border-bottom: 1px solid #263c56; background: #0d1a2b; padding: 10px 18px; color: #cbe5f7; font-size: .78rem; line-height: 1.5; }
+.python-player-layout { display: grid; grid-template-columns: minmax(220px, 285px) minmax(0, 1fr); align-items: start; }
+.python-module-sidebar { position: sticky; top: 12px; max-height: 76vh; overflow: auto; border-right: 1px solid #203149; padding: 13px; scrollbar-color: #35516e #0a1120; }
+.python-sidebar-heading { display: flex; justify-content: space-between; gap: 8px; padding: 2px 4px 10px; color: #fff; font-size: .83rem; font-weight: 700; }
+.python-sidebar-heading small { color: #8ca7c0; font-size: .68rem; font-weight: 500; }
+.python-module-sidebar ol { display: grid; gap: 4px; }
+.python-module-button { display: flex; width: 100%; align-items: center; gap: 9px; border: 1px solid transparent; border-radius: 7px; padding: 8px 7px; color: #c5d6e8; text-align: left; transition: background-color 140ms ease, border-color 140ms ease; }
+.python-module-button:hover:not(:disabled), .python-module-button.active { border-color: #35516e; background: #102036; }
+.python-module-button.locked { cursor: not-allowed; opacity: .45; }
+.python-module-number { display: grid; width: 30px; height: 30px; flex: none; place-items: center; border: 1px solid #3b5875; border-radius: 50%; font-size: .9rem; }
+.python-module-number.complete { border-color: #24a987; background: #12634f; color: white; }
+.python-module-copy { min-width: 0; flex: 1; }
+.python-module-copy b { display: block; overflow-wrap: anywhere; color: #edf6ff; font-size: .73rem; line-height: 1.25; }
+.python-module-copy small { display: block; margin-top: 3px; color: #88a5c1; font-size: .63rem; text-transform: capitalize; }
+.python-learning-panel { min-width: 0; padding: 17px; }
+.python-module-heading { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid #21354e; padding: 2px 0 14px; }
+.python-module-heading h3 { margin-top: 4px; color: #fff; font-family: var(--font-display); font-size: 1.22rem; font-weight: 700; }
+.python-module-heading p:not(.python-kicker) { margin-top: 6px; color: #b9cbe0; font-size: .81rem; line-height: 1.5; }
+.python-module-time { display: flex; flex: none; align-items: center; gap: 5px; color: #a9bfd4; font-size: .72rem; }
+.python-lesson-tabs { display: flex; gap: 6px; overflow-x: auto; padding: 12px 0; scrollbar-width: thin; }
+.python-lesson-tab { display: flex; min-height: 36px; flex: none; align-items: center; gap: 6px; border: 1px solid #2b4059; border-radius: 6px; padding: 6px 9px; color: #b9cce0; font-size: .7rem; }
+.python-lesson-tab.active { border-color: #3fae9b; background: #103b3a; color: #e7fffa; }
+.python-lesson-tab.done { color: #85e5c4; }
+.python-lesson-tab:disabled { cursor: not-allowed; opacity: .4; }
+.python-activity-content { border: 1px solid #253a54; border-radius: 9px; background: #0a1320; padding: 17px; }
+.python-activity-meta { display: flex; flex-wrap: wrap; gap: 12px; color: #96aec5; font-size: .64rem; }
+.python-activity-meta span { display: inline-flex; align-items: center; gap: 4px; }
+.python-activity-meta span:first-child { color: #64d6c0; font-weight: 700; letter-spacing: .08em; }
+.python-activity-content h4 { margin-top: 10px; color: #fff; font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; }
+.python-activity-description { margin-top: 5px; color: #bed0e2; font-size: .84rem; line-height: 1.55; }
+.python-objectives, .python-key-points { margin-top: 14px; border-left: 3px solid #55d6be; background: #0d1d2d; padding: 11px 13px; color: #dae9f5; font-size: .77rem; line-height: 1.55; }
+.python-objectives ul, .python-key-points ul { display: grid; gap: 4px; margin-top: 6px; padding-left: 17px; list-style: disc; }
+.python-reading-html { display: grid; gap: 11px; margin-top: 16px; color: #c4d5e6; font-size: .83rem; line-height: 1.7; }
+.python-reading-html h3 { color: #fff; font-weight: 700; }
+.python-reading-html pre.code, .python-dax-tip pre { overflow-x: auto; border: 1px solid #243b55; border-radius: 6px; background: #030810; padding: 12px; color: #a5f3fc; font-family: var(--font-mono); font-size: .76rem; line-height: 1.65; white-space: pre; }
+.python-reading-html .cm { color: #7890a8; }
+.python-reading-html .kw { color: #d6a6ff; }
+.python-reading-html .st { color: #a7e39e; }
+.python-reading-html .fn { color: #75d4f5; }
+.python-reading-html .nm { color: #f2c879; }
+.python-reading-html .note { border-left: 3px solid #f3bd5a; background: #292312; padding: 10px 12px; color: #f5dfad; }
+.python-playground, .python-lab-workspace, .python-quiz-workspace { display: grid; gap: 11px; margin-top: 16px; }
+.python-subheading { display: flex; justify-content: space-between; gap: 8px; }
+.python-subheading > div { display: flex; align-items: center; gap: 7px; color: #ecf7ff; font-size: .8rem; }
+.python-subheading > span { color: #8ba7c0; font-size: .65rem; }
+.python-playground > p { color: #a9bfd4; font-size: .75rem; line-height: 1.5; }
+.python-code-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.python-lab-instructions { border-left: 3px solid #f3bd5a; background: #201d16; padding: 11px 13px; color: #e9d9b7; font-size: .8rem; line-height: 1.6; }
+.python-solution { margin-left: auto; color: #afc4d9; font-size: .72rem; }
+.python-solution summary { cursor: pointer; padding: 8px; }
+.python-solution pre, .python-run-terminal pre, .python-run-variables pre, .python-dax-tip pre { overflow: auto; max-height: 320px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.python-solution pre { border: 1px solid #293f58; border-radius: 6px; background: #030810; padding: 10px; color: #a5f3fc; font-family: var(--font-mono); font-size: .72rem; }
+.python-run-result { display: grid; gap: 8px; }
+.python-run-terminal, .python-run-variables { border: 1px solid #263d57; border-radius: 6px; background: #040a12; padding: 10px; color: #d4e6f5; font-size: .7rem; }
+.python-run-terminal b { color: #91b6d6; font-size: .66rem; }
+.python-run-terminal pre, .python-run-variables pre { margin-top: 6px; color: #a5f3fc; font-family: var(--font-mono); line-height: 1.55; }
+.python-run-variables summary { cursor: pointer; }
+.python-check-list { display: grid; gap: 5px; }
+.python-check-list li { display: flex; align-items: flex-start; gap: 6px; font-size: .72rem; line-height: 1.4; }
+.python-check-list li.passed { color: #86e6bd; }
+.python-check-list li.failed { color: #f3c879; }
+.python-question { min-width: 0; border: 1px solid #2a405a; border-radius: 7px; padding: 12px; }
+.python-question legend { max-width: 100%; padding: 0 4px; color: #f0f7ff; font-size: .8rem; font-weight: 650; line-height: 1.55; white-space: pre-wrap; }
+.python-answer-options { display: grid; gap: 6px; margin-top: 7px; }
+.python-answer-options label { display: flex; align-items: flex-start; gap: 8px; border: 1px solid #253a52; border-radius: 5px; padding: 8px; color: #c6d7e7; font-size: .74rem; line-height: 1.45; cursor: pointer; }
+.python-answer-options label:has(input:checked) { border-color: #3fae9b; background: #10302f; }
+.python-answer-options input { margin-top: 2px; accent-color: #55d6be; }
+.python-question.correct { border-color: #258b72; }
+.python-question.incorrect { border-color: #a55c40; }
+.answer-explanation { margin-top: 8px; color: #94e0c5; font-size: .72rem; line-height: 1.5; }
+.answer-explanation.wrong { color: #ffd493; }
+.python-quiz-score { font-size: .78rem; font-weight: 700; }
+.python-quiz-score.passed { color: #86e6bd; }
+.python-quiz-score.failed { color: #ffd493; }
+.python-dax-tip { display: flex; gap: 10px; margin-top: 17px; border: 1px solid #294b5b; border-radius: 7px; background: #0b2027; padding: 11px; }
+.python-dax-tip > span { display: grid; width: 32px; height: 32px; flex: none; place-items: center; border-radius: 50%; background: #145c5b; color: white; font-size: .62rem; font-weight: 800; }
+.python-dax-tip > div { min-width: 0; flex: 1; }
+.python-dax-tip b { color: #e5fffa; font-size: .75rem; }
+.python-dax-tip p, .python-dax-tip small { display: block; margin-top: 4px; color: #afcfc9; font-size: .71rem; line-height: 1.5; }
+.python-dax-tip pre { margin-top: 8px; max-height: 130px; color: #b8f5e6; }
+.python-activity-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; margin-top: 15px; border-top: 1px solid #24374d; padding-top: 12px; }
+.python-done-label { display: inline-flex; align-items: center; gap: 6px; color: #8de5c2; font-size: .75rem; font-weight: 700; }
+.python-next-indicator { color: #819bb4; font-size: .68rem; }
+.python-complete-button:disabled, .python-run-button:disabled { cursor: not-allowed; opacity: .45; }
+.python-enroll-inline { color: #9ee5d3; font-size: .74rem; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.python-finish-banner { display: flex; align-items: center; gap: 10px; margin-top: 14px; border: 1px solid #298b73; border-radius: 8px; background: #103229; padding: 13px; color: #b7f4dc; }
+.python-finish-banner > div { flex: 1; }
+.python-finish-banner b { font-size: .82rem; }
+.python-finish-banner p { margin-top: 3px; color: #a1d8c4; font-size: .7rem; }
+.python-finish-banner a { display: inline-flex; align-items: center; gap: 3px; color: white; font-size: .72rem; font-weight: 700; }
+@media (max-width: 850px) { .python-player-layout { grid-template-columns: minmax(0, 1fr); } .python-module-sidebar { position: static; max-height: 300px; border-right: 0; border-bottom: 1px solid #203149; } .python-module-sidebar ol { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .python-player-header { flex-direction: column; padding: 17px; } .python-player-header h2 { font-size: 1.35rem; } .python-player-summary { grid-template-columns: auto auto; align-items: center; column-gap: 8px; min-width: 0; text-align: left; } .python-player-summary b { grid-row: span 2; } .python-module-sidebar ol { grid-template-columns: minmax(0, 1fr); } .python-learning-panel { padding: 12px; } .python-activity-content { padding: 12px; } .python-finish-banner { align-items: flex-start; flex-wrap: wrap; } .python-finish-banner a { margin-left: 30px; } }

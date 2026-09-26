@@ -49,8 +49,8 @@ export function computeStreak(lastActiveDate: string | null, currentStreak: numb
 type StreakRow = { current_streak: number; longest_streak: number; last_active_date: string | null };
 
 // Se dispara junto con el registro de progreso; nunca decide aprobación ni certificado.
-export async function awardXp(userId: string, courseSlug: string, lessonId: string, bloomLevel?: BloomLevel) {
-  const xpAwarded = xpForBloomLevel(bloomLevel);
+export async function awardXp(userId: string, courseSlug: string, lessonId: string, bloomLevel?: BloomLevel, exactAmount?: number) {
+  const xpAwarded = exactAmount ?? xpForBloomLevel(bloomLevel);
   await supabase.from("xp_events").insert({ user_id: userId, course_slug: courseSlug, lesson_id: lessonId, xp_awarded: xpAwarded, bloom_level: bloomLevel ?? null });
 
   const { data: streakRow } = await supabase.from("streaks").select("current_streak, longest_streak, last_active_date").eq("user_id", userId).maybeSingle();

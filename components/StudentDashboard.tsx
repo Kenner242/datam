@@ -10,6 +10,7 @@ import LearningMissionCard from "@/components/LearningMissionCard";
 import Leaderboard from "@/components/Leaderboard";
 import { getRecommendedMission } from "@/lib/learningMissions";
 import { calculateStudentLevel } from "@/lib/gamification";
+import { getCurrentUserSafely } from "@/lib/supabase/session";
 
 type Enrollment = { course_slug: string };
 type ProgressRow = { course_slug: string; lesson_id: string };
@@ -36,23 +37,24 @@ export default function StudentDashboard() {
 
   useEffect(() => {
     async function loadDashboard() {
-      const { data: auth } = await supabase.auth.getUser();
-      if (!auth.user) {
+      const { user, error: authError } = await getCurrentUserSafely();
+      if (!user) {
+        if (authError) setError(authError);
         router.replace("/login?next=/dashboard");
         return;
       }
-      setName(auth.user.user_metadata.full_name || auth.user.email || "estudiante");
-      setUserId(auth.user.id);
+      setName(user.user_metadata.full_name || user.email || "estudiante");
+      setUserId(user.id);
       const [enrollmentResult, progressResult, badgeResult, activityResult, xpResult, streakResult, trophyResult, achievementResult, profileResult] = await Promise.all([
-        supabase.from("enrollments").select("course_slug").eq("user_id", auth.user.id),
-        supabase.from("progress").select("course_slug, lesson_id").eq("user_id", auth.user.id),
-        supabase.from("badges").select("course_slug, fecha, puntaje, habilidades").eq("user_id", auth.user.id).order("fecha", { ascending: false }),
-        supabase.from("learning_activity").select("activity_date, lessons_completed").eq("user_id", auth.user.id).order("activity_date", { ascending: false }).limit(1),
-        supabase.from("xp_events").select("xp_awarded").eq("user_id", auth.user.id),
-        supabase.from("streaks").select("current_streak, longest_streak").eq("user_id", auth.user.id).maybeSingle(),
-        supabase.from("trophies").select("id", { count: "exact", head: true }).eq("user_id", auth.user.id),
-        supabase.from("achievements").select("id", { count: "exact", head: true }).eq("user_id", auth.user.id),
-        supabase.from("profiles").select("leaderboard_opt_in, leaderboard_display_name").eq("id", auth.user.id).maybeSingle(),
+        supabase.from("enrollments").select("course_slug").eq("user_id", user.id),
+        supabase.from("progress").select("course_slug, lesson_id").eq("user_id", user.id),
+        supabase.from("badges").select("course_slug, fecha, puntaje, habilidades").eq("user_id", user.id).order("fecha", { ascending: false }),
+        supabase.from("learning_activity").select("activity_date, lessons_completed").eq("user_id", user.id).order("activity_date", { ascending: false }).limit(1),
+        supabase.from("xp_events").select("xp_awarded").eq("user_id", user.id),
+        supabase.from("streaks").select("current_streak, longest_streak").eq("user_id", user.id).maybeSingle(),
+        supabase.from("trophies").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+        supabase.from("achievements").select("id", { count: "exact", head: true }).eq("user_id", user.id),
+        supabase.from("profiles").select("leaderboard_opt_in, leaderboard_display_name").eq("id", user.id).maybeSingle(),
       ]);
       if (enrollmentResult.error) setError(enrollmentResult.error.message);
       if (progressResult.error) setError(progressResult.error.message);

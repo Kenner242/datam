@@ -6,7 +6,10 @@ import { createClient } from "@supabase/supabase-js";
 export async function POST(request: NextRequest) {
   try {
     const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://placeholder.supabase.co", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "public-anon-key", { global: { headers: { Authorization: request.headers.get("Authorization") ?? "" } } });
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError && /jwt.{0,40}(issued|future)|issued.{0,40}future|token.{0,40}future/i.test(authError.message)) {
+      return NextResponse.json({ error: "Tu token de sesión tiene una fecha futura. Sincroniza la fecha y hora del equipo y vuelve a iniciar sesión." }, { status: 401 });
+    }
     if (!user) return NextResponse.json({ error: "Debes iniciar sesión para generar materiales." }, { status: 401 });
     const role = user.app_metadata?.role;
     if (role !== "admin" && role !== "creator") return NextResponse.json({ error: "No tienes permisos para generar materiales." }, { status: 403 });

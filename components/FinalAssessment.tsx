@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase/client";
 import type { Course } from "@/lib/courses";
 import { getCourseAssessment } from "@/lib/courseAssessments";
 import { registerCourseTrophy } from "@/lib/gamification";
+import { getCurrentUserSafely } from "@/lib/supabase/session";
 
 const PASSING_SCORE = 70;
 
@@ -22,13 +23,17 @@ export default function FinalAssessment({ course }: { course: Course }) {
 
   useEffect(() => {
     async function load() {
-      const { data: auth } = await supabase.auth.getUser();
-      if (!auth.user) return;
+      const { user, error: authError } = await getCurrentUserSafely();
+      if (!user) {
+        if (authError) setMessage(authError);
+        setIsLoading(false);
+        return;
+      }
 
       const lessonIds = course.modules.flatMap((module) => module.lessons.map((lesson) => `${module.title}:${lesson.title}`));
       const [{ data: progress }, { data: attempts }] = await Promise.all([
-        supabase.from("progress").select("lesson_id").eq("user_id", auth.user.id).eq("course_slug", course.slug),
-        supabase.from("exam_attempts").select("score, passed").eq("user_id", auth.user.id).eq("course_slug", course.slug).order("submitted_at", { ascending: false }).limit(1),
+        supabase.from("progress").select("lesson_id").eq("user_id", user.id).eq("course_slug", course.slug),
+        supabase.from("exam_attempts").select("score, passed").eq("user_id", user.id).eq("course_slug", course.slug).order("submitted_at", { ascending: false }).limit(1),
       ]);
 
       const completed = new Set((progress ?? []).map((entry) => entry.lesson_id));
@@ -56,11 +61,14 @@ export default function FinalAssessment({ course }: { course: Course }) {
     const correct = assessment.questions.reduce((total, question, index) => total + Number(answers[index] === question.correctOption), 0);
     const nextScore = Math.round((correct / assessment.questions.length) * 100);
     const passed = nextScore >= PASSING_SCORE;
-    const { data: auth } = await supabase.auth.getUser();
-    if (!auth.user) return;
+    const { user, error: authError } = await getCurrentUserSafely();
+    if (!user) {
+      setMessage(authError ?? "Inicia sesión de nuevo para enviar la evaluación.");
+      return;
+    }
 
     const { error } = await supabase.from("exam_attempts").insert({
-      user_id: auth.user.id,
+      user_id: user.id,
       course_slug: course.slug,
       score: nextScore,
       passed,
@@ -77,13 +85,13 @@ export default function FinalAssessment({ course }: { course: Course }) {
     setReviewAnswers([...answers]);
     if (passed) {
       void supabase.from("badges").upsert({
-        user_id: auth.user.id,
+        user_id: user.id,
         course_slug: course.slug,
         puntaje: nextScore,
         habilidades: course.learningOutcomes?.map((outcome) => outcome.outcome) ?? [],
       }, { onConflict: "user_id,course_slug" });
       // El trofeo es motivacional; el certificado (badges) sigue siendo el único logro verificable.
-      void registerCourseTrophy(auth.user.id, course.slug);
+      void registerCourseTrophy(user.id, course.slug);
     }
   }
 

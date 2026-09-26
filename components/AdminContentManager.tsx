@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase/client";
 import { courses } from "@/lib/courses";
 import type { GeneratedLessonMaterials } from "@/lib/contentStudio";
+import { getCurrentSessionSafely } from "@/lib/supabase/session";
 
 type ModuleRow = { id: number; title: string; position: number; bloom_level: string; learning_outcome: string };
 
@@ -60,8 +61,12 @@ export default function AdminContentManager() {
       return;
     }
     setMessage("Generando materiales con IA...");
-    const { data: { session } } = await supabase.auth.getSession();
-    const response = await fetch("/api/content-studio/generate", { method: "POST", headers: { "Content-Type": "application/json", ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}) }, body: JSON.stringify({ lessonContent: selectedLesson.content }) });
+    const { session, error: sessionError } = await getCurrentSessionSafely();
+    if (!session) {
+      setMessage(sessionError ?? "Tu sesión expiró. Inicia sesión nuevamente.");
+      return;
+    }
+    const response = await fetch("/api/content-studio/generate", { method: "POST", headers: { "Content-Type": "application/json", Authorization: `Bearer ${session.access_token}` }, body: JSON.stringify({ lessonContent: selectedLesson.content }) });
     const result = (await response.json()) as { materials?: GeneratedLessonMaterials; error?: string };
     if (!response.ok || !result.materials) {
       setMessage(result.error ?? "No se pudieron generar los materiales.");

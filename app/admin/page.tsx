@@ -8,6 +8,7 @@ import AdminContentManager from "@/components/AdminContentManager";
 import FlashcardSetForm from "@/components/FlashcardSetForm";
 import { supabase } from "@/lib/supabase/client";
 import { courses } from "@/lib/courses";
+import { getCurrentUserSafely } from "@/lib/supabase/session";
 
 type Enrollment = { course_slug: string };
 
@@ -19,9 +20,9 @@ export default function AdminPage() {
 
   useEffect(() => {
     async function load() {
-      const { data: auth } = await supabase.auth.getUser();
-      if (!auth.user || auth.user.email?.toLowerCase() !== process.env.NEXT_PUBLIC_ADMIN_EMAIL?.toLowerCase()) {
-        router.replace("/login");
+      const { user, error: authError } = await getCurrentUserSafely();
+      if (!user || user.email?.toLowerCase() !== process.env.NEXT_PUBLIC_ADMIN_EMAIL?.toLowerCase()) {
+        router.replace(authError ? "/login?reason=session" : "/login");
         return;
       }
       const { data, error: queryError } = await supabase.from("enrollments").select("course_slug");

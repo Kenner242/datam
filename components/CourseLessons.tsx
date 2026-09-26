@@ -13,6 +13,7 @@ import TopicWindow from "@/components/TopicWindow";
 import TopicFlashcardsTab from "@/components/TopicFlashcardsTab";
 import CourseRoadmap from "@/components/CourseRoadmap";
 import { awardXp, registerModuleAchievement } from "@/lib/gamification";
+import { getCurrentUserSafely } from "@/lib/supabase/session";
 
 const QUIZ_POINTS_PER_QUESTION = 10;
 const QUIZ_PASSING_SCORE = 70;
@@ -141,13 +142,13 @@ export default function CourseLessons({ course, materials }: { course: Course; m
   ];
 
   useEffect(() => {
-    void supabase.auth.getUser().then(async ({ data }) => {
-      if (data.user) {
-        setUserId(data.user.id);
+    void getCurrentUserSafely().then(async ({ user }) => {
+      if (user) {
+        setUserId(user.id);
         const { data: enrollment } = await supabase
           .from("enrollments")
           .select("id")
-          .eq("user_id", data.user.id)
+          .eq("user_id", user.id)
           .eq("course_slug", course.slug)
           .maybeSingle();
         setIsEnrolled(Boolean(enrollment));

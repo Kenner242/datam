@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Shuffle, Star, Timer } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { pickNextLearnCard, shuffle, type Flashcard, type FlashcardConfidence, type FlashcardProgress } from "@/lib/flashcards";
+import { getCurrentUserSafely } from "@/lib/supabase/session";
 
 type DeckMode = "flashcards" | "learn" | "match";
 
@@ -19,8 +20,8 @@ export default function FlashcardDeck({ setId, cards }: { setId: string; cards: 
   useEffect(() => setOrder(cards), [cards]);
 
   useEffect(() => {
-    void supabase.auth.getUser().then(async ({ data }) => {
-      const id = data.user?.id ?? null;
+    void getCurrentUserSafely().then(async ({ user }) => {
+      const id = user?.id ?? null;
       setUserId(id);
       if (!id) return;
       const { data: rows } = await supabase.from("flashcard_progress").select("flashcard_id, confidence, last_reviewed_at").in("flashcard_id", cards.map((card) => card.id));

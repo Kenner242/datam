@@ -5,14 +5,15 @@ import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import DetectiveWorkspace from "@/components/DetectiveWorkspace";
 import { supabase } from "@/lib/supabase/client";
+import { getCurrentUserSafely } from "@/lib/supabase/session";
 
 export default function LibraryPage() {
   const router = useRouter();
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    void supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) router.replace("/login?next=/biblioteca");
+    void getCurrentUserSafely().then(({ user, error }) => {
+      if (!user) router.replace(`/login?next=/biblioteca${error ? "&reason=session" : ""}`);
       else setReady(true);
     });
   }, [router]);

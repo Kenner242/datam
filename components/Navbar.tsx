@@ -7,6 +7,7 @@ import { Menu, X, LogOut, LayoutDashboard, Library } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase/client";
 import NavbarSearch from "./NavbarSearch";
+import { getCurrentUserSafely } from "@/lib/supabase/session";
 
 export default function Navbar() {
   const router = useRouter();
@@ -17,8 +18,8 @@ export default function Navbar() {
     let mounted = true;
 
     async function loadSession() {
-      const { data } = await supabase.auth.getSession();
-      if (mounted) setIsAuthenticated(Boolean(data.session));
+      const { user } = await getCurrentUserSafely();
+      if (mounted) setIsAuthenticated(Boolean(user));
     }
 
     void loadSession();

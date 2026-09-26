@@ -1,10 +1,11 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import { supabase } from "@/lib/supabase/client";
+import { AUTH_RECOVERY_MESSAGE_KEY } from "@/lib/supabase/session";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -16,6 +17,13 @@ export default function LoginPage() {
   const [isRecovering, setIsRecovering] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isMagicLinkLoading, setIsMagicLinkLoading] = useState(false);
+
+  useEffect(() => {
+    const recoveryMessage = window.sessionStorage.getItem(AUTH_RECOVERY_MESSAGE_KEY);
+    if (!recoveryMessage) return;
+    setMessage(recoveryMessage);
+    window.sessionStorage.removeItem(AUTH_RECOVERY_MESSAGE_KEY);
+  }, []);
 
   async function handleGoogleLogin() {
     setError("");

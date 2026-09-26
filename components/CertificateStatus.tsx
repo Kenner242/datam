@@ -5,6 +5,7 @@ import Link from "next/link";
 import { CheckCircle2, Printer } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import type { Course } from "@/lib/courses";
+import { getCurrentUserSafely } from "@/lib/supabase/session";
 
 export default function CertificateStatus({ course }: { course: Course }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -13,14 +14,14 @@ export default function CertificateStatus({ course }: { course: Course }) {
 
   useEffect(() => {
     async function load() {
-      const { data: auth } = await supabase.auth.getUser();
-      if (!auth.user) return;
-      setStudentName((auth.user.user_metadata.full_name as string | undefined) || auth.user.email || "Estudiante DataM");
+      const { user } = await getCurrentUserSafely();
+      if (!user) return;
+      setStudentName((user.user_metadata.full_name as string | undefined) || user.email || "Estudiante DataM");
 
       const { data: attempts } = await supabase
         .from("exam_attempts")
         .select("passed")
-        .eq("user_id", auth.user.id)
+        .eq("user_id", user.id)
         .eq("course_slug", course.slug)
         .eq("passed", true)
         .limit(1);

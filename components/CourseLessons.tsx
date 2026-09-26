@@ -172,16 +172,6 @@ export default function CourseLessons({ course, materials }: { course: Course; m
   }, [isReady, storageKey]);
 
   useEffect(() => {
-    function handleTopicRequest(event: Event) {
-      const detail = (event as CustomEvent<{ moduleIndex: number; lessonIndex: number }>).detail;
-      if (typeof detail?.moduleIndex !== "number" || typeof detail.lessonIndex !== "number") return;
-      setOpenLessonId(`${detail.moduleIndex}-${detail.lessonIndex}`);
-    }
-    window.addEventListener("datam:open-topic", handleTopicRequest);
-    return () => window.removeEventListener("datam:open-topic", handleTopicRequest);
-  }, []);
-
-  useEffect(() => {
     if (!userId) return;
     async function syncPendingProgress() {
       const pending = JSON.parse(window.localStorage.getItem(pendingSyncKey) ?? "[]") as string[];
@@ -203,6 +193,16 @@ export default function CourseLessons({ course, materials }: { course: Course; m
     window.addEventListener("datam:enroll-course", handleEnrollment);
     return () => window.removeEventListener("datam:enroll-course", handleEnrollment);
   }, [course.slug, userId]);
+
+  useEffect(() => {
+    if (course.slug !== "python-basico") return;
+    function handlePythonLesson(event: Event) {
+      const detail = (event as CustomEvent<{ moduleIndex: number; lessonIndex: number }>).detail;
+      if (detail) setOpenLessonId(`${detail.moduleIndex}-${detail.lessonIndex}`);
+    }
+    window.addEventListener("datam:open-python-lesson", handlePythonLesson);
+    return () => window.removeEventListener("datam:open-python-lesson", handlePythonLesson);
+  }, [course.slug]);
 
   async function enroll() {
     if (!userId) {

@@ -306,6 +306,65 @@ body {
 .python-overview-next b { margin-left: auto; color: #fff; }
 .python-overview-next svg { color: #93c5fd; }
 
+.python-experience { margin-top: 24px; overflow: hidden; border: 1px solid #22334f; border-radius: 20px; background: linear-gradient(180deg, #111c30, #060a14); box-shadow: 0 18px 42px -24px rgb(2 6 23 / .8); }
+.python-experience-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; padding: 26px; background: radial-gradient(680px 260px at 8% 0%, rgb(37 99 235 / .22), transparent 66%), linear-gradient(145deg, #0d1c34, #060a14); }
+.python-experience-head h2 { margin-top: 7px; color: #fff; font-family: var(--font-display); font-size: clamp(1.35rem, 3vw, 2rem); font-weight: 700; }
+.python-experience-head p:not(.python-kicker) { margin-top: 8px; max-width: 640px; color: #bfdbfe; font-size: .9rem; line-height: 1.6; }
+.python-experience-stats { display: grid; min-width: 100px; flex: none; border: 1px solid rgb(147 197 253 / .2); border-radius: 12px; background: rgb(255 255 255 / .07); padding: 11px; text-align: center; }
+.python-experience-stats b { color: #fff; font-family: var(--font-display); font-size: 1.6rem; }
+.python-experience-stats span, .python-experience-stats small { color: #bfdbfe; font-size: .66rem; }
+.python-stage-route { position: relative; display: grid; grid-template-columns: repeat(6, minmax(85px, 1fr)); gap: 7px; padding: 25px 18px 20px; background: #070d18; }
+.python-stage-route-line { position: absolute; top: 46px; left: 9%; right: 9%; height: 2px; background: #2d4162; }
+.python-route-stage { position: relative; z-index: 1; display: grid; min-width: 0; justify-items: center; gap: 6px; color: #9fb2cf; text-align: center; }
+.python-route-stage > span { display: grid; width: 42px; height: 42px; place-items: center; border: 3px solid #fff; border-radius: 50%; color: #fff; font-size: .75rem; font-weight: 800; box-shadow: 0 6px 14px rgb(2 6 23 / .45); }
+.python-route-stage b { color: #c2d0e8; font-size: .7rem; line-height: 1.35; }
+.python-route-stage small { color: #7f93b3; font-size: .62rem; }
+.python-route-stage.active > span { box-shadow: 0 0 0 6px rgb(99 102 241 / .2), 0 8px 22px rgb(99 102 241 / .4); }
+.python-route-stage.done b { color: #86efac; }
+.python-route-stage.locked { cursor: not-allowed; opacity: .6; }
+.python-experience-message { border-bottom: 1px solid #2d4162; background: rgb(37 99 235 / .12); padding: 10px 18px; color: #bfdbfe; font-size: .78rem; }
+.python-stage-card { display: flex; align-items: flex-start; gap: 15px; margin: 18px; border: 1px solid #2d4162; border-left: 3px solid #6366f1; border-radius: 12px; background: #0a1120; padding: 17px; }
+.python-stage-card-icon { display: grid; width: 48px; height: 48px; flex: none; place-items: center; border-radius: 13px; font-size: 1.4rem; }
+.python-stage-card h3 { margin-top: 4px; color: #fff; font-family: var(--font-display); font-size: 1.15rem; }
+.python-stage-card p:not(.python-stage-label) { margin-top: 4px; color: #bfdbfe; font-size: .82rem; line-height: 1.5; }
+.python-topic-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.python-topic-tags span { border: 1px solid #2d4162; border-radius: 99px; background: #111c30; padding: 4px 8px; color: #a5b4fc; font-size: .65rem; }
+.python-complete-button { display: inline-flex; flex: none; align-items: center; gap: 6px; border-radius: 7px; background: #2563eb; padding: 9px 11px; color: white; font-size: .7rem; font-weight: 700; }
+.python-complete-button:hover { background: #175cd3; }
+.python-experience-grid { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 14px; margin: 18px; }
+.python-lessons-panel, .python-lab-panel { min-width: 0; border: 1px solid #22334f; border-radius: 11px; background: #0a1120; padding: 15px; }
+.python-panel-heading { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+.python-panel-heading h3 { margin-top: 4px; color: #fff; font-family: var(--font-display); font-size: 1rem; }
+.python-panel-heading > span { color: #7f93b3; font-size: .66rem; }
+.python-lesson-card { display: flex; width: 100%; align-items: center; gap: 10px; margin-top: 7px; border: 1px solid #22334f; border-radius: 8px; background: #070d18; padding: 10px; color: white; text-align: left; }
+.python-lesson-card:hover { border-color: #818cf8; background: rgb(99 102 241 / .12); }
+.python-lesson-card > span:first-child { font-size: 1.1rem; }
+.python-lesson-card b, .python-lesson-card small { display: block; }
+.python-lesson-card b { font-size: .77rem; }
+.python-lesson-card small { margin-top: 3px; color: #7f93b3; font-size: .65rem; }
+.python-lab-prompt { min-height: 42px; color: #9fb2cf; font-size: .76rem; line-height: 1.5; }
+.python-code-editor { width: 100%; min-height: 170px; resize: vertical; border: 1px solid #2d4162; border-radius: 8px; background: #050a14; padding: 12px; color: #a5f3fc; font-family: var(--font-mono); font-size: .76rem; line-height: 1.6; outline: none; }
+.python-code-editor:focus { border-color: #818cf8; }
+.python-lab-actions { display: flex; flex-wrap: wrap; gap: 7px; margin-top: 9px; }
+.python-run-button, .python-reset-button { display: inline-flex; align-items: center; gap: 5px; border-radius: 7px; padding: 8px 10px; font-size: .7rem; font-weight: 700; }
+.python-run-button { background: #2563eb; color: white; }
+.python-reset-button { border: 1px solid #2d4162; color: #c2d0e8; }
+.python-output { margin-top: 10px; border-radius: 7px; padding: 10px; font-family: var(--font-mono); font-size: .7rem; line-height: 1.5; white-space: pre-wrap; }
+.python-output.passed { border: 1px solid rgb(16 185 129 / .35); background: rgb(16 185 129 / .1); color: #86efac; }
+.python-output.needs-work { border: 1px solid rgb(245 158 11 / .35); background: rgb(120 53 15 / .18); color: #fde68a; }
+.python-experience-footer { display: flex; align-items: center; gap: 8px; margin: 0 18px 18px; border-top: 1px solid #22334f; padding-top: 13px; color: #bfdbfe; font-size: .72rem; }
+.python-lesson-overlay { position: fixed; inset: 0; z-index: 80; display: grid; place-items: center; background: rgb(3 7 15 / .82); padding: 16px; }
+.python-lesson-modal { position: relative; width: min(680px, 100%); max-height: 88vh; overflow-y: auto; border: 1px solid #2d4162; border-radius: 14px; background: linear-gradient(180deg, #141f34, #0a1120); padding: 25px; color: #eef4ff; box-shadow: 0 28px 70px rgb(2 6 23 / .8); }
+.python-modal-close { position: absolute; top: 12px; right: 13px; padding: 5px; color: #9fb2cf; }
+.python-lesson-modal h2 { margin-top: 7px; font-family: var(--font-display); font-size: 1.35rem; }
+.python-modal-topics { margin-top: 7px; color: #a5b4fc; font-size: .75rem; }
+.python-modal-intro { margin-top: 18px; color: #dbeafe; font-size: .9rem; line-height: 1.7; }
+.python-modal-block { margin-top: 16px; border-left: 3px solid #6366f1; border-radius: 0 8px 8px 0; background: #070d18; padding: 13px 15px; color: #c2d0e8; font-size: .82rem; line-height: 1.6; }
+.python-modal-block b { color: white; }
+.python-modal-block ul { display: grid; gap: 6px; margin-top: 8px; padding-left: 18px; }
+.python-modal-primary { margin-top: 20px; border-radius: 7px; background: #2563eb; padding: 10px 14px; color: white; font-size: .78rem; font-weight: 700; }
+@media (max-width: 760px) { .python-experience-head { flex-direction: column; padding: 19px; } .python-experience-stats { align-self: flex-start; } .python-stage-route { grid-template-columns: repeat(3, minmax(85px, 1fr)); gap: 16px 5px; } .python-stage-route-line { display: none; } .python-stage-card { flex-wrap: wrap; margin: 12px; } .python-complete-button { margin-left: 63px; } .python-experience-grid { grid-template-columns: 1fr; margin: 12px; } .python-experience-footer { margin-left: 12px; margin-right: 12px; } }
+
 @media (max-width: 760px) {
   .python-overview-head { flex-direction: column; padding: 19px; }
   .python-overview-progress { align-self: flex-start; }

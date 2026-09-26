@@ -31,6 +31,61 @@ body {
   --dashboard-ink-2: #0d1c34;
 }
 
+.social-auth-group {
+  display: grid;
+  gap: 10px;
+}
+
+.social-auth-button {
+  display: flex;
+  min-height: 46px;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 11px;
+  border: 1px solid #d6dbe4;
+  border-radius: 6px;
+  background: #fff;
+  padding: 10px 14px;
+  color: #202124;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
+}
+
+.social-auth-button:hover:not(:disabled) {
+  border-color: #8b95a5;
+  background: #f8fafc;
+  box-shadow: 0 1px 3px rgb(15 23 42 / 0.12);
+}
+
+.social-auth-button:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.social-auth-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+}
+
+.social-auth-icon {
+  width: 20px;
+  height: 20px;
+  flex: none;
+}
+
+.social-auth-linkedin {
+  border-color: #0a66c2;
+  background: #0a66c2;
+  color: #fff;
+}
+
+.social-auth-linkedin:hover:not(:disabled) {
+  border-color: #004182;
+  background: #004182;
+}
+
 .dashboard-hero {
   position: relative;
   overflow: hidden;

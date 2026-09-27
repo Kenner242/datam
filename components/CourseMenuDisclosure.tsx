@@ -24,7 +24,7 @@ export default function CourseMenuDisclosure({ className, title, progress, child
     <aside className={`${className} course-menu-disclosure`}>
       <details open={isOpen} onToggle={(event) => setIsOpen(event.currentTarget.open)}>
         <summary className="course-menu-trigger" aria-label={`${isOpen ? "Cerrar" : "Abrir"} menú de ${title}`}>
-          <span className="course-menu-trigger-icon"><Image src="/images/datam-logo.svg" alt="" width={32} height={32} /></span>
+          <span className="course-menu-trigger-icon"><Image src="/images/datam-mark.svg" alt="" width={32} height={32} /></span>
           <span className="course-menu-trigger-copy"><b>{title}</b><small>{progress}</small></span>
           <ChevronDown className="course-menu-trigger-chevron" aria-hidden="true" />
         </summary>

@@ -64,8 +64,14 @@ export default function Home() {
       {/* Hero */}
       <section className="mx-auto max-w-6xl px-6 pb-16 pt-16 md:pt-24">
         <div className="mb-10 flex flex-col items-center text-center">
-          <div className="px-4 py-2">
-            <img src="/images/datam-logo.svg" alt="Logo de DataM" className="datam-logo-hero h-60 w-96 max-w-full object-contain" />
+          <div className="hero-tech-orbit" aria-label="Herramientas tecnológicas de DataM">
+            <span className="hero-tech-mark hero-tech-code" aria-hidden="true"><Code2 /></span>
+            <span className="hero-tech-mark hero-tech-database" aria-hidden="true"><Database /></span>
+            <span className="hero-tech-mark hero-tech-analytics" aria-hidden="true"><BarChart3 /></span>
+            <span className="hero-tech-mark hero-tech-excel" aria-hidden="true"><img src="/images/tools/excel.svg" alt="" /></span>
+            <span className="hero-tech-mark hero-tech-powerbi" aria-hidden="true"><img src="/images/tools/power%20bi.png" alt="" /></span>
+            <span className="hero-tech-mark hero-tech-ai" aria-hidden="true"><img src="/images/tools/agente_IA.png" alt="" /></span>
+            <img src="/images/datam-logo.svg" alt="Logo de DataM" className="datam-logo-hero" />
           </div>
           <p className="mt-4 font-display text-base font-bold uppercase tracking-[0.18em] text-blue-700 md:text-lg">
             Educación, Tecnología e Innovación

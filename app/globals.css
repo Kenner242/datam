@@ -921,8 +921,61 @@ body {
 }
 
 .datam-logo-hero {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  left: 50%;
+  width: min(76%, 384px);
+  height: 76%;
   animation: datam-logo-enter 560ms ease-out both, datam-logo-float 4s ease-in-out 700ms infinite;
   transform-origin: center;
+  object-fit: contain;
+  translate: -50% -50%;
+}
+
+.hero-tech-orbit {
+  position: relative;
+  width: min(100%, 544px);
+  height: clamp(230px, 34vw, 300px);
+  margin-inline: auto;
+  isolation: isolate;
+}
+
+.hero-tech-mark {
+  position: absolute;
+  z-index: 2;
+  display: grid;
+  width: 48px;
+  height: 48px;
+  place-items: center;
+  border: 1px solid rgb(30 91 200 / .2);
+  border-radius: 13px;
+  background: rgb(255 255 255 / .96);
+  box-shadow: 0 8px 22px rgb(24 54 96 / .14);
+  opacity: 0;
+  animation: hero-tech-arrive 6.8s cubic-bezier(.2,.72,.25,1) infinite both;
+  pointer-events: none;
+}
+
+.hero-tech-mark svg,
+.hero-tech-mark img {
+  display: block;
+  width: 27px;
+  height: 27px;
+  object-fit: contain;
+}
+
+.hero-tech-code { top: 8%; left: 12%; color: #2164df; animation-delay: 0s; }
+.hero-tech-database { top: 10%; right: 13%; color: #e34b48; animation-delay: .75s; }
+.hero-tech-analytics { top: 44%; left: 2%; color: #ebad25; animation-delay: 1.5s; }
+.hero-tech-excel { right: 3%; bottom: 29%; animation-delay: 2.25s; }
+.hero-tech-powerbi { bottom: 5%; left: 22%; animation-delay: 3s; }
+.hero-tech-ai { right: 21%; bottom: 4%; animation-delay: 3.75s; }
+
+@keyframes hero-tech-arrive {
+  0%, 6% { opacity: 0; transform: translateY(14px) scale(.72) rotate(-9deg); }
+  13%, 53% { opacity: 1; transform: translateY(0) scale(1) rotate(0); }
+  62%, 100% { opacity: 0; transform: translateY(-12px) scale(.78) rotate(8deg); }
 }
 
 .datam-logo-nav {
@@ -947,6 +1000,18 @@ body {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+@media (max-width: 520px) {
+  .hero-tech-orbit { height: 230px; }
+  .hero-tech-mark { width: 40px; height: 40px; border-radius: 11px; }
+  .hero-tech-mark svg, .hero-tech-mark img { width: 23px; height: 23px; }
+  .hero-tech-code { left: 4%; }
+  .hero-tech-database { right: 4%; }
+  .hero-tech-analytics { left: 0; }
+  .hero-tech-excel { right: 0; }
+  .hero-tech-powerbi { left: 14%; }
+  .hero-tech-ai { right: 14%; }
 }
 
 @media (prefers-contrast: more) {

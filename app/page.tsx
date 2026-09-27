@@ -25,16 +25,6 @@ const featuredCourses = [
       "Aprende Power Query, modelado estrella, DAX, RLS, optimización y publicación profesional.",
   },
   {
-    slug: "python-basico",
-    code: "B10",
-    title: "Python: de Cero a Avanzado",
-    level: "Principiante a avanzado",
-    duration: "8 semanas",
-    image: "https://cdn.simpleicons.org/python/3776AB",
-    description:
-      "Aprende Python desde las variables hasta POO, asincronía, pruebas y empaquetado profesional.",
-  },
-  {
     slug: "sql-basico",
     code: "B7",
     title: "SQL: de Cero a Avanzado",
@@ -43,16 +33,6 @@ const featuredCourses = [
     image: "https://cdn.simpleicons.org/postgresql/4169E1",
     description:
       "Aprende consultas relacionales, JOIN, análisis de ventas y diseño de datos con prácticas interactivas.",
-  },
-  {
-    slug: "ingles-basico",
-    code: "B13",
-    title: "Inglés con Voz: de Cero a Intermedio",
-    level: "Principiante a intermedio",
-    duration: "12 semanas",
-    image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=900&q=85",
-    description:
-      "Aprende escuchando: vocabulario con audio, práctica de pronunciación y conversaciones cotidianas.",
   },
 ];
 

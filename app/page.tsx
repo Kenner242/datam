@@ -44,6 +44,16 @@ const featuredCourses = [
     description:
       "Aprende consultas relacionales, JOIN, análisis de ventas y diseño de datos con prácticas interactivas.",
   },
+  {
+    slug: "ingles-basico",
+    code: "B13",
+    title: "Inglés con Voz: de Cero a Intermedio",
+    level: "Principiante a intermedio",
+    duration: "12 semanas",
+    image: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=900&q=85",
+    description:
+      "Aprende escuchando: vocabulario con audio, práctica de pronunciación y conversaciones cotidianas.",
+  },
 ];
 
 export default function Home() {
@@ -113,7 +123,7 @@ export default function Home() {
           <h2 className="mt-2 font-display text-2xl font-bold text-ink">
             Cursos destacados
           </h2>
-          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
             {featuredCourses.map((c) => (
               <CourseCard key={c.code} {...c} />
             ))}

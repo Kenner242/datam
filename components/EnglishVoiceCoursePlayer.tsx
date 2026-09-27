@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import CourseMenuDisclosure from "@/components/CourseMenuDisclosure";
 import { BarChart3, BookOpen, Check, CheckCircle2, ChevronRight, CircleHelp, Clock3, Headphones, LockKeyhole, RotateCcw, Sparkles, Trophy, Volume2, VolumeX, Zap } from "lucide-react";
 import type { Course } from "@/lib/courses";
 import { awardXp, registerModuleAchievement } from "@/lib/gamification";
@@ -281,14 +282,14 @@ export default function EnglishVoiceCoursePlayer({ course }: { course: Course })
 
   return (
     <section id="curso-aprendizaje" className="english-player" aria-label="Inglés con Voz: ruta A1 a B1">
-      <aside className="english-sidebar">
+      <CourseMenuDisclosure className="english-sidebar" title="Inglés con Voz" progress={`${progress}% · ${completed.length}/${totalLessons} actividades`}>
         <div className="english-brand">DataM <span>VOICE</span></div>
         <div className="english-mini"><small>CURSO ACTUAL</small><b>Inglés con Voz</b><span>{progress}% · {completed.length}/{totalLessons}</span><i><em style={{ width: `${progress}%` }} /></i></div>
         <p className="english-nav-heading">Ruta de aprendizaje</p>
         {([["ruta", BookOpen, "Mi ruta"], ["voz", Volume2, "Configurar voz"], ["laboratorio", Headphones, "Laboratorio"], ["logros", Trophy, "Logros"], ["progreso", BarChart3, "Mi progreso"]] as const).map(([id, Icon, label]) => <button key={id} type="button" onClick={() => setView(id)} className={`english-nav-item ${view === id ? "active" : ""}`}><span><Icon className="h-4 w-4" /></span><span>{label}</span>{id === "laboratorio" && <small>{doneLabs}/{audioLessons.length}</small>}</button>)}
         <p className="english-nav-heading">Evaluación</p>
         <Link className={`english-nav-item ${allDone ? "" : "locked"}`} href={allDone ? `/cursos/${course.slug}/evaluacion` : "#curso-aprendizaje"} onClick={(event) => { if (!allDone) { event.preventDefault(); setMessage("Completa los quince módulos para habilitar la evaluación final."); } }}><span>📝</span><span>Evaluación final</span>{!allDone && <LockKeyhole className="ml-auto h-4 w-4" />}</Link>
-      </aside>
+      </CourseMenuDisclosure>
       <main className="english-main">
         <header className="english-topbar"><div><span>DataM</span><ChevronRight className="h-3.5 w-3.5" /><span>Idiomas</span><ChevronRight className="h-3.5 w-3.5" /><b>Inglés con Voz</b></div><label>Tu ruta <input value={studentName} onChange={(event) => updateStudent(event.target.value)} maxLength={30} placeholder="Tu nombre" aria-label="Nombre para personalizar tu ruta" /></label></header>
         {message && <p role="status" className="english-message">{message}</p>}

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import CourseMenuDisclosure from "@/components/CourseMenuDisclosure";
 import { BarChart3, BookOpen, Check, CheckCircle2, ChevronRight, CircleHelp, Clock3, Code2, Database, LockKeyhole, RotateCcw, Sparkles, Trophy, Zap } from "lucide-react";
 import type { Course } from "@/lib/courses";
 import { awardXp, registerModuleAchievement } from "@/lib/gamification";
@@ -201,14 +202,14 @@ export default function SqlCoursePlayer({ course }: { course: Course }) {
   if (!isReady) return <section className="sql-player"><p className="p-6 text-sm">Preparando la ruta y sincronizando el avance...</p></section>;
   return (
     <section id="curso-aprendizaje" className="sql-player" aria-label="Ruta profesional de SQL">
-      <aside className="sql-sidebar">
+      <CourseMenuDisclosure className="sql-sidebar" title="SQL profesional" progress={`${progress}% · ${completed.length}/${totalLessons} actividades`}>
         <div className="sql-brand">DataM <span>SQL</span></div>
         <div className="sql-mini"><small>CURSO ACTUAL</small><b>SQL profesional</b><span>{progress}% · {completed.length}/{totalLessons} actividades</span><i><em style={{ width: `${progress}%` }} /></i></div>
         <p className="sql-nav-heading">Ruta del curso</p>
         {([["ruta", BookOpen, "Mi ruta"], ["laboratorio", Database, "Laboratorio SQL"], ["logros", Trophy, "Logros"], ["progreso", BarChart3, "Mi progreso"]] as const).map(([id, Icon, label]) => <button key={id} type="button" onClick={() => setView(id)} className={`sql-nav-item ${view === id ? "active" : ""}`}><span><Icon className="h-4 w-4" /></span><span>{label}</span>{id === "laboratorio" && <small>{completedLabs}/{sqlLessons.length}</small>}</button>)}
         <p className="sql-nav-heading">Evaluación</p>
         <Link className={`sql-nav-item ${allDone ? "" : "locked"}`} href={allDone ? `/cursos/${course.slug}/evaluacion` : "#curso-aprendizaje"} onClick={(event) => { if (!allDone) { event.preventDefault(); setMessage("Completa todos los módulos para habilitar la evaluación final."); } }}><span>📝</span><span>Evaluación final</span>{!allDone && <LockKeyhole className="ml-auto h-4 w-4" />}</Link>
-      </aside>
+      </CourseMenuDisclosure>
       <main className="sql-main">
         <header className="sql-topbar"><div><span>DataM</span><ChevronRight className="h-3.5 w-3.5" /><span>Bases de datos</span><ChevronRight className="h-3.5 w-3.5" /><b>SQL profesional</b></div><label>Tu ruta <input value={studentName} onChange={(event) => updateStudent(event.target.value)} maxLength={30} placeholder="Tu nombre" aria-label="Nombre para personalizar la ruta" /></label></header>
         {message && <p role="status" className="sql-message">{message}</p>}

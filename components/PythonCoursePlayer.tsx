@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import CourseMenuDisclosure from "@/components/CourseMenuDisclosure";
 import { BookOpen, Check, CheckCircle2, ChevronRight, CircleHelp, Clock3, Code2, LockKeyhole, Play, RotateCcw, Trophy, Zap } from "lucide-react";
 import type { Course } from "@/lib/courses";
 import { awardXp, registerModuleAchievement } from "@/lib/gamification";
@@ -247,7 +248,7 @@ export default function PythonCoursePlayer({ course }: { course: Course }) {
       {message && <p role="status" className="python-player-message">{message}</p>}
 
       <div className="python-player-layout">
-        <aside className="python-module-sidebar" aria-label="Temario del curso">
+        <CourseMenuDisclosure className="python-module-sidebar" title="Temario Python" progress={`${progress}% · ${completedCount}/${totalLessons} actividades`}>
           <div className="python-sidebar-heading"><span>Temario</span><small>20 módulos</small></div>
           <ol>
             {PYTHON_CURRICULUM.map((module, moduleIndex) => {
@@ -263,7 +264,7 @@ export default function PythonCoursePlayer({ course }: { course: Course }) {
               </li>;
             })}
           </ol>
-        </aside>
+        </CourseMenuDisclosure>
 
         <main className="python-learning-panel">
           <header className="python-module-heading">

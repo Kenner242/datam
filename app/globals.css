@@ -2064,6 +2064,78 @@ body {
   .welcome-poster-close { transition: none; }
 }
 
+/* Compact course navigation: the learning area expands when the menu is closed. */
+.course-menu-disclosure {
+  width: 100%;
+  min-width: 0;
+  transition: width 180ms ease, background-color 180ms ease;
+}
+
+.course-menu-disclosure > details { width: 100%; }
+.course-menu-disclosure > details > .course-sidebar-content { display: none; }
+.course-menu-disclosure > details[open] > .course-sidebar-content { display: flex; }
+.course-menu-trigger {
+  display: flex;
+  min-height: 54px;
+  width: 100%;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid rgb(127 224 192 / .28);
+  border-radius: 8px;
+  background: rgb(25 54 53 / .92);
+  padding: 8px 10px;
+  color: #edf7f1;
+  cursor: pointer;
+  list-style: none;
+}
+.course-menu-trigger::-webkit-details-marker { display: none; }
+.course-menu-trigger-icon { display: grid; width: 32px; height: 32px; flex: none; place-items: center; overflow: hidden; border-radius: 6px; background: #fff; padding: 3px; }
+.course-menu-trigger-icon img { width: 100%; height: 100%; object-fit: contain; }
+.course-menu-trigger-copy { display: grid; min-width: 0; flex: 1; gap: 2px; }
+.course-menu-trigger-copy b { overflow: hidden; color: #f4fbf6; font-size: .82rem; text-overflow: ellipsis; white-space: nowrap; }
+.course-menu-trigger-copy small { overflow: hidden; color: #a7c7bd; font-size: .65rem; text-overflow: ellipsis; white-space: nowrap; }
+.course-menu-trigger-chevron { width: 18px; height: 18px; flex: none; color: #9be3c6; transition: transform 180ms ease; }
+.course-menu-disclosure > details[open] > .course-menu-trigger .course-menu-trigger-chevron { transform: rotate(180deg); }
+.course-sidebar-content { min-width: 0; }
+.course-sidebar-content > * { min-width: 0; }
+
+.english-player:has(.english-sidebar > details:not([open])),
+.excel-player:has(.excel-sidebar > details:not([open])),
+.powerbi-player:has(.powerbi-sidebar > details:not([open])),
+.sql-player:has(.sql-sidebar > details:not([open])) {
+  grid-template-columns: 72px minmax(0, 1fr);
+}
+
+.python-player-layout:has(.python-module-sidebar > details:not([open])) {
+  grid-template-columns: 72px minmax(0, 1fr);
+}
+
+.english-player:has(.english-sidebar > details:not([open])) .course-menu-trigger-copy,
+.excel-player:has(.excel-sidebar > details:not([open])) .course-menu-trigger-copy,
+.powerbi-player:has(.powerbi-sidebar > details:not([open])) .course-menu-trigger-copy,
+.sql-player:has(.sql-sidebar > details:not([open])) .course-menu-trigger-copy,
+.python-player-layout:has(.python-module-sidebar > details:not([open])) .course-menu-trigger-copy { display: none; }
+
+.english-player:has(.english-sidebar > details:not([open])) .course-menu-trigger,
+.excel-player:has(.excel-sidebar > details:not([open])) .course-menu-trigger,
+.powerbi-player:has(.powerbi-sidebar > details:not([open])) .course-menu-trigger,
+.sql-player:has(.sql-sidebar > details:not([open])) .course-menu-trigger,
+.python-player-layout:has(.python-module-sidebar > details:not([open])) .course-menu-trigger { justify-content: center; padding-inline: 6px; }
+
+@media (max-width: 850px) {
+  .english-player:has(.english-sidebar > details:not([open])),
+  .excel-player:has(.excel-sidebar > details:not([open])),
+  .powerbi-player:has(.powerbi-sidebar > details:not([open])),
+  .sql-player:has(.sql-sidebar > details:not([open])) { grid-template-columns: minmax(0, 1fr); }
+
+  .python-player-layout:has(.python-module-sidebar > details:not([open])) { grid-template-columns: minmax(0, 1fr); }
+  .course-menu-disclosure { width: 100%; }
+  .course-menu-trigger { min-height: 58px; }
+  .course-menu-trigger-copy { display: grid !important; }
+  .course-menu-trigger { justify-content: flex-start !important; padding-inline: 11px !important; }
+  .course-sidebar-content { max-height: min(68dvh, 520px); overflow: auto; overscroll-behavior: contain; margin-top: 8px; border: 1px solid rgb(120 161 150 / .24); border-radius: 7px; padding: 8px; }
+}
+
 .sql-player { --sql-ink: #192a31; --sql-muted: #65757a; --sql-line: #d8e1de; --sql-paper: #f4f7f4; --sql-accent: #c85e42; --sql-teal: #18785f; display: grid; min-height: 720px; grid-template-columns: 232px minmax(0, 1fr); margin-top: 22px; overflow: hidden; border: 1px solid #d2ddda; border-radius: 8px; background: var(--sql-paper); color: var(--sql-ink); box-shadow: 0 12px 32px rgb(20 40 42 / .12); }
 .sql-sidebar { min-width: 0; border-right: 1px solid #263b45; background: #132631; padding: 14px 10px; color: #eef4f1; }
 .sql-brand { display: flex; align-items: center; gap: 8px; padding: 4px 8px 14px; color: #fff; font-family: var(--font-display); font-size: 1rem; font-weight: 800; }

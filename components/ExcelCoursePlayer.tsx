@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import CourseMenuDisclosure from "@/components/CourseMenuDisclosure";
 import { BarChart3, BookOpen, Check, CheckCircle2, ChevronRight, CircleHelp, Clock3, FileSpreadsheet, LockKeyhole, RotateCcw, Sparkles, Trophy, Zap } from "lucide-react";
 import type { Course } from "@/lib/courses";
 import { awardXp, registerModuleAchievement } from "@/lib/gamification";
@@ -211,14 +212,14 @@ export default function ExcelCoursePlayer({ course }: { course: Course }) {
 
   return (
     <section id="curso-aprendizaje" className="excel-player" aria-label="Excel de cero a avanzado">
-      <aside className="excel-sidebar">
+      <CourseMenuDisclosure className="excel-sidebar" title="Excel profesional" progress={`${progress}% · ${completed.length}/${totalLessons} actividades`}>
         <div className="excel-brand">DataM <span>AI</span></div>
         <div className="excel-course-mini"><small>RUTA ACTUAL</small><b>📊 Excel Profesional</b><span>{progress}% · {completed.length}/{totalLessons} actividades</span><i><em style={{ width: `${progress}%` }} /></i></div>
         <p className="excel-menu-heading">Aprendizaje</p>
         {([ ["ruta", "🗺️", "Mi ruta"], ["laboratorio", "💻", "Laboratorio"], ["logros", "🏆", "Logros"], ["progreso", "📈", "Mi progreso"] ] as const).map(([id, icon, label]) => <button key={id} type="button" onClick={() => setView(id)} className={`excel-menu-item ${view === id ? "active" : ""}`}>{icon}<span>{label}</span>{id === "laboratorio" && <small>{doneLabs}/{sheetLessons.length}</small>}</button>)}
         <p className="excel-menu-heading">Evaluación</p>
         <Link className={`excel-menu-item ${completed.length < totalLessons ? "locked" : ""}`} href={completed.length === totalLessons ? `/cursos/${course.slug}/evaluacion` : "#curso-aprendizaje"} onClick={(event) => { if (completed.length < totalLessons) { event.preventDefault(); setMessage("Completa las quince unidades para habilitar la evaluación final."); } }}>📝<span>Evaluación final</span>{completed.length < totalLessons && <LockKeyhole className="ml-auto h-3.5 w-3.5" />}</Link>
-      </aside>
+      </CourseMenuDisclosure>
       <main className="excel-player-main">
         <header className="excel-topbar"><div><span>DataM</span><ChevronRight className="h-3.5 w-3.5" /><span>Análisis de datos</span><ChevronRight className="h-3.5 w-3.5" /><b>Excel profesional</b></div><label>Tu ruta <input maxLength={30} value={studentName} onChange={(event) => setStudent(event.target.value)} placeholder="Tu nombre" aria-label="Nombre para personalizar la ruta" /></label></header>
         {message && <p role="status" className="excel-player-message">{message}</p>}

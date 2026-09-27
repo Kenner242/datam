@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import CourseMenuDisclosure from "@/components/CourseMenuDisclosure";
 import { BarChart3, BookOpen, Check, CheckCircle2, ChevronRight, CircleHelp, Clock3, Database, LockKeyhole, RotateCcw, Sparkles, Trophy, Zap } from "lucide-react";
 import type { Course } from "@/lib/courses";
 import { awardXp, registerModuleAchievement } from "@/lib/gamification";
@@ -194,14 +195,14 @@ export default function PowerBiCoursePlayer({ course }: { course: Course }) {
 
   return (
     <section id="curso-aprendizaje" className="powerbi-player" aria-label="Power BI de cero a avanzado">
-      <aside className="powerbi-sidebar">
+      <CourseMenuDisclosure className="powerbi-sidebar" title="Power BI profesional" progress={`${progress}% · ${completed.length}/${totalLessons} actividades`}>
         <div className="powerbi-brand">DataM <span>AI</span></div>
         <div className="powerbi-mini"><small>RUTA ACTUAL</small><b>📊 Power BI Profesional</b><span>{progress}% · {completed.length}/{totalLessons}</span><i><em style={{ width: `${progress}%` }} /></i></div>
         <p className="powerbi-nav-heading">Aprendizaje</p>
         {([["ruta", "🗺️", "Mi ruta"], ["laboratorio", "📐", "Laboratorio DAX"], ["logros", "🏆", "Logros"], ["progreso", "📈", "Mi progreso"]] as const).map(([id, icon, label]) => <button key={id} type="button" onClick={() => setView(id)} className={`powerbi-nav-item ${view === id ? "active" : ""}`}>{icon}<span>{label}</span>{id === "laboratorio" && <small>{labCount}/{daxLessons.length}</small>}</button>)}
         <p className="powerbi-nav-heading">Evaluación</p>
         <Link className={`powerbi-nav-item ${!lastDone ? "locked" : ""}`} href={lastDone ? `/cursos/${course.slug}/evaluacion` : "#curso-aprendizaje"} onClick={(event) => { if (!lastDone) { event.preventDefault(); setMessage("Completa los quince módulos para habilitar la evaluación final."); } }}>📝<span>Evaluación final</span>{!lastDone && <LockKeyhole className="ml-auto h-3.5 w-3.5" />}</Link>
-      </aside>
+      </CourseMenuDisclosure>
       <main className="powerbi-player-main">
         <header className="powerbi-topbar"><div><span>DataM</span><ChevronRight className="h-3.5 w-3.5" /><span>Business Intelligence</span><ChevronRight className="h-3.5 w-3.5" /><b>Power BI</b></div><label>Tu ruta <input value={studentName} onChange={(event) => updateStudent(event.target.value)} maxLength={30} placeholder="Tu nombre" aria-label="Nombre para personalizar tu ruta" /></label></header>
         {message && <p role="status" className="powerbi-message">{message}</p>}

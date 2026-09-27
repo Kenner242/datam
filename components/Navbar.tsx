@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import Image from "next/image";
 import { Menu, X, LogOut, LayoutDashboard, Library } from "lucide-react";
@@ -9,29 +10,70 @@ import { supabase } from "@/lib/supabase/client";
 import NavbarSearch from "./NavbarSearch";
 import { getCurrentUserSafely } from "@/lib/supabase/session";
 
+const WELCOME_POSTER_SESSION_KEY = "datam-welcome-poster-shown";
+
 export default function Navbar() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isWelcomePosterOpen, setIsWelcomePosterOpen] = useState(false);
+  const posterCloseRef = useRef<HTMLButtonElement>(null);
+
+  const showWelcomePosterOnce = useCallback(() => {
+    try {
+      if (window.sessionStorage.getItem(WELCOME_POSTER_SESSION_KEY) === "shown") return;
+      window.sessionStorage.setItem(WELCOME_POSTER_SESSION_KEY, "shown");
+    } catch {}
+    setIsWelcomePosterOpen(true);
+  }, []);
 
   useEffect(() => {
     let mounted = true;
 
     async function loadSession() {
       const { user } = await getCurrentUserSafely();
-      if (mounted) setIsAuthenticated(Boolean(user));
+      if (mounted) {
+        setIsAuthenticated(Boolean(user));
+        if (user) showWelcomePosterOnce();
+      }
     }
 
     void loadSession();
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: listener } = supabase.auth.onAuthStateChange((event, session) => {
       setIsAuthenticated(Boolean(session));
+      if (event === "SIGNED_IN" && session?.user) showWelcomePosterOnce();
+      if (event === "SIGNED_OUT") {
+        try { window.sessionStorage.removeItem(WELCOME_POSTER_SESSION_KEY); } catch {}
+        setIsWelcomePosterOpen(false);
+      }
     });
 
     return () => {
       mounted = false;
       listener.subscription.unsubscribe();
     };
-  }, []);
+  }, [showWelcomePosterOnce]);
+
+  useEffect(() => {
+    if (!isWelcomePosterOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    const previouslyFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    document.body.style.overflow = "hidden";
+    posterCloseRef.current?.focus();
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") setIsWelcomePosterOpen(false);
+      if (event.key === "Tab") {
+        event.preventDefault();
+        posterCloseRef.current?.focus();
+      }
+    }
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      previouslyFocused?.focus();
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [isWelcomePosterOpen]);
 
   async function handleSignOut() {
     await supabase.auth.signOut();
@@ -46,6 +88,7 @@ export default function Navbar() {
   }
 
   return (
+    <>
     <header className="sticky top-0 z-50 border-b border-line bg-base/90 backdrop-blur">
       <nav className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3 sm:gap-4 sm:px-6 sm:py-4">
         <Link href="/" aria-label="DataM, inicio" className="flex items-center">
@@ -135,5 +178,35 @@ export default function Navbar() {
         </div>
       )}
     </header>
+    {isWelcomePosterOpen && typeof document !== "undefined" && createPortal(
+      <div
+        className="welcome-poster-backdrop"
+        onMouseDown={(event) => {
+          if (event.target === event.currentTarget) setIsWelcomePosterOpen(false);
+        }}
+      >
+        <section className="welcome-poster-dialog" role="dialog" aria-modal="true" aria-label="Bienvenido a DataM">
+          <button
+            ref={posterCloseRef}
+            type="button"
+            className="welcome-poster-close"
+            aria-label="Cerrar anuncio de bienvenida"
+            onClick={() => setIsWelcomePosterOpen(false)}
+          >
+            <X aria-hidden="true" />
+          </button>
+          <Image
+            src="/images/flayer_02.jpg"
+            alt="Aprende, practica y crece con los cursos profesionales de DataM"
+            width={1024}
+            height={1536}
+            className="welcome-poster-image"
+            priority
+          />
+        </section>
+      </div>,
+      document.body,
+    )}
+    </>
   );
 }

@@ -317,7 +317,8 @@ body {
 .course-theme .python-module-heading h3,
 .course-theme .excel-detail-head h3,
 .course-theme .powerbi-detail-head h3 {
-  font-size: 1.08rem;
+  font-size: 1.2rem;
+  line-height: 1.35;
 }
 
 .course-theme .python-activity-content h4,
@@ -354,6 +355,89 @@ body {
 .course-theme .excel-player,
 .course-theme .powerbi-player {
   margin-top: 22px;
+}
+
+.course-theme #curso-aprendizaje > div.relative > section > div.divide-y > article > button span span:first-child {
+  font-size: 1.05rem;
+  line-height: 1.5;
+}
+
+.course-theme #curso-aprendizaje > div.relative > section > div.divide-y > article > button span span:last-child {
+  font-size: .92rem;
+  line-height: 1.55;
+}
+
+.course-theme #curso-aprendizaje > div.relative > section > div.data-cell > header h3 {
+  font-size: 1.35rem;
+  line-height: 1.35;
+}
+
+.course-theme #curso-aprendizaje > div.relative > section > div.data-cell > header p:not(.data-cell-header) {
+  font-size: .98rem;
+  line-height: 1.6;
+}
+
+.course-theme #curso-aprendizaje .english-player,
+.course-theme #curso-aprendizaje .excel-player,
+.course-theme #curso-aprendizaje .powerbi-player,
+.course-theme #curso-aprendizaje .sql-player,
+.course-theme #curso-aprendizaje .python-course-player {
+  font-size: .96rem;
+}
+
+.course-theme :is(.english-player, .excel-player, .powerbi-player, .sql-player, .python-course-player) :is(.english-activity-row b, .excel-activity-row b, .powerbi-activity b, .sql-activity-row b, .python-module-copy b) {
+  font-size: .9rem;
+  line-height: 1.4;
+}
+
+.course-theme :is(.english-player, .excel-player, .powerbi-player, .sql-player, .python-course-player) :is(.english-activity-row small, .excel-activity-row small, .powerbi-activity small, .sql-activity-row small, .python-module-copy small) {
+  font-size: .78rem;
+  line-height: 1.5;
+}
+
+.course-theme :is(.english-player, .excel-player, .powerbi-player, .sql-player, .python-course-player) :is(.english-lesson-header > div:first-child > p:last-child, .excel-lesson-header > div:first-child > p:last-child, .powerbi-lesson-heading > div:first-child > p:last-child, .sql-lesson-header > div:first-child > p:last-child, .python-activity-description) {
+  font-size: .98rem;
+  line-height: 1.65;
+}
+
+.course-theme :is(.english-player, .excel-player, .powerbi-player, .sql-player, .python-course-player) :is(.english-objectives, .excel-objectives, .powerbi-objectives, .sql-objectives, .python-objectives, .english-reading, .excel-reading-content, .powerbi-reading, .sql-reading, .python-reading-html) {
+  font-size: .96rem;
+  line-height: 1.7;
+}
+
+.course-theme :is(.english-player, .excel-player, .powerbi-player, .sql-player, .python-course-player) :is(.english-objectives li, .excel-objectives li, .powerbi-objectives li, .sql-objectives li, .python-objectives li, .english-reading li, .excel-reading-content li, .powerbi-reading li, .sql-reading li, .python-reading-html li) {
+  line-height: 1.65;
+}
+
+.course-theme :is(.english-player, .excel-player, .powerbi-player, .sql-player, .python-course-player) :is(.english-quiz legend, .excel-quiz legend, .powerbi-quiz legend, .sql-quiz legend, .python-question legend) {
+  font-size: .92rem;
+  line-height: 1.55;
+}
+
+.course-theme :is(.english-player, .excel-player, .powerbi-player, .sql-player, .python-course-player) :is(.english-quiz label, .excel-quiz label, .powerbi-quiz label, .sql-quiz label, .python-answer-options label) {
+  font-size: .88rem;
+  line-height: 1.5;
+}
+
+.course-theme :is(.english-detail-head, .excel-detail-head, .powerbi-detail-head, .sql-detail-head) h3 {
+  font-size: 1.2rem;
+  line-height: 1.35;
+}
+
+.course-theme :is(.english-detail-head, .excel-detail-head, .powerbi-detail-head, .sql-detail-head) small {
+  font-size: .8rem;
+  line-height: 1.55;
+}
+
+.course-theme :is(.english-route-node, .excel-route-node, .powerbi-route-node, .sql-route-node) > b {
+  font-size: .76rem;
+  line-height: 1.35;
+}
+
+.course-theme :is(.english-route-node, .excel-route-node, .powerbi-route-node, .sql-route-node) > small,
+.course-theme .python-lesson-tab {
+  font-size: .68rem;
+  line-height: 1.4;
 }
 
 @media (max-width: 1023px) {
@@ -1755,6 +1839,230 @@ body {
 .powerbi-finish a { display: inline-flex; align-items: center; gap: 4px; color: #796600; font-size: .67rem; font-weight: 750; }
 @media (max-width: 850px) { .powerbi-player { grid-template-columns: minmax(0, 1fr); } .powerbi-sidebar { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 4px; padding: 8px; } .powerbi-brand, .powerbi-mini, .powerbi-nav-heading { display: none; } .powerbi-nav-item { justify-content: center; padding: 8px 5px; } .powerbi-nav-item > span { flex: initial; } .powerbi-nav-item small { display: none; } .powerbi-route-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 560px) { .powerbi-player-main { padding: 10px; } .powerbi-topbar { align-items: flex-start; flex-direction: column; } .powerbi-route-hero { grid-template-columns: minmax(0, 1fr); } .powerbi-route-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; } .powerbi-route-node { min-height: 114px; padding: 8px; } .powerbi-route-node b { font-size: .66rem; } .powerbi-detail-head { flex-wrap: wrap; } .powerbi-detail-head > b { margin-left: 50px; } .powerbi-activity { gap: 6px; padding: 9px 8px; } .powerbi-activity small { max-width: 180px; } .powerbi-activity > em { padding: 3px 5px; font-size: .52rem; } .powerbi-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); } .powerbi-lab-grid, .powerbi-achievements { grid-template-columns: minmax(0, 1fr); } .powerbi-progress-stats { grid-template-columns: minmax(0, 1fr); } .powerbi-lesson-heading { flex-direction: column; } .powerbi-lesson-heading > div:last-child { flex-direction: row; } .powerbi-finish { align-items: flex-start; flex-wrap: wrap; } .powerbi-finish a { margin-left: 28px; } }
+
+.course-menu-disclosure { min-width: 0; }
+.course-menu-disclosure > details { width: 100%; min-width: 0; }
+.course-menu-disclosure summary { list-style: none; }
+.course-menu-disclosure summary::-webkit-details-marker { display: none; }
+.course-sidebar-content { display: flex; min-width: 0; flex-direction: column; gap: 4px; }
+.course-menu-trigger { display: none; }
+
+.english-player .course-menu-disclosure .course-sidebar-content { gap: 4px; }
+.python-module-sidebar.course-menu-disclosure .course-sidebar-content ol { margin: 0; padding: 0; list-style: none; }
+
+.english-route-grid,
+.excel-route-grid,
+.powerbi-route-grid,
+.sql-route-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 145px), 1fr));
+}
+
+.english-route-node,
+.excel-route-node,
+.powerbi-route-node,
+.sql-route-node {
+  min-width: 0;
+}
+
+.english-route-node > b,
+.excel-route-node > b,
+.powerbi-route-node > b,
+.sql-route-node > b {
+  overflow-wrap: anywhere;
+  line-height: 1.35;
+}
+
+@media (min-width: 851px) {
+  .course-menu-disclosure > details > .course-sidebar-content { display: flex !important; }
+}
+
+@media (max-width: 850px) {
+  .course-menu-disclosure {
+    position: relative;
+    z-index: 5;
+    display: block !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    overflow: visible !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid #344b52 !important;
+    padding: 8px 10px !important;
+    background: #142328;
+  }
+
+  .course-menu-disclosure > details { overflow: visible; }
+  .course-menu-trigger {
+    display: flex;
+    min-height: 54px;
+    align-items: center;
+    gap: 11px;
+    border: 1px solid #39565b;
+    border-radius: 7px;
+    background: #1c3035;
+    padding: 8px 11px;
+    color: #edf5ef;
+    cursor: pointer;
+  }
+
+  .course-menu-trigger-icon { display: grid; width: 28px; height: 28px; flex: none; place-items: center; border-radius: 5px; background: #25463f; color: #95e5c6; }
+  .course-menu-trigger-icon svg { width: 17px; height: 17px; }
+  .course-menu-trigger-copy { display: grid; min-width: 0; flex: 1; gap: 2px; }
+  .course-menu-trigger-copy b { overflow: hidden; color: #f3faf5; font-size: .88rem; text-overflow: ellipsis; white-space: nowrap; }
+  .course-menu-trigger-copy small { overflow: hidden; color: #a9c2bd; font-size: .7rem; text-overflow: ellipsis; white-space: nowrap; }
+  .course-menu-trigger-chevron { width: 18px; height: 18px; flex: none; color: #9fb9b3; transition: transform 160ms ease; }
+  .course-menu-disclosure details[open] > .course-menu-trigger .course-menu-trigger-chevron { transform: rotate(180deg); }
+  .course-sidebar-content {
+    max-height: min(68dvh, 520px);
+    overflow: auto;
+    overscroll-behavior: contain;
+    margin-top: 8px;
+    border: 1px solid #354d52;
+    border-radius: 7px;
+    background: #142328;
+    padding: 8px;
+    scrollbar-color: #52736f #142328;
+  }
+
+  .course-sidebar-content > .english-brand,
+  .course-sidebar-content > .excel-brand,
+  .course-sidebar-content > .powerbi-brand,
+  .course-sidebar-content > .sql-brand,
+  .course-sidebar-content > .python-sidebar-heading { display: none; }
+
+  .course-sidebar-content :is(.english-nav-heading, .excel-menu-heading, .powerbi-nav-heading, .sql-nav-heading) {
+    margin: 12px 8px 4px;
+    border-top: 1px solid #344b50;
+    padding: 11px 0 2px;
+    color: #91ada7;
+    font-size: .66rem;
+  }
+
+  .course-sidebar-content :is(.english-nav-item, .excel-menu-item, .powerbi-nav-item, .sql-nav-item, .python-module-button) {
+    min-height: 46px;
+    border-bottom: 1px solid rgb(137 169 163 / .18);
+    border-radius: 4px;
+    padding: 9px 10px;
+    font-size: .88rem;
+  }
+
+  .course-sidebar-content :is(.english-nav-item, .excel-menu-item, .powerbi-nav-item, .sql-nav-item):last-child,
+  .course-sidebar-content .python-module-sidebar ol li:last-child .python-module-button { border-bottom: 0; }
+
+  .course-sidebar-content .python-module-sidebar ol,
+  .python-module-sidebar.course-menu-disclosure .course-sidebar-content ol {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 185px), 1fr));
+    gap: 4px 8px;
+  }
+
+  .course-sidebar-content .python-module-button { width: 100%; }
+  .course-sidebar-content .python-module-copy b { font-size: .82rem; }
+  .course-sidebar-content .python-module-copy small { font-size: .68rem; }
+  .course-sidebar-content .english-mini,
+  .course-sidebar-content .excel-course-mini,
+  .course-sidebar-content .powerbi-mini,
+  .course-sidebar-content .sql-mini { margin: 0 0 8px; }
+
+  .english-route-grid,
+  .excel-route-grid,
+  .powerbi-route-grid,
+  .sql-route-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 138px), 1fr));
+  }
+
+  .english-route-node,
+  .excel-route-node,
+  .powerbi-route-node,
+  .sql-route-node {
+    min-height: 108px;
+  }
+}
+
+@media (max-width: 420px) {
+  .english-route-grid,
+  .excel-route-grid,
+  .powerbi-route-grid,
+  .sql-route-grid {
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 128px), 1fr));
+  }
+
+  .english-route-node,
+  .excel-route-node,
+  .powerbi-route-node,
+  .sql-route-node { min-height: 102px; padding: 7px; }
+  .course-sidebar-content { padding: 6px; }
+}
+
+.welcome-poster-backdrop {
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  overflow-y: auto;
+  background: rgb(5 10 18 / .78);
+  padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom));
+  backdrop-filter: blur(5px);
+  animation: welcome-poster-fade 180ms ease-out both;
+}
+
+.welcome-poster-dialog {
+  position: relative;
+  display: grid;
+  width: min(100%, 470px);
+  max-height: calc(100dvh - 24px);
+  place-items: center;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / .22);
+  border-radius: 10px;
+  background: #080b11;
+  box-shadow: 0 24px 90px rgb(0 0 0 / .5);
+  animation: welcome-poster-enter 240ms cubic-bezier(.2,.75,.25,1) both;
+}
+
+.welcome-poster-image {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: calc(100dvh - 24px);
+  object-fit: contain;
+}
+
+.welcome-poster-close {
+  position: absolute;
+  z-index: 1;
+  top: max(10px, env(safe-area-inset-top));
+  right: max(10px, env(safe-area-inset-right));
+  display: grid;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border: 1px solid rgb(255 255 255 / .45);
+  border-radius: 50%;
+  background: rgb(10 15 23 / .84);
+  color: #fff;
+  box-shadow: 0 3px 14px rgb(0 0 0 / .32);
+  cursor: pointer;
+  transition: background-color 140ms ease, transform 140ms ease;
+}
+
+.welcome-poster-close:hover { transform: scale(1.06); background: #1e293b; }
+.welcome-poster-close:focus-visible { outline: 3px solid #8ee2bd; outline-offset: 3px; }
+.welcome-poster-close svg { width: 22px; height: 22px; }
+
+@keyframes welcome-poster-fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes welcome-poster-enter { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+@media (max-width: 520px) {
+  .welcome-poster-backdrop { padding-right: 8px; padding-left: 8px; }
+  .welcome-poster-dialog { width: min(100%, 430px); max-height: calc(100dvh - 16px); border-radius: 7px; }
+  .welcome-poster-image { max-height: calc(100dvh - 16px); }
+  .welcome-poster-close { top: 8px; right: 8px; width: 40px; height: 40px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .welcome-poster-backdrop, .welcome-poster-dialog { animation: none; }
+  .welcome-poster-close { transition: none; }
+}
 
 .sql-player { --sql-ink: #192a31; --sql-muted: #65757a; --sql-line: #d8e1de; --sql-paper: #f4f7f4; --sql-accent: #c85e42; --sql-teal: #18785f; display: grid; min-height: 720px; grid-template-columns: 232px minmax(0, 1fr); margin-top: 22px; overflow: hidden; border: 1px solid #d2ddda; border-radius: 8px; background: var(--sql-paper); color: var(--sql-ink); box-shadow: 0 12px 32px rgb(20 40 42 / .12); }
 .sql-sidebar { min-width: 0; border-right: 1px solid #263b45; background: #132631; padding: 14px 10px; color: #eef4f1; }

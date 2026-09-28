@@ -2133,6 +2133,7 @@ body {
 .course-menu-trigger-copy { display: grid; min-width: 0; flex: 1; gap: 2px; }
 .course-menu-trigger-copy b { overflow: hidden; color: #f4fbf6; font-size: .82rem; text-overflow: ellipsis; white-space: nowrap; }
 .course-menu-trigger-copy small { overflow: hidden; color: #a7c7bd; font-size: .65rem; text-overflow: ellipsis; white-space: nowrap; }
+.course-menu-trigger-progress { flex: none; color: #a7c7bd; font-family: var(--font-mono); font-size: .62rem; white-space: nowrap; }
 .course-menu-trigger-chevron { width: 18px; height: 18px; flex: none; color: #9be3c6; transition: transform 180ms ease; }
 .course-menu-disclosure > details[open] > .course-menu-trigger .course-menu-trigger-chevron { transform: rotate(180deg); }
 .course-sidebar-content { min-width: 0; }

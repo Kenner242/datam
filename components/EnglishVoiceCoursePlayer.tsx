@@ -283,7 +283,7 @@ export default function EnglishVoiceCoursePlayer({ course }: { course: Course })
   return (
     <section id="curso-aprendizaje" className="english-player" aria-label="Inglés con Voz: ruta A1 a B1">
       <CourseMenuDisclosure className="english-sidebar" title="Inglés con Voz" progress={`${progress}% · ${completed.length}/${totalLessons} actividades`}>
-        <div className="english-brand">DataM <span>VOICE</span></div>
+        <div className="english-brand">DataM <span>Educación continua</span></div>
         <div className="english-mini"><small>CURSO ACTUAL</small><b>Inglés con Voz</b><span>{progress}% · {completed.length}/{totalLessons}</span><i><em style={{ width: `${progress}%` }} /></i></div>
         <p className="english-nav-heading">Ruta de aprendizaje</p>
         {([["ruta", BookOpen, "Mi ruta"], ["voz", Volume2, "Configurar voz"], ["laboratorio", Headphones, "Laboratorio"], ["logros", Trophy, "Logros"], ["progreso", BarChart3, "Mi progreso"]] as const).map(([id, Icon, label]) => <button key={id} type="button" onClick={() => setView(id)} className={`english-nav-item ${view === id ? "active" : ""}`}><span><Icon className="h-4 w-4" /></span><span>{label}</span>{id === "laboratorio" && <small>{doneLabs}/{audioLessons.length}</small>}</button>)}

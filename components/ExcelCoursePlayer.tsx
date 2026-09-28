@@ -213,7 +213,7 @@ export default function ExcelCoursePlayer({ course }: { course: Course }) {
   return (
     <section id="curso-aprendizaje" className="excel-player" aria-label="Excel de cero a avanzado">
       <CourseMenuDisclosure className="excel-sidebar" title="Excel profesional" progress={`${progress}% · ${completed.length}/${totalLessons} actividades`}>
-        <div className="excel-brand">DataM <span>AI</span></div>
+        <div className="excel-brand">DataM <span>Educación continua</span></div>
         <div className="excel-course-mini"><small>RUTA ACTUAL</small><b>📊 Excel Profesional</b><span>{progress}% · {completed.length}/{totalLessons} actividades</span><i><em style={{ width: `${progress}%` }} /></i></div>
         <p className="excel-menu-heading">Aprendizaje</p>
         {([ ["ruta", "🗺️", "Mi ruta"], ["laboratorio", "💻", "Laboratorio"], ["logros", "🏆", "Logros"], ["progreso", "📈", "Mi progreso"] ] as const).map(([id, icon, label]) => <button key={id} type="button" onClick={() => setView(id)} className={`excel-menu-item ${view === id ? "active" : ""}`}>{icon}<span>{label}</span>{id === "laboratorio" && <small>{doneLabs}/{sheetLessons.length}</small>}</button>)}

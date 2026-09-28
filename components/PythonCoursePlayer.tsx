@@ -236,7 +236,7 @@ export default function PythonCoursePlayer({ course }: { course: Course }) {
     <section id="curso-aprendizaje" className="python-course-player" aria-label="Curso Python de cero a avanzado">
       <header className="python-player-header">
         <div className="min-w-0">
-          <p className="python-kicker">DataM AI · Ruta de aprendizaje</p>
+          <p className="python-kicker">DataM · Educación continua · Ruta de aprendizaje</p>
           <h2>Python: de Cero a Avanzado</h2>
           <p>Veinte módulos para aprender fundamentos, construir soluciones y probarlas con criterio profesional.</p>
         </div>

@@ -24,7 +24,8 @@ export default function CourseMenuDisclosure({ className, title, progress, child
       <details open={isOpen} onToggle={(event) => setIsOpen(event.currentTarget.open)}>
         <summary className="course-menu-trigger" aria-label={`${isOpen ? "Cerrar" : "Abrir"} menú de ${title}`}>
           <span className="course-menu-trigger-icon" aria-hidden="true"><span className="course-menu-mark">M</span><i>DataM</i></span>
-          <span className="course-menu-trigger-copy"><b>{title}</b><small>{progress}</small></span>
+          <span className="course-menu-trigger-copy"><b>{title}</b><small>DataM · Educación continua</small></span>
+          <span className="course-menu-trigger-progress">{progress}</span>
           <ChevronDown className="course-menu-trigger-chevron" aria-hidden="true" />
         </summary>
         <div className="course-sidebar-content" onClick={closeAfterNavigation}>{children}</div>

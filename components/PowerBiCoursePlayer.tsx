@@ -196,7 +196,7 @@ export default function PowerBiCoursePlayer({ course }: { course: Course }) {
   return (
     <section id="curso-aprendizaje" className="powerbi-player" aria-label="Power BI de cero a avanzado">
       <CourseMenuDisclosure className="powerbi-sidebar" title="Power BI profesional" progress={`${progress}% · ${completed.length}/${totalLessons} actividades`}>
-        <div className="powerbi-brand">DataM <span>AI</span></div>
+        <div className="powerbi-brand">DataM <span>Educación continua</span></div>
         <div className="powerbi-mini"><small>RUTA ACTUAL</small><b>📊 Power BI Profesional</b><span>{progress}% · {completed.length}/{totalLessons}</span><i><em style={{ width: `${progress}%` }} /></i></div>
         <p className="powerbi-nav-heading">Aprendizaje</p>
         {([["ruta", "🗺️", "Mi ruta"], ["laboratorio", "📐", "Laboratorio DAX"], ["logros", "🏆", "Logros"], ["progreso", "📈", "Mi progreso"]] as const).map(([id, icon, label]) => <button key={id} type="button" onClick={() => setView(id)} className={`powerbi-nav-item ${view === id ? "active" : ""}`}>{icon}<span>{label}</span>{id === "laboratorio" && <small>{labCount}/{daxLessons.length}</small>}</button>)}

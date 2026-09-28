@@ -203,7 +203,7 @@ export default function SqlCoursePlayer({ course }: { course: Course }) {
   return (
     <section id="curso-aprendizaje" className="sql-player" aria-label="Ruta profesional de SQL">
       <CourseMenuDisclosure className="sql-sidebar" title="SQL profesional" progress={`${progress}% · ${completed.length}/${totalLessons} actividades`}>
-        <div className="sql-brand">DataM <span>SQL</span></div>
+        <div className="sql-brand">DataM <span>Educación continua</span></div>
         <div className="sql-mini"><small>CURSO ACTUAL</small><b>SQL profesional</b><span>{progress}% · {completed.length}/{totalLessons} actividades</span><i><em style={{ width: `${progress}%` }} /></i></div>
         <p className="sql-nav-heading">Ruta del curso</p>
         {([["ruta", BookOpen, "Mi ruta"], ["laboratorio", Database, "Laboratorio SQL"], ["logros", Trophy, "Logros"], ["progreso", BarChart3, "Mi progreso"]] as const).map(([id, Icon, label]) => <button key={id} type="button" onClick={() => setView(id)} className={`sql-nav-item ${view === id ? "active" : ""}`}><span><Icon className="h-4 w-4" /></span><span>{label}</span>{id === "laboratorio" && <small>{completedLabs}/{sqlLessons.length}</small>}</button>)}

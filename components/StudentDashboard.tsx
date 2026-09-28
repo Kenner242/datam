@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, BookOpen, ShieldCheck, Trophy } from "lucide-react";
+import { ArrowRight, BookOpen, Camera, ShieldCheck, Trophy } from "lucide-react";
 import { supabase } from "@/lib/supabase/client";
 import { courses } from "@/lib/courses";
 import ProgressBar from "@/components/ProgressBar";
@@ -18,10 +18,14 @@ type BadgeRow = { course_slug: string; fecha: string; puntaje: number; habilidad
 type ActivityRow = { activity_date: string; lessons_completed: number };
 type StreakRow = { current_streak: number; longest_streak: number };
 type ProfilePrivacy = { leaderboard_opt_in: boolean; leaderboard_display_name: string | null };
+const AVATAR_STORAGE_PREFIX = "datam-profile-avatar:";
 
 export default function StudentDashboard() {
   const router = useRouter();
   const [name, setName] = useState("estudiante");
+  const [avatarUrl, setAvatarUrl] = useState("");
+  const [avatarMessage, setAvatarMessage] = useState("");
+  const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
   const [progressRows, setProgressRows] = useState<ProgressRow[]>([]);
   const [badges, setBadges] = useState<BadgeRow[]>([]);
@@ -45,6 +49,8 @@ export default function StudentDashboard() {
       }
       setName(user.user_metadata.full_name || user.email || "estudiante");
       setUserId(user.id);
+      const localAvatar = window.localStorage.getItem(`${AVATAR_STORAGE_PREFIX}${user.id}`) ?? "";
+      setAvatarUrl(user.user_metadata.avatar_url || localAvatar);
       const [enrollmentResult, progressResult, badgeResult, activityResult, xpResult, streakResult, trophyResult, achievementResult, profileResult] = await Promise.all([
         supabase.from("enrollments").select("course_slug").eq("user_id", user.id),
         supabase.from("progress").select("course_slug, lesson_id").eq("user_id", user.id),
@@ -71,6 +77,41 @@ export default function StudentDashboard() {
     }
     void loadDashboard();
   }, [router]);
+
+  async function updateAvatar(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file || !userId) return;
+    if (!file.type.startsWith("image/")) { setAvatarMessage("Selecciona una imagen válida."); return; }
+    if (file.size > 5 * 1024 * 1024) { setAvatarMessage("La imagen debe pesar menos de 5 MB."); return; }
+    setIsUploadingAvatar(true);
+    setAvatarMessage("");
+    const preview = await new Promise<string>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => typeof reader.result === "string" ? resolve(reader.result) : reject(new Error("No se pudo leer la imagen."));
+      reader.onerror = () => reject(new Error("No se pudo leer la imagen."));
+      reader.readAsDataURL(file);
+    }).catch(() => "");
+    if (!preview) { setAvatarMessage("No se pudo leer la imagen."); setIsUploadingAvatar(false); return; }
+    setAvatarUrl(preview);
+    window.localStorage.setItem(`${AVATAR_STORAGE_PREFIX}${userId}`, preview);
+    try {
+      const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
+      const path = `${userId}/avatar-${Date.now()}.${extension}`;
+      const { error: uploadError } = await supabase.storage.from("avatars").upload(path, file, { upsert: true, contentType: file.type });
+      if (uploadError) throw uploadError;
+      const { data } = supabase.storage.from("avatars").getPublicUrl(path);
+      const publicUrl = data.publicUrl;
+      await supabase.auth.updateUser({ data: { avatar_url: publicUrl } });
+      setAvatarUrl(publicUrl);
+      window.localStorage.setItem(`${AVATAR_STORAGE_PREFIX}${userId}`, publicUrl);
+      setAvatarMessage("Foto de perfil actualizada correctamente.");
+    } catch {
+      setAvatarMessage("Foto guardada en este dispositivo. Configura el bucket avatars para sincronizarla en todos tus dispositivos.");
+    } finally {
+      setIsUploadingAvatar(false);
+    }
+  }
 
   if (isLoading) return <p className="mt-8 text-sm text-muted">Cargando tu progreso...</p>;
 
@@ -108,6 +149,21 @@ export default function StudentDashboard() {
   return <div className="dashboard-space">
     {error && <p role="alert" className="mt-6 border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</p>}
     <div className="dashboard-hero">
+      <div className="profile-identity">
+        <div className="profile-avatar">
+          {avatarUrl ? <img src={avatarUrl} alt={`Foto de perfil de ${name}`} /> : <span>{name.trim().charAt(0).toUpperCase() || "E"}</span>}
+        </div>
+        <div className="profile-identity-copy">
+          <p className="data-cell-header dashboard-hero-kicker">Perfil del estudiante</p>
+          <b>{name}</b>
+          <label className="profile-avatar-button">
+            <Camera className="h-4 w-4" />
+            {isUploadingAvatar ? "Subiendo foto..." : "Cambiar foto"}
+            <input type="file" accept="image/png,image/jpeg,image/webp" onChange={updateAvatar} disabled={isUploadingAvatar} />
+          </label>
+          {avatarMessage && <small role="status">{avatarMessage}</small>}
+        </div>
+      </div>
       <div className="flex flex-wrap items-start justify-between gap-5">
         <div>
           <p className="data-cell-header dashboard-hero-kicker">Experiencia del estudiante</p>

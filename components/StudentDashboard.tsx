@@ -116,11 +116,13 @@ export default function StudentDashboard() {
   if (isLoading) return <p className="mt-8 text-sm text-muted">Cargando tu progreso...</p>;
 
   const enrolledCourses = enrollments.map(({ course_slug }) => courses.find((course) => course.slug === course_slug)).filter((course) => course !== undefined);
-  const completedCourses = enrolledCourses.filter((course) => {
+  const courseProgress = enrolledCourses.map((course) => {
     const totalLessons = course.modules.reduce((total, module) => total + module.lessons.length, 0);
-    const completedLessons = progressRows.filter((row) => row.course_slug === course.slug).length;
-    return totalLessons > 0 && completedLessons >= totalLessons;
-  }).length;
+    const completedLessons = new Set(progressRows.filter((row) => row.course_slug === course.slug).map((row) => row.lesson_id)).size;
+    const percent = totalLessons ? Math.min(100, Math.round((completedLessons / totalLessons) * 100)) : 0;
+    return { course, totalLessons, completedLessons, remainingLessons: Math.max(0, totalLessons - completedLessons), percent, isComplete: totalLessons > 0 && completedLessons >= totalLessons };
+  });
+  const completedCourses = courseProgress.filter((item) => item.isComplete).length;
   const daysSinceActivity = lastActivity ? Math.floor((Date.now() - new Date(`${lastActivity.activity_date}T00:00:00`).getTime()) / 86400000) : null;
   const nextMission = getRecommendedMission(courses, progressRows.length);
   const studentLevel = calculateStudentLevel(totalXp);
@@ -130,9 +132,10 @@ export default function StudentDashboard() {
   const nextLevelXp = studentLevel.id === "principiante" ? 100 : studentLevel.id === "intermedio" ? 300 : studentLevel.id === "avanzado" ? 700 : totalXp;
   const previousLevelXp = studentLevel.minXp;
   const levelProgress = nextLevelXp > previousLevelXp ? Math.min(100, Math.round(((totalXp - previousLevelXp) / (nextLevelXp - previousLevelXp)) * 100)) : 100;
-  const activeCourse = enrolledCourses.find((course) => progressRows.filter((row) => row.course_slug === course.slug).length < course.modules.reduce((sum, module) => sum + module.lessons.length, 0)) ?? enrolledCourses[0];
-  const activeCourseDone = activeCourse ? progressRows.filter((row) => row.course_slug === activeCourse.slug).length : 0;
-  const activeCourseTotal = activeCourse?.modules.reduce((sum, module) => sum + module.lessons.length, 0) ?? 0;
+  const activeProgress = courseProgress.find((item) => !item.isComplete) ?? courseProgress[0];
+  const activeCourse = activeProgress?.course;
+  const activeCourseDone = activeProgress?.completedLessons ?? 0;
+  const activeCourseTotal = activeProgress?.totalLessons ?? 0;
 
   async function togglePrivacy(optIn: boolean) {
     if (!userId) return;
@@ -213,7 +216,7 @@ export default function StudentDashboard() {
       <p id="next-mission-title" className="data-cell-header mb-3">Tu próxima misión</p>
       <LearningMissionCard mission={nextMission} />
     </section>
-    <div className="data-cell mt-6 p-6"><p className="data-cell-header mb-4">Mi progreso real</p>{enrolledCourses.length ? <div className="flex flex-col gap-5">{enrolledCourses.map((course) => { const total = course.modules.reduce((sum, module) => sum + module.lessons.length, 0); const done = progressRows.filter((row) => row.course_slug === course.slug).length; return <div key={course.slug}><div className="mb-2 flex items-center justify-between gap-3"><a href={`/cursos/${course.slug}`} className="font-display font-bold text-ink hover:text-accent">{course.title}</a><span className="font-mono text-xs text-muted">{done}/{total}</span></div><ProgressBar label="Avance del curso" percent={Math.min(100, Math.round((done / total) * 100))} /></div>; })}</div> : <div><p className="text-sm text-muted">Todavía no estás inscrito en ningún curso.</p><button onClick={() => router.push("/cursos")} className="mt-4 rounded-cell bg-blue-600 px-4 py-2 text-sm font-bold text-white">Explorar cursos</button></div>}</div>
+    <section className="profile-courses-panel mt-6" aria-labelledby="profile-courses-title"><div className="flex flex-wrap items-end justify-between gap-3"><div><p className="data-cell-header">Tu aprendizaje</p><h2 id="profile-courses-title" className="mt-1 font-display text-2xl font-bold text-ink">Mis cursos</h2><p className="mt-1 text-sm text-muted">Consulta el avance de cada ruta y continúa exactamente donde lo dejaste.</p></div><span className="font-mono text-xs text-muted">{courseProgress.length} inscritos · {completedCourses} terminados</span></div>{courseProgress.length ? <div className="profile-course-grid">{courseProgress.map(({ course, totalLessons, completedLessons, remainingLessons, percent, isComplete }) => <article key={course.slug} className="profile-course-card"><div className="profile-course-image"><img src={course.image} alt="" /></div><div className="profile-course-body"><div className="flex items-start justify-between gap-3"><div><span className="data-cell-header">{course.code} · {course.level}</span><h3>{course.title}</h3></div><span className={`profile-course-status ${isComplete ? "complete" : "active"}`}>{isComplete ? "Completado" : "En curso"}</span></div><p className="profile-course-count">{completedLessons} de {totalLessons} clases · {remainingLessons} pendientes</p><ProgressBar label={`Avance de ${course.title}`} percent={percent} /><div className="profile-course-actions"><button type="button" onClick={() => router.push(`/cursos/${course.slug}`)}>{isComplete ? "Repasar curso" : "Continuar curso"}<ArrowRight className="h-4 w-4" /></button>{isComplete && <button type="button" className="secondary" onClick={() => router.push(`/cursos/${course.slug}/evaluacion`)}>Evaluación final</button>}</div></div></article>)}</div> : <div className="profile-empty-courses"><p>Todavía no estás inscrito en ningún curso.</p><button type="button" onClick={() => router.push("/cursos")}>Explorar cursos<ArrowRight className="h-4 w-4" /></button></div>}</section>
     <div className="mt-6 grid gap-5 md:grid-cols-2">
       <div className="data-cell p-5">
         <p className="data-cell-header">Privacidad de la tabla de posiciones</p>

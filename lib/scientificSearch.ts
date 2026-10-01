@@ -24,6 +24,7 @@ export type OpenAlexRecord = {
   primary_location?: { source?: { display_name?: string }; landing_page_url?: string };
   open_access?: { is_oa?: boolean; oa_url?: string | null };
   abstract_inverted_index?: Record<string, number[]>;
+  cited_by_count?: number;
 };
 
 export type ScientificRecord = {
@@ -38,6 +39,7 @@ export type ScientificRecord = {
   url: string;
   abstract: string;
   openAccess: boolean;
+  citationCount: number | null;
 };
 
 function cleanText(value: string) {
@@ -71,6 +73,7 @@ export function normalizeCrossref(record: CrossrefRecord): ScientificRecord | nu
     url: fullTextLink || record.URL || (doi ? `https://doi.org/${doi}` : ""),
     abstract: cleanText(record.abstract ?? "").slice(0, 5000),
     openAccess,
+    citationCount: typeof record["is-referenced-by-count"] === "number" ? record["is-referenced-by-count"] : null,
   };
 }
 
@@ -91,5 +94,6 @@ export function normalizeOpenAlex(record: OpenAlexRecord): ScientificRecord | nu
     url: record.open_access?.oa_url || record.primary_location?.landing_page_url || (doi ? `https://doi.org/${doi}` : ""),
     abstract: cleanText(restoreAbstract(record.abstract_inverted_index)).slice(0, 5000),
     openAccess: record.open_access?.is_oa === true,
+    citationCount: typeof record.cited_by_count === "number" ? record.cited_by_count : null,
   };
 }

@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
   crossrefUrl.searchParams.set("query", query);
   crossrefUrl.searchParams.set("rows", String(PAGE_SIZE));
   crossrefUrl.searchParams.set("offset", String(offset));
-  crossrefUrl.searchParams.set("select", "DOI,title,author,published,issued,container-title,short-container-title,type,URL,abstract,link,license");
+  crossrefUrl.searchParams.set("select", "DOI,title,author,published,issued,container-title,short-container-title,type,URL,abstract,link,license,is-referenced-by-count");
   if (yearFrom) crossrefUrl.searchParams.set("filter", `from-pub-date:${yearFrom}${yearTo ? `,until-pub-date:${yearTo}` : ""}`);
   else if (yearTo) crossrefUrl.searchParams.set("filter", `until-pub-date:${yearTo}`);
   const headers = { "User-Agent": `DataMAcademicSearch/1.0 (${process.env.CROSSREF_MAILTO ?? "educational-use"})` };
@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
   openAlexUrl.searchParams.set("search", query);
   openAlexUrl.searchParams.set("per-page", String(PAGE_SIZE));
   openAlexUrl.searchParams.set("page", String(page));
-  openAlexUrl.searchParams.set("select", "id,doi,title,publication_year,type,authorships,primary_location,open_access,abstract_inverted_index");
+  openAlexUrl.searchParams.set("select", "id,doi,title,publication_year,type,authorships,primary_location,open_access,abstract_inverted_index,cited_by_count");
   const openAlexFilters: string[] = [];
   if (yearFrom) openAlexFilters.push(`from_publication_date:${yearFrom}-01-01`);
   if (yearTo) openAlexFilters.push(`to_publication_date:${yearTo}-12-31`);
@@ -79,7 +79,7 @@ export async function GET(request: NextRequest) {
     else {
       const primary = existing.source === "Crossref" ? existing : record.source === "Crossref" ? record : existing;
       const secondary = primary === existing ? record : existing;
-      deduplicated.set(key, { ...primary, authors: primary.authors === "Autoría no disponible" ? secondary.authors : primary.authors, year: primary.year ?? secondary.year, journal: primary.journal === "Revista no disponible" ? secondary.journal : primary.journal, publicationType: primary.publicationType === "Tipo no disponible" ? secondary.publicationType : primary.publicationType, doi: primary.doi || secondary.doi, url: primary.url || secondary.url, abstract: primary.abstract || secondary.abstract, openAccess: primary.openAccess || secondary.openAccess });
+      deduplicated.set(key, { ...primary, authors: primary.authors === "Autoría no disponible" ? secondary.authors : primary.authors, year: primary.year ?? secondary.year, journal: primary.journal === "Revista no disponible" ? secondary.journal : primary.journal, publicationType: primary.publicationType === "Tipo no disponible" ? secondary.publicationType : primary.publicationType, doi: primary.doi || secondary.doi, url: primary.url || secondary.url, abstract: primary.abstract || secondary.abstract, openAccess: primary.openAccess || secondary.openAccess, citationCount: primary.citationCount ?? secondary.citationCount });
     }
   }
   return NextResponse.json({ results: Array.from(deduplicated.values()), page, pageSize: PAGE_SIZE * sources.length, hasMore: crossrefHasMore || openAlexHasMore, sources, warning: failures.length ? `Fuente temporalmente no disponible: ${failures.join(", ")}.` : null });

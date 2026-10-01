@@ -1,75 +1,98 @@
 "use client";
 
-import { ChangeEvent, DragEvent, useEffect, useMemo, useState } from "react";
-import { BookOpen, FileArchive, FileCode2, FileImage, FileText, Lightbulb, Search, Trash2, Upload } from "lucide-react";
+import { ChangeEvent, DragEvent, FormEvent, useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import { BookOpen, Clock3, ExternalLink, FileText, GitBranch, Loader2, Plus, Search, Sparkles, Tag, Trash2, Upload, X } from "lucide-react";
+import { buildConceptMap, extractDocumentText, type ConceptMap } from "@/lib/documentAnalysis";
 import { deleteLibraryFile, listLibraryFiles, saveLibraryFile, type StoredLibraryFile } from "@/lib/libraryStorage";
+import type { ScientificRecord } from "@/lib/scientificSearch";
+import { ConceptMapPanel, STATE_KEY, readState, type DetectiveState } from "@/components/DetectiveWorkspace";
 
-type LibraryFilter = "todos" | "lectura" | "datos" | "codigo" | "multimedia" | "otros";
-type PdfJsApi = { GlobalWorkerOptions: { workerSrc: string }; getDocument: (options: { data: ArrayBuffer; disableWorker: boolean }) => { promise: Promise<{ numPages: number; getPage: (page: number) => Promise<{ getTextContent: () => Promise<{ items: Array<{ str?: string }> }> }> }> } };
+const RECENT_KEY = "datam-library-recent-v1";
+const TOPICS = ["Educación y tecnología", "Inteligencia artificial", "Metodología de investigación", "Ciencia de datos", "Salud pública"];
 
-function extension(name: string) { return name.split(".").pop()?.toLowerCase() ?? ""; }
-function words(text: string) { return text.replace(/[^\p{L}\p{N}_-]+/gu, " ").trim().split(/\s+/).filter(Boolean); }
-function category(type: string): LibraryFilter { if (["txt", "md", "pdf", "doc", "docx", "epub"].includes(type)) return "lectura"; if (["csv", "xls", "xlsx", "json"].includes(type)) return "datos"; if (["sql", "py", "js", "ts", "tsx", "jsx", "ipynb", "html", "css"].includes(type)) return "codigo"; if (["png", "jpg", "jpeg", "gif", "webp", "mp3", "wav", "mp4", "webm"].includes(type)) return "multimedia"; return "otros"; }
-function icon(type: string) { if (["sql", "py", "js", "ts", "tsx", "jsx", "ipynb", "html", "css"].includes(type)) return FileCode2; if (["png", "jpg", "jpeg", "gif", "webp"].includes(type)) return FileImage; if (["mp3", "wav", "mp4", "webm"].includes(type)) return FileArchive; return FileText; }
-function categoryLabel(type: string) { const labels: Record<string, string> = { txt: "Lectura", md: "Lectura", pdf: "Lectura", doc: "Lectura", docx: "Lectura", epub: "Lectura", csv: "Datos", xls: "Datos", xlsx: "Datos", json: "Datos", sql: "Código", py: "Código", js: "Código", ts: "Código", tsx: "Código", jsx: "Código", ipynb: "Código", html: "Código", css: "Código", png: "Imagen", jpg: "Imagen", jpeg: "Imagen", gif: "Imagen", webp: "Imagen", mp3: "Audio", wav: "Audio", mp4: "Video", webm: "Video" }; return labels[type] ?? "Archivo"; }
-async function extractPdfText(file: File): Promise<string> {
-  const globalWindow = window as unknown as { pdfjsLib?: PdfJsApi };
-  if (!globalWindow.pdfjsLib) {
-    await new Promise<void>((resolve, reject) => { const script = document.createElement("script"); script.src = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"; script.onload = () => resolve(); script.onerror = () => reject(new Error("No se pudo cargar el analizador PDF.")); document.head.appendChild(script); });
-  }
-  const pdfjs = (window as unknown as { pdfjsLib: PdfJsApi }).pdfjsLib;
-  pdfjs.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
-  const documentPdf = await pdfjs.getDocument({ data: await file.arrayBuffer(), disableWorker: true }).promise;
-  const pages: string[] = [];
-  for (let pageNumber = 1; pageNumber <= documentPdf.numPages; pageNumber += 1) { const page = await documentPdf.getPage(pageNumber); const content = await page.getTextContent(); pages.push(content.items.map((item) => item.str ?? "").join(" ")); }
-  return pages.join("\n\n");
-}
-function createItem(file: File, text: string): StoredLibraryFile {
-  const paragraphs = text.split(/\n\s*\n/).map((part) => part.trim()).filter(Boolean);
-  const lines = text.split(/\r?\n/).map((line) => line.trim()).filter((line) => line.length > 20);
-  const candidates = Array.from(new Set(lines.concat(paragraphs).flatMap((line) => line.match(/\b[A-ZÁÉÍÓÚÑ][A-Za-zÁÉÍÓÚÑ0-9_-]{4,}\b/g) ?? []))).slice(0, 8);
-  const concepts = candidates.length ? candidates : paragraphs.slice(0, 8).map((part) => part.split(/[.!?]/)[0]).filter(Boolean);
-  const excerpt = (paragraphs[0] ?? text).slice(0, 260);
-  return { id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, name: file.name, type: extension(file.name), mimeType: file.type || "application/octet-stream", size: file.size, text, summary: text ? `Material de ${words(text).length.toLocaleString("es-PE")} palabras. Idea inicial: ${excerpt}${excerpt.length === 260 ? "..." : ""}` : "Archivo guardado. Este formato necesita un visor específico para generar análisis.", concepts, missions: ["Explica con tus propias palabras la idea principal del material.", "Elige dos conceptos técnicos y relaciónalos con una tarea real.", "Escribe una aplicación concreta para tu estudio o trabajo."], flashcards: concepts.slice(0, 8).map((term) => ({ term, definition: `Define ${term} usando un ejemplo del material y una situación laboral.` })), createdAt: new Date().toISOString(), blob: file };
-}
+type SearchResponse = { results?: ScientificRecord[]; error?: string; warning?: string };
+function recentIds() { try { const value = JSON.parse(window.localStorage.getItem(RECENT_KEY) ?? "[]"); return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : []; } catch { return []; } }
+function words(text: string) { return text.match(/[\p{L}\p{N}_-]+/gu) ?? []; }
 
 export default function LibraryWorkspace() {
-  const [items, setItems] = useState<StoredLibraryFile[]>([]);
+  const [files, setFiles] = useState<StoredLibraryFile[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [filter, setFilter] = useState<LibraryFilter>("todos");
   const [query, setQuery] = useState("");
-  const [isDragging, setIsDragging] = useState(false);
+  const [activeQuery, setActiveQuery] = useState("");
+  const [results, setResults] = useState<ScientificRecord[]>([]);
+  const [searched, setSearched] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [warning, setWarning] = useState("");
   const [message, setMessage] = useState("");
+  const [dragging, setDragging] = useState(false);
+  const [state, setState] = useState<DetectiveState>(readState);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const selected = files.find((file) => file.id === selectedId) ?? null;
+  const selectedMap = useMemo<ConceptMap | null>(() => selected ? buildConceptMap(selected.name, selected.text) : null, [selected]);
+  const recent = recentIds().map((id) => files.find((file) => file.id === id)).filter((file): file is StoredLibraryFile => Boolean(file));
+  const tags = useMemo(() => Array.from(new Set(files.flatMap((file) => file.concepts))).slice(0, 12), [files]);
 
-  useEffect(() => { void listLibraryFiles().then(setItems).catch(() => setMessage("No se pudo abrir la biblioteca local.")); }, []);
-  const selected = items.find((item) => item.id === selectedId) ?? items[0];
-  const visibleItems = items.filter((item) => (filter === "todos" || category(item.type) === filter) && item.name.toLowerCase().includes(query.toLowerCase()));
-  const totalWords = useMemo(() => items.reduce((total, item) => total + words(item.text).length, 0), [items]);
+  useEffect(() => { void listLibraryFiles().then(setFiles); }, []);
+  useEffect(() => { window.localStorage.setItem(STATE_KEY, JSON.stringify(state)); }, [state]);
 
-  async function processFiles(files: FileList | File[]) {
-    setMessage(""); const next: StoredLibraryFile[] = [];
-    for (const file of Array.from(files)) {
-      if (file.size > 50 * 1024 * 1024) { setMessage(`${file.name}: supera el límite de 50 MB.`); continue; }
-      let text = "";
-      const readable = file.type.startsWith("text/") || ["txt", "md", "csv", "json", "sql", "py", "js", "ts", "tsx", "jsx", "html", "css", "ipynb"].includes(extension(file.name));
-      if (readable) text = await file.text();
-      if (extension(file.name) === "pdf") text = await extractPdfText(file);
-      const item = createItem(file, text); await saveLibraryFile(item); next.push(item);
+  function openFile(file: StoredLibraryFile) {
+    setSelectedId(file.id);
+    try { window.localStorage.setItem(RECENT_KEY, JSON.stringify([file.id, ...recentIds().filter((id) => id !== file.id)].slice(0, 8))); } catch {}
+  }
+
+  async function processFiles(input: FileList | File[]) {
+    setMessage("");
+    const created: StoredLibraryFile[] = [];
+    for (const file of Array.from(input)) {
+      if (file.size > 50 * 1024 * 1024) { setMessage(`${file.name}: supera 50 MB.`); continue; }
+      try {
+        const extracted = await extractDocumentText(file);
+        const text = extracted.text;
+        const map = buildConceptMap(file.name, text);
+        const concepts = map.concepts.flatMap((section) => section.children).slice(0, 16);
+        const item: StoredLibraryFile = { id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, name: file.name, type: file.name.split(".").pop()?.toLowerCase() ?? "archivo", mimeType: file.type || "application/octet-stream", size: file.size, text, summary: text ? `${map.wordCount.toLocaleString("es-PE")} palabras · ${concepts.length} conceptos detectados.` : "Archivo guardado sin texto extraíble.", concepts: concepts.map((concept) => concept.label), missions: [], flashcards: concepts.slice(0, 8).map((concept) => ({ term: concept.label, definition: concept.evidence[0] ?? "Revisa la evidencia del mapa conceptual." })), analysisWarnings: [...extracted.warnings, ...map.warnings], createdAt: new Date().toISOString(), blob: file };
+        await saveLibraryFile(item); created.push(item);
+      } catch (processingError) { setMessage(processingError instanceof Error ? processingError.message : "No se pudo procesar el archivo."); }
     }
-    if (next.length) { setItems((current) => [...next, ...current]); setSelectedId(next[0].id); setMessage(`${next.length} material${next.length === 1 ? "" : "es"} guardado${next.length === 1 ? "" : "s"} de forma local.`); }
+    if (created.length) { setFiles((current) => [...created, ...current]); openFile(created[0]); setMessage(`${created.length} material${created.length === 1 ? "" : "es"} agregado${created.length === 1 ? "" : "s"}.`); }
   }
   function handleInput(event: ChangeEvent<HTMLInputElement>) { if (event.target.files) void processFiles(event.target.files); event.target.value = ""; }
-  function handleDrop(event: DragEvent<HTMLLabelElement>) { event.preventDefault(); setIsDragging(false); void processFiles(event.dataTransfer.files); }
-  async function removeItem(id: string) { await deleteLibraryFile(id); setItems((current) => current.filter((item) => item.id !== id)); if (selectedId === id) setSelectedId(null); }
-  const SelectedIcon = selected ? icon(selected.type) : BookOpen;
-  const previewUrl = selected && !selected.text ? URL.createObjectURL(selected.blob) : "";
+  function handleDrop(event: DragEvent<HTMLLabelElement>) { event.preventDefault(); setDragging(false); void processFiles(event.dataTransfer.files); }
+  async function removeFile(id: string) { await deleteLibraryFile(id); setFiles((current) => current.filter((file) => file.id !== id)); if (selectedId === id) setSelectedId(null); }
 
-  return <div className="library-space">
-    <section className="library-hero"><p className="data-cell-header library-kicker">Tu biblioteca personal</p><h1 className="mt-2 font-display text-3xl font-bold text-white sm:text-4xl">Ordena todo tu aprendizaje en un solo lugar.</h1><p className="mt-3 max-w-2xl text-sm leading-6 text-blue-100">Guarda lecturas, datos, código, imágenes, audio y video. DataM los clasifica y convierte los formatos legibles en conceptos, flashcards y misiones.</p><div className="mt-5 flex flex-wrap gap-5 text-sm text-blue-100"><span><b className="text-white">{items.length}</b> materiales</span><span><b className="text-white">{totalWords.toLocaleString("es-PE")}</b> palabras analizadas</span><span><b className="text-white">{items.filter((item) => item.text).length}</b> con análisis didáctico</span></div></section>
-    <label htmlFor="library-file-input" onDragOver={(event) => { event.preventDefault(); setIsDragging(true); }} onDragLeave={() => setIsDragging(false)} onDrop={handleDrop} className={`library-dropzone ${isDragging ? "is-dragging" : ""}`}><Upload className="mx-auto h-9 w-9 text-accent2" /><span className="mt-3 block font-display text-lg font-bold text-white">Arrastra cualquier archivo o selecciónalo</span><span className="mx-auto mt-2 block max-w-lg text-sm leading-6 text-blue-100">Hasta 50 MB por archivo. El archivo se guarda en tu navegador; los materiales de texto también se analizan localmente.</span><span className="mt-4 inline-flex rounded-cell bg-accent px-4 py-2 text-sm font-bold text-white">Seleccionar archivos</span><input id="library-file-input" type="file" multiple onChange={handleInput} className="sr-only" /></label>
-    {message && <p role="status" className="mt-3 text-sm text-blue-800">{message}</p>}
-    <div className="mt-6 flex flex-col gap-3 sm:flex-row"><label className="relative min-w-0 flex-1"><Search className="absolute left-3 top-2.5 h-4 w-4 text-muted" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar materiales..." className="w-full rounded-cell border border-line bg-white py-2 pl-9 pr-3 text-sm" /></label><select value={filter} onChange={(event) => setFilter(event.target.value as LibraryFilter)} className="rounded-cell border border-line bg-white px-3 py-2 text-sm"><option value="todos">Todos los formatos</option><option value="lectura">Lecturas</option><option value="datos">Datos</option><option value="codigo">Código</option><option value="multimedia">Multimedia</option><option value="otros">Otros</option></select></div>
-    <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(260px,0.75fr)_minmax(0,1.25fr)]"><section className="library-list" aria-label="Materiales guardados"><div className="flex items-center justify-between gap-3"><p className="data-cell-header">Materiales organizados</p><span className="text-xs text-muted">{visibleItems.length}/{items.length}</span></div>{visibleItems.length === 0 ? <div className="library-empty"><FileText className="mx-auto h-8 w-8 text-muted" /><p className="mt-2 text-sm text-muted">No hay materiales con ese filtro.</p></div> : <div className="mt-3 space-y-2">{visibleItems.map((item) => { const ItemIcon = icon(item.type); return <button key={item.id} type="button" onClick={() => setSelectedId(item.id)} className={`library-item ${selected?.id === item.id ? "selected" : ""}`}><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-cell bg-blue-100 text-blue-700"><ItemIcon className="h-4 w-4" /></span><span className="min-w-0 flex-1 text-left"><b className="block truncate text-sm text-ink">{item.name}</b><small className="text-xs uppercase text-muted">{categoryLabel(item.type)} · {(item.size / 1024).toFixed(1)} KB</small></span><Trash2 onClick={(event) => { event.stopPropagation(); void removeItem(item.id); }} className="h-4 w-4 shrink-0 text-muted hover:text-red-600" /></button>; })}</div>}</section>
-      {selected ? <section className="library-detail" aria-live="polite"><div className="flex flex-wrap items-start justify-between gap-3"><div className="flex items-start gap-3"><span className="flex h-11 w-11 items-center justify-center rounded-cell bg-blue-100 text-blue-700"><SelectedIcon className="h-5 w-5" /></span><div><p className="data-cell-header">Material seleccionado</p><h2 className="mt-1 break-all font-display text-xl font-bold text-white">{selected.name}</h2></div></div><span className="rounded-cell bg-green-100 px-2 py-1 text-xs font-bold text-green-800">{selected.text ? "Listo para estudiar" : "Guardado"}</span></div><p className="mt-4 text-sm leading-6 text-blue-100">{selected.summary}</p>{selected.text ? <><div className="mt-5 grid gap-4 md:grid-cols-2"><div className="library-panel"><h3><Lightbulb className="h-4 w-4 text-accent2" /> Conceptos detectados</h3><ul className="mt-3 space-y-2">{selected.concepts.map((concept) => <li key={concept} className="border-l-2 border-accent pl-3 text-sm text-blue-100">{concept}</li>)}</ul></div><div className="library-panel"><h3><BookOpen className="h-4 w-4 text-accent2" /> Misiones de aprendizaje</h3><ol className="mt-3 space-y-2">{selected.missions.map((mission, index) => <li key={mission} className="flex gap-2 text-sm text-blue-100"><span className="font-mono text-accent2">0{index + 1}</span>{mission}</li>)}</ol></div></div><div className="mt-4 library-panel"><h3>Flashcards técnicas</h3><div className="mt-3 grid gap-2 sm:grid-cols-2">{selected.flashcards.map((card) => <details key={card.term} className="rounded-cell border border-line-2 bg-bg2 p-3"><summary className="cursor-pointer text-sm font-bold text-white">{card.term}</summary><p className="mt-2 text-sm text-blue-100">{card.definition}</p></details>)}</div></div></> : <div className="library-panel mt-5"><h3>Vista previa del archivo</h3>{selected.mimeType.startsWith("image/") && previewUrl && <img src={previewUrl} alt={selected.name} className="mt-3 max-h-80 max-w-full object-contain" />}{selected.mimeType.startsWith("audio/") && previewUrl && <audio controls src={previewUrl} className="mt-4 w-full" />}{selected.mimeType.startsWith("video/") && previewUrl && <video controls src={previewUrl} className="mt-4 max-h-80 w-full" />}{selected.mimeType === "application/pdf" && previewUrl && <iframe title={`Vista previa de ${selected.name}`} src={previewUrl} className="mt-4 h-96 w-full" />}{!["image/", "audio/", "video/"].some((prefix) => selected.mimeType.startsWith(prefix)) && selected.mimeType !== "application/pdf" && <p className="mt-3 text-sm text-blue-100">El archivo está guardado correctamente. Para generar contenido didáctico de este formato se requiere un extractor específico.</p>}</div>}<details className="mt-4 library-source"><summary className="cursor-pointer text-sm font-bold text-blue-200">Ver extracto original</summary>{selected.text ? <pre className="mt-3 max-h-64 overflow-auto whitespace-pre-wrap text-xs text-blue-100">{selected.text.slice(0, 8000)}</pre> : <p className="mt-3 text-sm text-blue-100">No hay texto extraído para este formato.</p>}</details></section> : <section className="library-detail library-empty-detail"><BookOpen className="mx-auto h-10 w-10 text-blue-300" /><h2 className="mt-3 font-display text-xl font-bold text-white">Tu espacio de estudio</h2><p className="mt-2 text-sm text-blue-100">Selecciona un material para verlo y estudiarlo.</p></section>}</div>
+  async function search(event?: FormEvent, topic?: string) {
+    event?.preventDefault();
+    const term = (topic ?? query).trim();
+    if (term.length < 2) { setError("Escribe al menos dos caracteres para buscar."); return; }
+    setLoading(true); setError(""); setWarning(""); setSearched(true); setActiveQuery(term); setResults([]); setSelectedId(null);
+    try {
+      const response = await fetch(`/api/research/search?q=${encodeURIComponent(term)}&page=1`, { headers: { Accept: "application/json" } });
+      const data = await response.json() as SearchResponse;
+      if (!response.ok) throw new Error(data.error ?? "Falló la búsqueda científica.");
+      setResults(data.results ?? []); setWarning(data.warning ?? "");
+    } catch (searchError) { setError(searchError instanceof Error ? searchError.message : "No se pudo conectar con las bases académicas."); }
+    finally { setLoading(false); }
+  }
+
+  return <div className={`library-shell ${results.length ? "has-results" : ""}`}>
+    <input ref={inputRef} type="file" multiple className="sr-only" onChange={handleInput} />
+    <aside className="library-sidebar">
+      <div className="library-brand"><span className="library-brand-mark">D</span><span>DataM <b>Biblioteca</b></span></div>
+      <button type="button" className="library-new-button" onClick={() => { setSearched(false); setResults([]); setQuery(""); }}><Plus className="h-4 w-4" /> Nueva investigación</button>
+      <button type="button" className="library-upload-button" onClick={() => inputRef.current?.click()}><Upload className="h-4 w-4" /> Subir documento</button>
+      <p className="library-nav-heading">Biblioteca</p>
+      <button type="button" className={`library-nav-item ${!selected && !searched ? "active" : ""}`} onClick={() => { setSelectedId(null); setSearched(false); }}><Search className="h-4 w-4" /> Buscar Ciencia</button>
+      {recent.length > 0 && <div className="library-recent-list">{recent.map((file) => <button key={file.id} type="button" className="library-recent-item" onClick={() => openFile(file)}><Clock3 className="h-3.5 w-3.5" /><span className="truncate">{file.name}</span></button>)}</div>}
+      <p className="library-nav-heading">Mis documentos</p>
+      {files.length === 0 ? <p className="library-empty-hint">Aún no hay materiales.</p> : <div className="library-doc-list">{files.map((file) => <button key={file.id} type="button" className={`library-doc-item ${selectedId === file.id ? "active" : ""}`} onClick={() => openFile(file)}><FileText className="h-4 w-4" /><span className="truncate">{file.name}</span><Trash2 className="ml-auto h-3.5 w-3.5" onClick={(event) => { event.stopPropagation(); void removeFile(file.id); }} /></button>)}</div>}
+      {tags.length > 0 && <><p className="library-nav-heading">Etiquetas</p><div className="library-tag-list">{tags.map((tag) => <span key={tag} className="library-tag"><Tag className="h-3 w-3" />{tag}</span>)}</div></>}
+      <div className="library-profile-footer"><span className="library-profile-avatar">D</span><div><p>Biblioteca personal</p><Link href="/dashboard">Ver perfil</Link></div></div>
+    </aside>
+    <main className="library-main">
+      {message && <p className="library-message">{message}</p>}
+      {selected ? <section className="library-document-panel"><div className="library-document-head"><div><p className="data-cell-header">Material seleccionado</p><h2>{selected.name}</h2><p>{words(selected.text).length.toLocaleString("es-PE")} palabras · {selected.concepts.length} conceptos</p></div><span className="library-active-tag">Investigación activa</span></div><div className="library-doc-tabs"><span className="active"><GitBranch className="h-4 w-4" /> Mapa conceptual</span></div><ConceptMapPanel conceptMap={selectedMap} selectedConcept={null} mapView="tree" onMapView={() => undefined} onSelectConcept={() => undefined} selectedFile={selected} /></section> : <section className="library-research-area"><section className="library-home"><p className="library-home-eyebrow">Investigación académica</p><h1>{searched ? activeQuery : "¿Qué quieres saber?"}</h1><form className="library-home-search" onSubmit={(event) => void search(event)}><Search className="h-5 w-5" /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Busca educación, salud, IA, física..." /><button type="submit" disabled={loading}>{loading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Buscar"}</button></form><div className="library-suggestions">{TOPICS.map((topic) => <button key={topic} type="button" onClick={() => { setQuery(topic); void search(undefined, topic); }}>{topic}</button>)}</div>{error && <p className="library-search-error">{error}</p>}{warning && <p className="library-search-warning">{warning}</p>}{searched && !loading && <p className="library-home-footnote">{results.length} fuentes encontradas desde Crossref y OpenAlex.</p>}</section>{searched && <div className="library-consensus-card"><p className="library-consensus-label"><Sparkles className="h-4 w-4" /> Resultados académicos</p><div className="library-source-list">{results.map((result, index) => <article key={result.id} className="library-source-card"><span className="library-source-number">{index + 1}</span><h3>{result.title}</h3><p>{result.authors} · {result.year ?? "Año no disponible"} · {result.journal}</p><a href={result.url} target="_blank" rel="noreferrer">Ver fuente <ExternalLink className="inline h-3.5 w-3.5" /></a></article>)}</div></div>}</section>}
+    </main>
   </div>;
 }

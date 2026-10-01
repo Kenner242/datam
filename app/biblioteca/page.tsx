@@ -3,8 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "@/components/Navbar";
-import DetectiveWorkspace from "@/components/DetectiveWorkspace";
-import { supabase } from "@/lib/supabase/client";
+import LibraryWorkspace from "@/components/LibraryWorkspace";
 import { getCurrentUserSafely } from "@/lib/supabase/session";
 
 export default function LibraryPage() {
@@ -18,5 +17,5 @@ export default function LibraryPage() {
     });
   }, [router]);
 
-  return <><Navbar /><main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">{ready ? <DetectiveWorkspace /> : <p className="text-sm text-muted">Preparando tu biblioteca...</p>}</main></>;
+  return <><Navbar /><main className="library-page">{ready ? <LibraryWorkspace /> : <p className="px-6 py-10 text-sm text-muted">Preparando tu biblioteca...</p>}</main></>;
 }

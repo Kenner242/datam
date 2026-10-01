@@ -32,14 +32,14 @@ export default function CourseModuleGroup({ track, title, image, description, pr
           <span className="data-cell-header">Módulo</span>
           <span className="rounded-cell bg-base px-2 py-1 text-xs font-medium text-muted">{isSingleCourse ? "Acceso directo" : `${totalDuration} niveles`}</span>
         </div>
-        <h3 className="font-display text-xl font-bold leading-tight text-ink sm:text-lg">{title}</h3>
-        <p className="text-base leading-6 text-muted sm:text-sm sm:leading-normal">{description}</p>
+        <h3 className="font-display text-xl font-bold leading-tight text-ink">{title}</h3>
+        <p className="text-base leading-7 text-muted">{description}</p>
         <div className="border-l-2 border-accent pl-3">
           <p className="data-cell-header">Lograrás</p>
-          <p className="mt-1 text-base leading-6 text-ink sm:text-sm sm:leading-5">{professionalUse}</p>
+          <p className="mt-1 text-base leading-7 text-ink">{professionalUse}</p>
         </div>
         <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2">
-          <span className="text-base font-medium text-accent group-hover:underline sm:text-sm">{isSingleCourse ? "Ver curso →" : "Ver módulo →"}</span>
+          <span className="text-base font-semibold text-accent group-hover:underline">{isSingleCourse ? "Ver curso →" : "Ver módulo →"}</span>
         </div>
       </div>
     </Link>

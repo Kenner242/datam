@@ -29,15 +29,15 @@ export default function CourseCard({
         <img src={image} alt={`Imagen del curso ${title}`} className="h-full w-full object-contain" loading="lazy" />
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5 sm:p-6">
-        <div className="flex items-center justify-between">
-          <span className="data-cell-header">{code}</span>
-          <span className="rounded-cell bg-base px-2 py-1 text-xs font-medium text-muted">{level}</span>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <span className="data-cell-header shrink-0">{code}</span>
+          <span className="max-w-full rounded-cell bg-base px-2 py-1 text-right text-xs font-medium leading-4 text-muted">{level}</span>
         </div>
-        <h3 className="font-display text-xl font-bold leading-tight text-ink sm:text-lg">{title}</h3>
-        <p className="text-base leading-6 text-muted sm:text-sm sm:leading-normal">{description}</p>
+        <h3 className="font-display text-xl font-bold leading-tight text-ink">{title}</h3>
+        <p className="text-base leading-7 text-muted">{description}</p>
         <div className="mt-auto flex flex-wrap items-center justify-between gap-2 pt-2">
-          <span className="font-mono text-sm text-muted sm:text-xs">{duration}</span>
-          <span className="text-base font-medium text-accent group-hover:underline sm:text-sm">Ver curso →</span>
+          <span className="font-mono text-sm text-muted">{duration}</span>
+          <span className="text-base font-semibold text-accent group-hover:underline">Ver curso →</span>
         </div>
       </div>
     </Link>

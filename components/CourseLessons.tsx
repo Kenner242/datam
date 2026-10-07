@@ -221,6 +221,7 @@ export default function CourseLessons({ course, materials }: { course: Course; m
     if (previousLessonId && !watched.includes(previousLessonId)) return;
     const nextProgress = [...watched, lessonId];
     setWatched(nextProgress);
+    window.dispatchEvent(new CustomEvent("datam:dax-celebrate"));
     window.localStorage.setItem(storageKey, JSON.stringify(nextProgress));
     if (!userId || !navigator.onLine) {
       const pending = JSON.parse(window.localStorage.getItem(pendingSyncKey) ?? "[]") as string[];

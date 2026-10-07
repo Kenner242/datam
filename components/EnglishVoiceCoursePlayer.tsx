@@ -266,6 +266,7 @@ export default function EnglishVoiceCoursePlayer({ course }: { course: Course })
       if (module.lessons.every((item) => next.includes(item.id))) void registerModuleAchievement(userId, course.slug, moduleIndex);
     }
     setMessage(syncMessage || `Actividad completada: ${lesson.title}.`);
+    window.dispatchEvent(new CustomEvent("datam:dax-celebrate"));
   }
   function reviewQuiz() {
     const questions = lesson.questions ?? [];

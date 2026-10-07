@@ -187,6 +187,7 @@ export default function ExcelCoursePlayer({ course }: { course: Course }) {
       if (activeModule.lessons.every((lesson) => next.includes(lesson.id))) void registerModuleAchievement(userId, course.slug, activeModuleIndex);
     }
     setMessage(syncMessage || `Actividad completada: ${activeLesson.title}.`);
+    window.dispatchEvent(new CustomEvent("datam:dax-celebrate"));
   }
 
   function reviewQuiz() {

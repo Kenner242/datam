@@ -209,6 +209,7 @@ export default function PythonCoursePlayer({ course }: { course: Course }) {
       if (activeModule.lessons.every((lesson) => next.includes(lesson.id))) void registerModuleAchievement(userId, course.slug, moduleIndex);
     }
     setMessage(syncMessage || `Progreso guardado: ${activeLesson.title}.`);
+    window.dispatchEvent(new CustomEvent("datam:dax-celebrate"));
   }
 
   function submitQuiz() {

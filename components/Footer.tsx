@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Footer() {
   return (
     <footer className="border-t border-line bg-panel">
@@ -8,6 +10,12 @@ export default function Footer() {
           </p>
           <p>Educación tecnológica práctica: datos, automatización e IA.</p>
           <p>© {new Date().getFullYear()} DataM. Todos los derechos reservados.</p>
+        </div>
+        <div className="mt-6 flex flex-wrap gap-4 border-t border-line pt-6 text-xs">
+          <Link href="/terminos" className="hover:text-accent">Términos y condiciones</Link>
+          <Link href="/privacidad" className="hover:text-accent">Política de privacidad</Link>
+          <Link href="/reembolsos" className="hover:text-accent">Política de reembolsos</Link>
+          <Link href="/contacto" className="hover:text-accent">Contacto</Link>
         </div>
       </div>
     </footer>

@@ -60,6 +60,9 @@ export default function PlansPage() {
             {plans.map((plan) => (
               <article key={plan.id} className={`data-cell flex flex-col p-6 ${plan.highlight ? "border-2 border-accent shadow-lg" : ""}`}>
                 {plan.highlight && <span className="mb-3 inline-flex w-fit items-center gap-1 rounded-full bg-accent px-3 py-1 text-xs font-bold text-white"><Sparkles className="h-3.5 w-3.5" /> Recomendado</span>}
+                <div className="mb-4 flex h-24 items-center justify-center rounded-cell bg-blue-50 p-4">
+                  <img src={plan.id === "free" ? "/images/tools/excel.svg" : plan.id === "premium" ? "/images/tools/power%20bi.png" : "/images/tools/agente_IA.png"} alt={`Imagen del plan ${plan.name}`} className="h-full object-contain" />
+                </div>
                 <h2 className="font-display text-xl font-bold text-ink">{plan.name}</h2>
                 <div className="mt-3 flex items-baseline gap-1">
                   <span className="font-display text-3xl font-bold text-ink">{plan.price}</span>
@@ -80,6 +83,28 @@ export default function PlansPage() {
                 )}
               </article>
             ))}
+          </div>
+
+          <div className="mt-12 rounded-cell border border-line bg-panel p-6">
+            <p className="data-cell-header">Precios de productos y servicios</p>
+            <div className="mt-4 overflow-x-auto">
+              <table className="w-full text-left text-sm">
+                <thead>
+                  <tr className="border-b border-line">
+                    <th className="py-2 font-bold text-ink">Producto/Servicio</th>
+                    <th className="py-2 font-bold text-ink">Precio</th>
+                    <th className="py-2 font-bold text-ink">Incluye</th>
+                  </tr>
+                </thead>
+                <tbody className="text-muted">
+                  <tr className="border-b border-line"><td className="py-2">Plan Gratuito</td><td className="py-2">S/ 0</td><td className="py-2">Cursos seleccionados, ejercicios básicos, progreso</td></tr>
+                  <tr className="border-b border-line"><td className="py-2">Plan Premium</td><td className="py-2">S/ 19/mes</td><td className="py-2">Todos los cursos, certificados, laboratorios, Dax IA</td></tr>
+                  <tr className="border-b border-line"><td className="py-2">Certificado individual</td><td className="py-2">S/ 39</td><td className="py-2">Evaluación + certificado verificable por curso</td></tr>
+                  <tr className="border-b border-line"><td className="py-2">Programa profesional</td><td className="py-2">S/ 99</td><td className="py-2">Ruta completa con proyecto final y certificado</td></tr>
+                  <tr><td className="py-2">Licencia institucional</td><td className="py-2">A convenir</td><td className="py-2">Panel de gestión, reportes, cupos patrocinados</td></tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </section>
 
